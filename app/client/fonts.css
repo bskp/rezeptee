@@ -1,0 +1,135 @@
+@font-face {
+    font-family: 'camingo';
+    src: url('/fonts/camingocode-regular-webfont.woff2') format('woff2'),
+         url('/fonts/camingocode-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'flowers1';
+    src: url('/fonts/imfeflow1-webfont.woff2') format('woff2'),
+         url('/fonts/imfeflow1-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'flowers2';
+    src: url('/fonts/imfeflow2-webfont.woff2') format('woff2'),
+         url('/fonts/imfeflow2-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'french_canon';
+    src: url('/fonts/imfefcrm29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfefcrm29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'french_canon';
+    src: url('/fonts/imfefcit29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfefcit29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'french_canon_SC';
+    src: url('/fonts/imfefcrm29cSC-webfont.woff2') format('woff2'),
+         url('/fonts/imfefcrm29cSC-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'great_primer';
+    src: url('/fonts/imfegprm29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfegprm29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'great_primer';
+    src: url('/fonts/imfegpit29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfegpit29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'great_primer_SC';
+    src: url('/fonts/imfegprm29cSC-webfont.woff2') format('woff2'),
+         url('/fonts/imfegprm29cSC-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'english';
+    src: url('/fonts/imfeenrm29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfeenrm29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'english';
+    src: url('/fonts/imfeenit29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfeenit29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'english_SC';
+    src: url('/fonts/imfeenrm29cSC-webfont.woff2') format('woff2'),
+         url('/fonts/imfeenrm29cSC-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+@font-face {
+    font-family: 'three_line_pica';
+    src: url('/fonts/imfetlrm29c-webfont.woff2') format('woff2'),
+         url('/fonts/imfetlrm29c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'double_pica';
+    src: url('/fonts/imfedprm27c-webfont.woff2') format('woff2'),
+         url('/fonts/imfedprm27c-webfont.woff') format('woff');
+
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'double_pica';
+    src: url('/fonts/imfedpit27c-webfont.woff2') format('woff2'),
+         url('/fonts/imfedpit27c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+@font-face {
+    font-family: 'pica';
+    src: url('/fonts/imfepirm27c-webfont.woff2') format('woff2'),
+         url('/fonts/imfedirm27c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'pica';
+    src: url('/fonts/imfepiit27c-webfont.woff2') format('woff2'),
+         url('/fonts/imfediit27c-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
