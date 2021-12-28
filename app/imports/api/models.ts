@@ -6,6 +6,7 @@ import {DOMParser} from 'xmldom'
 import slug from 'slug'
 import {FilterXSS} from 'xss';
 import { Random } from 'meteor/random';
+import { _ } from "meteor/underscore";
 
 const options: XSS.IFilterXSSOptions = {
   whiteList: {
@@ -58,8 +59,8 @@ export class Rezept {
   name: string;
   slug: string;
   html: string;
-  tags: Array<Tag>;
-  ingredients: Array<Zutat>;
+  tagNames: Array<string>;
+  ingredientNames: Array<Zutat>;
 
   // Set upon saving
   _id?: string;
@@ -81,6 +82,7 @@ export class Rezept {
 
     // Interpret HTML and populate fields
     const dom = new DOMParser().parseFromString(this.html, "text/html");
+    if (dom === undefined) return;
 
     let h1 = dom.getElementsByTagName("h1");
     if (h1.length > 0) {
@@ -90,8 +92,8 @@ export class Rezept {
     }
 
     this.slug = slug(this.name);
-    this.tags = collectTags(dom);
-    this.ingredients = collectIngredients(dom);
+    this.tagNames = collectTags(dom);
+    this.ingredientNames = collectIngredients(dom);
 
   }
 }
@@ -102,7 +104,7 @@ function collectIngredients(dom) {
     if (ul.getAttribute("class") != "ingredients") continue;
 
     for (let li of ul.getElementsByTagName("li")) {
-      tags.push(new Zutat(li.textContent));
+      tags.push(li.textContent);
     }
   }
   return tags;
@@ -114,22 +116,27 @@ function collectTags(dom) {
     if (ul.getAttribute("class") != "tags") continue;
 
     for (let li of ul.getElementsByTagName("li")) {
-      tags.push(new Tag(li.textContent));
+      tags.push(li.textContent);
     }
   }
   return tags;
 }
 
 export class Tag {
-  constructor(name : string) {
-    this.name = name;
-    this.description = "";
+  constructor(doc : object) {
+    this._id = ''
+    _.extend(this, doc);
   }
 
   _id?: string;
   name: string;
   color: string;
   description: string;
+
+  containedIn(tagNames?: Array<string>) : boolean {
+    if (tagNames === undefined) return false;
+    return tagNames.includes(this.name);
+  }
 }
 
 export class Zutat {
@@ -143,7 +150,12 @@ export class Zutat {
 
 let Rezepte = new Mongo.Collection<Rezept>("rezepte");
 let Zutaten = new Mongo.Collection<Zutat>("zutaten");
-let Tags = new Mongo.Collection<Tag>("tags");
+let Tags = new Mongo.Collection<Tag>("tags", {
+  transform(doc) {
+    return new Tag(doc);
+  }
+
+});
 
 const bound = Meteor.bindEnvironment((callback) => {
   return callback();

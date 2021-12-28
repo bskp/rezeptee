@@ -23,6 +23,7 @@ Meteor.methods({
     }
 
     // Normalize referenced collection items
+    /*
     rezept.tags = rezept.tags?.map(tag => {
       let storedTag = Tags.findOne({name: tag.name});
       if (storedTag !== undefined) {
@@ -43,6 +44,7 @@ Meteor.methods({
         return zutat;
       }
     });
+     */
 
     // Archive previous version
     if (stored !== undefined) {

@@ -1,17 +1,18 @@
-import {Rezept, Rezepte, Tag, Tags} from "../api/models";
+import {Rezept, Tag, Tags} from "../api/models";
 import React, {useState} from "react";
-import {withTracker} from "meteor/react-meteor-data";
 import NavLink from "./NavLink";
+import {useFind, useSubscribe} from "meteor/react-meteor-data";
 
 interface SidebarProps {
-  tagsLoading: boolean,
-  rezepteLoading: boolean,
-  rezepte: Array<Rezept>,
-  tags: Array<Tag>
+  rezept?: Rezept,
+  rezepte: Rezept[],
 }
 
 export const Sidebar = (props: SidebarProps) => {
   const [filter, setFilter] = useState('');
+
+  const isLoading = useSubscribe('tags');
+  let tags : Tag[] = useFind(() => Tags.find({}, {sort: {name: 1}}));
 
   function getFilterTogglingCallback(term: string) {
     return () => setFilter(filter => {
@@ -26,32 +27,31 @@ export const Sidebar = (props: SidebarProps) => {
     });
   }
 
+  function handleKey(event) {
+    setFilter(() => event.target.value);
+  }
+
+  if (isLoading()) {
+    tags = [new Tag({name: 'Lade Tags TODO'})];
+  }
+
   return <aside id="list">
-    <input type="text" id="suchtext" autoComplete="off" placeholder="Etwas kochen mit…"/>
-    <a href="" id="clear_filter">×</a>
+    <input type="text" id="suchtext" autoComplete="off" placeholder="Etwas kochen mit…" onChange={handleKey} value={filter}/>
+    <span onClick={() => setFilter('') } id="clear_filter">×</span>
     <ul id="taglist">
-      {props.tags.map(tag =>
-        <li id={tag._id}><a onClick={getFilterTogglingCallback(tag.name)}>#{tag.name}</a></li>
+      {tags.map(tag => {
+          // TODO synonyme
+          let active = tag.containedIn(props.rezept?.tagNames) ? 'active' : undefined;
+          return <li key={tag._id}><a onClick={getFilterTogglingCallback(tag.name)} className={active}>{tag.name}</a></li>
+        }
       )}
     </ul>
     <ul id="rezepte">
       {props.rezepte.map(rezept =>
-        <li id={rezept._id}><NavLink to={rezept.slug}>{rezept.name}</NavLink></li>
+        <li key={rezept._id}><NavLink to={'/'+rezept.slug}>{rezept.name}</NavLink></li>
       )}
-      <li id="new"><NavLink to="create">Neu…</NavLink></li>
+      <li key="new"><NavLink to="create">Neu…</NavLink></li>
     </ul>
   </aside>
 }
-
-export default withTracker(props => {
-  const rezHandle = Meteor.subscribe('rezepte')
-  const tagHandle = Meteor.subscribe('tags')
-
-  return {
-    rezepteLoading: !rezHandle.ready(),
-    tagsLoading: !tagHandle.ready(),
-    rezepte: Rezepte.find({}, {sort: {title: 1}}).fetch(),
-    tags: Tags.find({}).fetch()
-  }
-})(Sidebar)
 

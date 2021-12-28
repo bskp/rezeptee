@@ -1,42 +1,63 @@
-import React, {ChangeEvent, EventHandler, MouseEventHandler, useState} from 'react';
+import React, {ChangeEvent, cloneElement, EventHandler, FunctionComponent, MouseEventHandler, useState} from 'react';
 import {withTracker} from "meteor/react-meteor-data";
-import {Rezept, Rezepte} from "../api/models";
-import Sidebar from "./Sidebar";
+import {Rezept, Rezepte, Tags} from "../api/models";
+import {Sidebar} from "./Sidebar";
 import parse, {DOMNode, domToReact} from 'html-react-parser'
 import {BrowserRouter, Route, Routes, useNavigate, useParams} from "react-router-dom";
+import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import DocumentTitle from "react-document-title";
 
 
-
-
-const Page = ({children}) => {
-  let rezept;
+const Page = (props) => {
+  // TODO: Filter hier reinnehmen!
+  const isLoading = useSubscribe('rezepte');
+  const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {title: 1}}));
   let slug = useParams().rezept;
-  if (slug === undefined) {
+
+  let content = <h1>?f</h1>;
+  let rezept = undefined;
+
+  if (isLoading()) {
+    content = <h1>lade...</h1>;
+  } else if (slug === undefined) {
     rezept = new Rezept({text: "# Testrez\n\nAsdf.\n"});
   } else {
     rezept = Rezepte.findOne({slug: slug});
     if (rezept === undefined) {
-      return <h1>{slug} wurde leider nicht gefunden.</h1>
+      content = <h1>{slug} wurde leider nicht gefunden.</h1>
+    } else {
+      content = React.cloneElement(props.children, {rezept: rezept});
     }
   }
 
-  return React.cloneElement(children, {rezept: rezept})
+  return <>
+    <section id="content">
+      {content}
+    </section>
+    <Sidebar rezept={rezept} rezepte={rezepte}/>
+  </>
 }
 
+type ContentProps = {
+  rezept: Rezept
+}
+
+type Content = FunctionComponent<ContentProps>;
+
 function Hello() {
+  console.log("asf");
   return <h1>Hallo!</h1>
 }
 
-function Editor({rezept}) {
+const Editor: Content = ({rezept}) => {
   let [text, setText] = useState(rezept.text);
   let navigate = useNavigate();
 
-  const keyHandler : EventHandler<ChangeEvent<HTMLTextAreaElement>> = (event) => {
+  const keyHandler: EventHandler<ChangeEvent<HTMLTextAreaElement>> = (event) => {
     setText(event.currentTarget.value);
   }
 
-
-  const clickHandler : MouseEventHandler = event => {
+  const clickHandler: MouseEventHandler = event => {
     save();
     event.preventDefault();
   }
@@ -52,11 +73,12 @@ function Editor({rezept}) {
   }
 
   return <div onContextMenu={clickHandler}>
-    <textarea id="editor" onChange={keyHandler} value={text} />
+    <DocumentTitle title={rezept.name + " (bearbeite)"} />
+    <textarea id="editor" onChange={keyHandler} value={text}/>
   </div>
 }
 
-function Viewer({rezept}) {
+const Viewer: Content = ({rezept}) => {
   let navigate = useNavigate();
 
   const clickHandler = event => {
@@ -64,33 +86,58 @@ function Viewer({rezept}) {
     event.preventDefault();
   }
 
-  const postprocess = (dom : DOMNode) => {
+  const postprocess = (dom: DOMNode) => {
     return dom;
   }
 
   let vdom = parse(rezept.html, {replace: postprocess}) as JSX.Element[]
-  return <div onContextMenu={clickHandler}>{vdom}</div>
+  return (<>
+      <DocumentTitle title={rezept.name} />
+      <div onContextMenu={clickHandler}>{vdom}</div>
+    </>);
 }
 
 export const App = () => {
 
   return (
     <BrowserRouter>
-      <section id="content">
-        <Routes>
-          <Route path='/' element={<Hello/>}/>
-          <Route path='/create' element={<Page><Editor/></Page>}/>
-          <Route path='/:rezept' element={<Page><Viewer /></Page>}/>
-          <Route path='/:rezept/edit' element={<Page><Editor/></Page>}/>
-        </Routes>
-      </section>
-      <Sidebar/>
+      <Routes>
+        <Route path='/' element={
+          <Page>
+            <Hello/>
+          </Page>
+        }/>
+        <Route path='/create' element={
+          <Page>
+            <Editor/>
+          </Page>
+        }/>
+        <Route path='/:rezept' element={
+          <Page>
+            <Viewer/>
+          </Page>
+        }/>
+        <Route path='/:rezept/edit' element={
+          <Page>
+            <Editor/>
+          </Page>
+        }/>
+      </Routes>
     </BrowserRouter>
   )
 }
 
+/*
 export default withTracker(props => {
+  const rezHandle = Meteor.subscribe('rezepte')
+  const tagHandle = Meteor.subscribe('tags')
+
   return {
-    user: Meteor.user()
+    user: Meteor.user(),
+    rezepteLoading: !rezHandle.ready(),
+    tagsLoading: !tagHandle.ready(),
+    rezepte: Rezepte.find({}, {sort: {title: 1}}).fetch(),
+    tags: Tags.find({}).fetch()
   }
 })(App)
+ */
