@@ -3,7 +3,7 @@
     /* Basic Options */
     "target": "es2018",
     "module": "esNext",
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "dom", "DOM.Iterable"],
     "allowJs": true,
     "checkJs": false,
     "jsx": "preserve",
@@ -33,12 +33,8 @@
     "esModuleInterop": true,
     "preserveSymlinks": true,
 
-    /* Additional libs */
-    "lib": [
-      "DOM",
-      "es6",
-      "DOM.Iterable"
-    ]
+    // to allow for iteration of HTMLCollections
+    "downlevelIteration": true
   },
   "exclude": [
     "./.meteor/**",

@@ -112,7 +112,8 @@ function collectIngredients(dom) {
 
 function collectTags(dom) {
   let tags = [];
-  for (let ul of dom.getElementsByTagName("ul")) {
+  let uls = dom.getElementsByTagName("ul");
+  for (let ul of uls) {
     if (ul.getAttribute("class") != "tags") continue;
 
     for (let li of ul.getElementsByTagName("li")) {

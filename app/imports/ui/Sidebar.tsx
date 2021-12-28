@@ -48,9 +48,9 @@ export const Sidebar = (props: SidebarProps) => {
     </ul>
     <ul id="rezepte">
       {props.rezepte.map(rezept =>
-        <li key={rezept._id}><NavLink to={'/'+rezept.slug}>{rezept.name}</NavLink></li>
+        <li key={rezept._id}><NavLink activeClassName="active" to={'/'+rezept.slug}>{rezept.name}</NavLink></li>
       )}
-      <li key="new"><NavLink to="create">Neu…</NavLink></li>
+      <li key="new"><NavLink to="/create">Neu…</NavLink></li>
     </ul>
   </aside>
 }
