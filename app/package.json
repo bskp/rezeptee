@@ -19,7 +19,7 @@
     "slug": "^5.1.0",
     "spawn-sync": "^2.0.0",
     "tslib": "^2.3.1",
-    "xmldom": "^0.6.0",
+    "@xmldom/xmldom": "^0.8.0",
     "xss": "^1.0.10"
   },
   "devDependencies": {

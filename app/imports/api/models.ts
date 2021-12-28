@@ -2,7 +2,7 @@
 import {FilesCollection} from 'meteor/ostrio:files';
 import * as showdown from 'showdown'
 import {showdownRezepte as rmd} from 'showdown-rezepte'
-import {DOMParser} from 'xmldom'
+import {DOMParser} from '@xmldom/xmldom'
 import slug from 'slug'
 import {FilterXSS} from 'xss';
 import { Random } from 'meteor/random';
@@ -100,10 +100,11 @@ export class Rezept {
 
 function collectIngredients(dom) {
   let tags = [];
-  for (let ul of dom.getElementsByTagName("ul")) {
+  let uls = dom.getElementsByTagName("ul");
+  for (let ul of Array.from(uls)) {
     if (ul.getAttribute("class") != "ingredients") continue;
 
-    for (let li of ul.getElementsByTagName("li")) {
+    for (let li of Array.from(ul.getElementsByTagName("li"))) {
       tags.push(li.textContent);
     }
   }
@@ -113,10 +114,10 @@ function collectIngredients(dom) {
 function collectTags(dom) {
   let tags = [];
   let uls = dom.getElementsByTagName("ul");
-  for (let ul of uls) {
+  for (let ul of Array.from(uls)) {
     if (ul.getAttribute("class") != "tags") continue;
 
-    for (let li of ul.getElementsByTagName("li")) {
+    for (let li of Array.from(ul.getElementsByTagName("li"))) {
       tags.push(li.textContent);
     }
   }
