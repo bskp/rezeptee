@@ -6,7 +6,6 @@ import { renderMdast } from 'mdast-react-render';
 import { matchType, matchHeading, matchParagraph } from 'mdast-react-render/lib/utils';
 import React from "react";
 import {removePosition} from "unist-util-remove-position";
-import {ingredientNode} from "./mdast-recipe";
 
 const mdast = {
   'type': 'root',

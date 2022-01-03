@@ -1,14 +1,16 @@
 // @ts-ignore
-import {FilesCollection} from 'meteor/ostrio:files';
-import * as showdown from 'showdown'
-import {showdownRezepte as rmd} from 'showdown-rezepte'
-import {DOMParser} from '@xmldom/xmldom'
+import {FileRef, FilesCollection} from 'meteor/ostrio:files';
 import slug from 'slug'
-import {FilterXSS} from 'xss';
-import { Random } from 'meteor/random';
-import { _ } from "meteor/underscore";
+import {Random} from 'meteor/random';
+import {_} from "meteor/underscore";
+import {Node} from "unist";
+import {getIngredients, getTitle, parse} from "./document";
+import {Mongo} from 'meteor/mongo';
+import {Meteor} from 'meteor/meteor';
+import fs from "fs";
+import gm from "gm";
 
-const options: XSS.IFilterXSSOptions = {
+const tags = {
   whiteList: {
     a: ["href", "title"],
     span: ["class"],
@@ -36,96 +38,49 @@ const options: XSS.IFilterXSSOptions = {
   }
 };
 
-const converter = new showdown.Converter({
-  extensions: [rmd],
-  striketrough: true,
-  ghCodeBlocks: true,
-  smoothLivePreview: true
-});
-
-showdown.setOption("simpleLineBreaks", true);
-showdown.setOption("smoothLivePreview", true);
-showdown.setOption("simplifiedAutoLink", true);
-showdown.setOption("openLinksInNewWindow", true);
-const gm = require('gm');
 
 export class Rezept {
   // Set through instantiation / copy constructor
-  text: string;
+  markdown: string;
   _lineage: string = Random.id();
 
   // Set during parsing
   _parser_version: number;
   name: string;
   slug: string;
-  html: string;
+  mdast: Node;
   tagNames: Array<string>;
-  ingredientNames: Array<Zutat>;
+  ingredientNames: Array<string>;
 
   // Set upon saving
-  _id?: string;
+  _id: string;
   active: boolean;
   previous_version_id: string;
 
-  constructor(doc) {
-    this.text = doc.text;
+  constructor(doc: { markdown: string, _lineage?: string, _id?: string }) {
+    this.markdown = doc.markdown;
     this._lineage = doc._lineage ? doc._lineage : this._lineage;
+    // @ts-ignore
+    this._id = doc._id ? doc._id : undefined;
     this._parse();
   }
 
-  private _parse() {
+  _parse() {
     this._parser_version = 0;
 
-    // XSS filtering and Markdown parsing
-    const filter = new FilterXSS(options)
-    this.html = filter.process(converter.makeHtml(this.text));
+    let mdast = parse(this.markdown);
 
-    // Interpret HTML and populate fields
-    const dom = new DOMParser().parseFromString(this.html, "text/html");
-    if (dom === undefined) return;
+    this.name = getTitle(mdast);
+    this.ingredientNames = getIngredients(mdast);
+    this.tagNames = [];
 
-    let h1 = dom.getElementsByTagName("h1");
-    if (h1.length > 0) {
-      this.name = h1[0].textContent;
-    } else {
-      this.name = '(Ohne Titel)';
-    }
-
+    this.mdast = mdast;
     this.slug = slug(this.name);
-    this.tagNames = collectTags(dom);
-    this.ingredientNames = collectIngredients(dom);
-
   }
-}
-
-function collectIngredients(dom) {
-  let tags = [];
-  let uls = dom.getElementsByTagName("ul");
-  for (let ul of Array.from(uls)) {
-    if (ul.getAttribute("class") != "ingredients") continue;
-
-    for (let li of Array.from(ul.getElementsByTagName("li"))) {
-      tags.push(li.textContent);
-    }
-  }
-  return tags;
-}
-
-function collectTags(dom) {
-  let tags = [];
-  let uls = dom.getElementsByTagName("ul");
-  for (let ul of Array.from(uls)) {
-    if (ul.getAttribute("class") != "tags") continue;
-
-    for (let li of Array.from(ul.getElementsByTagName("li"))) {
-      tags.push(li.textContent);
-    }
-  }
-  return tags;
 }
 
 export class Tag {
-  constructor(doc : object) {
+  constructor(doc: object) {
     this._id = ''
     _.extend(this, doc);
   }
@@ -135,7 +90,7 @@ export class Tag {
   color: string;
   description: string;
 
-  containedIn(tagNames?: Array<string>) : boolean {
+  containedIn(tagNames?: Array<string>): boolean {
     if (tagNames === undefined) return false;
     return tagNames.includes(this.name);
   }
@@ -150,7 +105,11 @@ export class Zutat {
   synonym: Array<string>;
 }
 
-let Rezepte = new Mongo.Collection<Rezept>("rezepte");
+let Rezepte = new Mongo.Collection<Rezept>("rezepte", {
+  transform(doc: Rezept) {
+    return new Rezept(doc);
+  }
+});
 let Zutaten = new Mongo.Collection<Zutat>("zutaten");
 let Tags = new Mongo.Collection<Tag>("tags", {
   transform(doc) {
@@ -164,52 +123,49 @@ const bound = Meteor.bindEnvironment((callback) => {
 });
 
 
-const createSizeVersion = function(img, version_label, transform) {
-  let fs = require('fs')
-  let version_path = Imgs.storagePath + '/' + version_label + '/' + img._id + '.' + img.extension;
-  let writeStream = fs.createWriteStream(version_path);
+const createSizeVersion = function (img: FileRef<any>, version_label: string, transform: (i: gm.State) => gm.State) {
+  const version_path = `${fs_storage}/${version_label}/${img._id}.${img.extension}`;
 
-  let readStream = transform(gm(img.path)).stream();
-
-  // Once we have a file, then upload it to our new data storage
-  readStream.on('end', () => {
-    console.log(version_label + ' version of ' + img.name + ' done.');
-
-    bound(() => {
-      let upd = {
-        $set: {}
-      };
-      upd['$set']['versions.' + version_label] = {
-        path: version_path,
-      };
-      return Imgs.update(img._id, upd);
+  transform(gm(img.path)).write(version_path, (err) => {
+    fs.stat(version_path, (err, stats) => {
+      bound(() => {
+        let upd = {
+          $set: {}
+        };
+        upd['$set']['versions.' + version_label] = {
+          path: version_path,
+          size: stats.size,
+          type: img.type,
+          name: img.name,
+          extension: img.extension,
+        };
+        return Imgs.update(img._id, upd);
+      });
     });
   });
-
-  readStream.pipe(writeStream);
 }
 
 let fs_storage = '/images';  // within docker container
 if (Meteor.isDevelopment) {
-  fs_storage = `${process.env.PWD}/../images`;
+  fs_storage = `${process.env.PWD}/images`;
 }
 
-let Imgs = new FilesCollection({
+const Imgs = new FilesCollection({
   debug: false,
   storagePath: fs_storage,
   permissions: 0o774,
   parentDirPermissions: 0o774,
   collectionName: 'imgs',
   allowClientCode: true, // Allow remove files from Client
-  onBeforeUpload: function(file) {
+  onBeforeUpload: function (file) {
     // Allow upload files under 10MB, and only in png/jpg/jpeg formats
-    if (file.size <= 1024*1024*10 && /png|jpg|jpeg/i.test(file.extension)) {
+    if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg|heic/i.test(file.extension)) {
       return true;
     } else {
-       return 'Please upload image, with size equal or less than 10MB';
+      return 'Please upload image, with size equal or less than 10MB';
     }
   },
-  onAfterUpload: function(file) {
+  onAfterUpload: function (file) {
     const image = gm(file.path);
     image.size((error, features) => {
       bound(() => {
@@ -227,11 +183,12 @@ let Imgs = new FilesCollection({
             'versions.original.meta.height': features.height
           }
         });
-        createSizeVersion(file, 'thumbnail', i => i.quality(90).resize('300', '150^').gravity('Center').crop(300, 150));
+        createSizeVersion(file, 'thumbnail', i => i.quality(90).resize('300>').gravity('Center'));
         createSizeVersion(file, 'full', i => i.quality(80).resize('1600>'));
-    })}); // size + bound
+      })
+    }); // size + bound
 
   }
 });
 
-export { Rezepte, Imgs, Tags, Zutaten }
+export {Rezepte, Imgs, Tags, Zutaten, createSizeVersion}

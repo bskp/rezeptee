@@ -30,3 +30,4 @@ const valueNode = (type: string, value: string): Literal => ({
 export const ingredientListNode = (children: Children) => nodeWithChildren("ingredientList", children);
 export const quantityNode = (value: string) => valueNode("quantity", value);
 export const unitNode = (value: string) => valueNode("unit", value);
+export const ingredientNode = (value: string) => valueNode("ingredient", value);

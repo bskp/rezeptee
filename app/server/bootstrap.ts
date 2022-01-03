@@ -1,5 +1,6 @@
 // if the database is empty on server start, create some sample data.
 
+import { Meteor } from "meteor/meteor";
 import {Rezept, Rezepte, Zutat, Zutaten} from "../imports/api/models";
 
 Meteor.startup(function () {

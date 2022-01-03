@@ -20,7 +20,8 @@ const Page = (props) => {
   if (isLoading()) {
     content = <h1>lade...</h1>;
   } else if (slug === undefined) {
-    rezept = new Rezept({text: "# Testrez\n\nAsdf.\n"});
+    rezept = new Rezept({markdown: "# Testrez\n\nAsdf.\n"});
+    content = React.cloneElement(props.children, {rezept: rezept});
   } else {
     rezept = Rezepte.findOne({slug: slug});
     if (rezept === undefined) {
@@ -50,7 +51,7 @@ function Hello() {
 }
 
 const Editor: Content = ({rezept}) => {
-  let [text, setText] = useState(rezept.text);
+  let [text, setText] = useState(rezept.markdown);
   let navigate = useNavigate();
 
   const keyHandler: EventHandler<ChangeEvent<HTMLTextAreaElement>> = (event) => {
@@ -63,7 +64,7 @@ const Editor: Content = ({rezept}) => {
   }
 
   const save = () => {
-    rezept.text = text;
+    rezept.markdown = text;
     Meteor.call('saveRezept', rezept, (error, isValid) => {
       if (error !== undefined) {
         console.log(error);
@@ -86,15 +87,16 @@ const Viewer: Content = ({rezept}) => {
     event.preventDefault();
   }
 
-  const postprocess = (dom: DOMNode) => {
-    return dom;
+  if (!rezept.hasOwnProperty('mdast')) {
+    rezept._parse()
   }
+  const vdom = renderMdast(rezept.mdast, schema);
 
   let vdom = parse(rezept.html, {replace: postprocess}) as JSX.Element[]
   return (<>
-      <DocumentTitle title={rezept.name} />
-      <div onContextMenu={clickHandler}>{vdom}</div>
-    </>);
+    <DocumentTitle title={rezept.name}/>
+    <div onContextMenu={clickHandler}>{vdom}</div>
+  </>);
 }
 
 export const App = () => {

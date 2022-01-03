@@ -1,95 +1,117 @@
-import {ingredientNode} from "./mdast-recipe";
+import {splitIngredients} from "./mdast-recipe";
 import assert from "assert";
 
 describe('Ingredient Node parsing', () => {
   it('Typographical Fractional Quantity', () => {
-    const expected = {
-      "children": [
-        {
-          "type": "quantity",
-          "value": "3/4"
-        },
-        {
-          "type": "unit",
-          "value": "dl"
-        },
-        {
-          "type": "text",
-          "value": " Suppe"
-        }
-      ],
-      "type": "listItem"
-    }
-    const mdast = ingredientNode("¾dl Suppe")
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "3/4"
+      },
+      {
+        "type": "unit",
+        "value": "dl"
+      },
+      {
+        "type": "ingredient",
+        "value": "Suppe"
+      }
+    ]
+    const mdast = splitIngredients("¾dl Suppe")
     assert.deepEqual(mdast, expected);
   });
   it('Fractional Quantity', () => {
-    const expected = {
-      "children": [
-        {
-          "type": "quantity",
-          "value": "3/4"
-        },
-        {
-          "type": "unit",
-          "value": "dl"
-        },
-        {
-          "type": "text",
-          "value": " Suppe"
-        }
-      ],
-      "type": "listItem"
-    }
-    const mdast = ingredientNode("3/4 dl Suppe")
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "3/4"
+      },
+      {
+        "type": "unit",
+        "value": "dl"
+      },
+      {
+        "type": "ingredient",
+        "value": "Suppe"
+      }
+    ]
+    const mdast = splitIngredients("3/4 dl Suppe")
     assert.deepEqual(mdast, expected);
   });
 
   it('No Quantities', () => {
-    const expected = {
-      "children": [
-        {
-          "type": "text",
-          "value": "Hagelzucker"
-        }
-      ],
-      "type": "listItem"
-    }
-    const mdast = ingredientNode("Hagelzucker")
+    const expected = [
+      {
+        "type": "ingredient",
+        "value": "Hagelzucker"
+      }
+    ]
+    const mdast = splitIngredients("Hagelzucker")
     assert.deepEqual(mdast, expected);
   });
 
-  it('Multitple Quantity per Row', () => {
-    const mdast = ingredientNode("ca. 6-10 EL Zucker")
-    const expected = {
-      "type": "listItem",
-      "children": [
-        {
-          "type": "text",
-          "value": "ca. "
-        },
-        {
-          "type": "quantity",
-          "value": "6"
-        },
-        {
-          "type": "text",
-          "value": "-"
-        },
-        {
-          "type": "quantity",
-          "value": "10"
-        },
-        {
-          "type": "unit",
-          "value": "EL"
-        },
-        {
-          "type": "text",
-          "value": " Zucker"
-        }
-      ],
-    }
+  it('Word boundary after unit', () => {
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "1"
+      },
+      {
+        "type": "ingredient",
+        "value": "kleine Tomate"
+      }
+    ]
+    const mdast = splitIngredients("1 kleine Tomate")
+    assert.deepEqual(mdast, expected);
+  })
+
+  it('Prosaic units', () => {
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "1"
+      },
+      {
+        "type": "unit",
+        "value": "Dose"
+      },
+      {
+        "type": "ingredient",
+        "value": "Mais"
+      }
+    ]
+    const mdast = splitIngredients("1 Dose Mais")
+    assert.deepEqual(mdast, expected);
+  })
+
+  it('Multitple Quantities per Row', () => {
+    const expected = [
+      {
+        "type": "text",
+        "value": "ca."
+      },
+      {
+        "type": "quantity",
+        "value": "6"
+      },
+      {
+        "type": "text",
+        "value": "-"
+      },
+      {
+        "type": "quantity",
+        "value": "10"
+      },
+      {
+        "type": "unit",
+        "value": "EL"
+      },
+      {
+        "type": "ingredient",
+        "value": "Zucker"
+      }
+    ]
+    const mdast = splitIngredients("ca. 6-10 EL Zucker")
     assert.deepEqual(mdast, expected);
   });
 });

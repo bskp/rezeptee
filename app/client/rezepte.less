@@ -41,7 +41,7 @@ body {
 }
 
 
-aside {
+aside#list {
   color: @sheet;
   z-index: 1;
   flex-grow: 0;
@@ -166,8 +166,7 @@ aside {
 
   strong {
     font-weight: normal;
-    background-color: yellow;
-    border-radius: 8px;
+    //background-color: yellow;
   }
 
   a {
@@ -180,35 +179,6 @@ aside {
 
   .dirty {
     color: #c50409;
-  }
-
-  .left {
-    font-family: pica;
-    position: fixed;
-    left: 1em;
-    top: 0;
-    font-size: 0.5em;
-    color: #999;
-
-    img {
-      border-radius: 10px;
-      height: 100px;
-      width: 300px;
-      height: 150px;
-      background-color: #ddd;
-      background-image: url('spinner.svg');
-      background-repeat: no-repeat;
-      background-position: center;
-
-      display: block;
-
-      border-radius: 10px;
-      margin-top: 5px;
-
-      cursor: -moz-grab;
-      cursor: -webkit-grab;
-      cursor: grab;
-    }
   }
 
   #editor {
@@ -273,43 +243,90 @@ aside {
   }
 }
 
-#dropzone {
-  font: 1em 'DIN', Helvetica, Arial, sans-serif;
-  padding: 40px 0;
-  border-radius: 10px;
-  border: 2px dashed;
-  text-align: center;
-  width: 300px - 4px;
+aside#images{
+  width: calc(@margin/2 - 1em);
 
-  position: relative;
-  overflow: hidden;
+  position: fixed;
+  left: 0.2em;
+  top: 0.5em;
 
+  box-sizing: border-box;
 
-  &:before {
-    content: '';
-    position: absolute;
+  li {
+    display: block;
     width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    background: url('/cross.svg') 0 0 no-repeat;
-    background-position: center;
-    background-size: 3em;
-    transform: rotate(0deg);
+    border-radius: 0.8em;
+    margin-bottom: 0.5em;
 
-    opacity: 0.2;
+    background-color: #222;
 
-    transition: 0.2s;
+    img {
+      display: block;
+      border-radius: inherit;
+      min-height: unset;
+      cursor: -moz-grab;
+      cursor: -webkit-grab;
+      cursor: grab;
+      opacity: 1;
+
+      transition: 5s opacity;
+
+      &.gone {
+        //opacity: 0.3;
+      }
+
+      &.fresh {
+        opacity: 0;
+      }
+    }
   }
 
-  &.x:before {
-    transform: rotate(45deg);
+  @dropperHeight: 5em;
+
+  li#blueprint {
+    height: @dropperHeight;
+    box-sizing: border-box;
+    background-color: hsla(0, 0, 0, 0.2);
+    transition: 0.1s margin-top;
   }
 
-  &.over {
-    background-color: rgba(0, 0, 0, 0.1);
+  li#dropzone {
+    border: 3px dashed rgba(0, 0, 0, 0.2);
+    text-align: center;
+    height: @dropperHeight;
+    box-sizing: border-box;
+    background-color: transparent;
+
+    &:before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: inherit;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background: url('/cross.svg') no-repeat center;
+      background-size: 2em;
+      transform: rotate(0deg);
+
+      opacity: 0.2;
+      transition: 0.2s;
+    }
+
+    &.x:before {
+      transform: rotate(45deg);
+    }
+
+    &.over {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
   }
+
+}
+
+
+.hover {
+  box-shadow: #0000005c 0px 6px 22px, #00000026 0 1px 5px;
 }
 
 ul.ingredients {
@@ -323,6 +340,26 @@ ul.ingredients {
   float: left;
   margin-left: -@margin;
   padding-left: 10px;
+
+  li span {
+    padding: 0 0.4em;
+    margin: 0 -0.2em;
+  }
+
+  .quantity {
+    border-radius: 1em;
+    cursor: pointer;
+
+    transition: 0.3s box-shadow;
+
+    &:hover {
+      .hover
+    }
+  }
+
+  .unit {
+  }
+
 }
 
 // Typo

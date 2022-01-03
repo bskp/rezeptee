@@ -6,12 +6,14 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer",
     "test": "mocha"
   },
-  "type": "module",
   "dependencies": {
     "@babel/runtime": "^7.15.4",
+    "@types/gm": "^1.18.11",
     "@xmldom/xmldom": "^0.8.0",
+    "classnames": "^2.3.1",
     "gm": "^1.23.1",
     "mdast-builder": "^1.1.1",
+    "mdast-flatten-image-paragraphs": "^1.0.0",
     "mdast-react-render": "^1.2.0",
     "mdast-util-to-string": "^3.1.0",
     "meteor-node-stubs": "^1.1.0",
@@ -24,6 +26,7 @@
     "spawn-sync": "^2.0.0",
     "tslib": "^2.3.1",
     "unified": "^10.1.1",
+    "unist-util-find": "^1.0.2",
     "unist-util-is": "^5.1.1",
     "unist-util-map": "^3.0.0",
     "unist-util-remove-position": "^4.0.1",

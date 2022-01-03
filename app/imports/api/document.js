@@ -1,36 +1,26 @@
-import {Transformer, unified} from "unified";
-// @ts-ignore
+import {unified} from "unified";
 import {renderMdast} from 'mdast-react-render';
-// @ts-ignore
-import {matchHeading, matchParagraph, matchType} from 'mdast-react-render/lib/utils';
 import remarkParse from "remark-parse";
 import {is} from 'unist-util-is'
-import {listItem, text} from 'mdast-builder'
 import {map} from "unist-util-map";
-import {Node, Parent} from 'unist';
-import {Code} from 'mdast';
-import {Root} from "remark-parse/lib";
+import find from "unist-util-find";
+import {toString} from "mdast-util-to-string";
+import {visit} from "unist-util-visit";
+import {list, listItem} from "mdast-builder";
+import {splitIngredients} from "/imports/api/mdast-recipe";
+import {ingredientListNode} from "/imports/api/mdast-recipe-builders";
+import flattenImageParagraphs from "mdast-flatten-image-paragraphs";
 
 
+function ingredientsPlugin() {
 
-function ingredientListNode(children) {
-  return {
-    ...{type: "ingredientList"},
-    children
-  }
-}
-
-
-function ingredientsProcessor() {
-
-  return (tree)  => {
+  return (tree) => {
     return map(tree, (node) => {
       if (is(node, "code")) {
+        const rows = node.value.split("\n");
         return ingredientListNode(
-          node.value.split("\n").map(row => {
-
-            return listItem(text(row))
-          }));
+          rows.map(row => listItem(splitIngredients(row)))
+        )
       }
       return node;
     });
@@ -38,20 +28,26 @@ function ingredientsProcessor() {
 }
 
 const parser = unified()
-.use(remarkParse)
-.use(ingredientsProcessor)
+  .use(remarkParse)
+  .use(ingredientsPlugin)
+  .use(flattenImageParagraphs);
 
 export const parse = md => {
-  const tree = parser.runSync(parser.parse(md));
-  return tree;
+  const mdast = parser.runSync(parser.parse(md));
+  return mdast;
 }
 
-function mdToReact(markdown) {
-  let mdast = parse(markdown);
-
-  return renderMdast
+export function getTitle(mdast) {
+  let h1 = find(mdast, {type: "heading", depth: 1});
+  return toString(h1 || "(Ohne Titel)");
 }
 
-export {mdToReact}
+export function getIngredients(mdast) {
+  let ingredients = [];
+  visit(mdast, 'ingredient', node => {
+    ingredients.push(toString(node));
+  });
+  return ingredients;
+}
 
 

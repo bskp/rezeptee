@@ -8,17 +8,17 @@ Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
 
 Meteor.methods({
 
-  saveRezept(remoteObject: Object) {
+  saveRezept(remoteObject: Rezept) {
     let rezept = new Rezept(remoteObject); // Re-attach class methods and perform parsing
 
     // Compare with stored Rezept versions
     // TODO: respect creation date
     let stored = Rezepte.findOne({_lineage: rezept._lineage, active: true});
 
-    if (stored && stored.text == rezept.text) {
+    if (stored && stored.markdown == rezept.markdown) {
       // Handle parser evolution
       if (stored._parser_version != rezept._parser_version) {
-        Rezepte.update(rezept._id, rezept);
+        Rezepte.update(stored._id, rezept);
       }
     }
 
@@ -44,42 +44,22 @@ Meteor.methods({
         return zutat;
       }
     });
-     */
+    */
 
     // Archive previous version
     if (stored !== undefined) {
       stored.active = false;
       rezept.previous_version_id = stored._id;
+      Rezepte.update(stored._id, stored);
     }
 
     // Add a new, active version - unless the recipe`s text is empty.
     // That is the convention to delete a recipe.
-    if (rezept.text != "") {
+    if (rezept.markdown != "") {
       rezept.active = true;
+      // @ts-ignore
       delete rezept._id;  // Triggers creation of a new ID
       Rezepte.insert(rezept);
     }
-
-    Rezepte.update(stored._id, stored);
   }
 });
-
-// Serve images from "pretty" urls
-/*
-Picker.route('/:name/img/:img', function (params, req, res, next) {
-  var r = Rezepte.findOne({url: params.name});
-  var img_id = r && r.images && r.images[params.img];
-
-  img = img_id && Imgs.findOne(img_id);
-  if (img) {
-    res.writeHeader(301, {Location: img.link('full')});
-    res.end();
-  } else {
-    res.writeHeader(404);
-    res.end();
-  }
-});
-
-
-
- */
