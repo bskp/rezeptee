@@ -1,21 +1,25 @@
-import React, {ChangeEvent, cloneElement, EventHandler, FunctionComponent, MouseEventHandler, useState} from 'react';
-import {withTracker} from "meteor/react-meteor-data";
-import {Rezept, Rezepte, Tags} from "../api/models";
+import React, {ChangeEvent, EventHandler, FunctionComponent, MouseEventHandler, useRef, useState} from 'react';
+import {Imgs, Rezept, Rezepte} from "../api/models";
 import {Sidebar} from "./Sidebar";
-import parse, {DOMNode, domToReact} from 'html-react-parser'
 import {BrowserRouter, Route, Routes, useNavigate, useParams} from "react-router-dom";
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import DocumentTitle from "react-document-title";
+import schema from "./recipe-schema"
+import {renderMdast} from "mdast-react-render";
+import {Meteor} from 'meteor/meteor';
+import {ImageList} from "/imports/ui/Images";
 
 
-const Page = (props) => {
+const ContentWrapper = (props) => {
   // TODO: Filter hier reinnehmen!
   const isLoading = useSubscribe('rezepte');
   const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {title: 1}}));
   let slug = useParams().rezept;
 
-  let content = <h1>?f</h1>;
-  let rezept = undefined;
+  let [sidebarCollapse, setSidebarCollapse] = useState(true);
+
+  let content = <h1>asdff</h1>;
+  let rezept: Rezept | undefined = undefined;
 
   if (isLoading()) {
     content = <h1>lade...</h1>;
@@ -31,12 +35,17 @@ const Page = (props) => {
     }
   }
 
-  return <>
+  let handleSidebarToggle : React.MouseEventHandler = event => {
+    setSidebarCollapse( current => !current );
+  }
+
+  return <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}>
     <section id="content">
       {content}
     </section>
-    <Sidebar rezept={rezept} rezepte={rezepte}/>
-  </>
+    <Sidebar rezept={rezept} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
+    <div onClick={handleSidebarToggle} id="mode_flip"> </div>
+  </div>
 }
 
 type ContentProps = {
@@ -46,7 +55,6 @@ type ContentProps = {
 type Content = FunctionComponent<ContentProps>;
 
 function Hello() {
-  console.log("asf");
   return <h1>Hallo!</h1>
 }
 
@@ -74,7 +82,8 @@ const Editor: Content = ({rezept}) => {
   }
 
   return <div onContextMenu={clickHandler}>
-    <DocumentTitle title={rezept.name + " (bearbeite)"} />
+    <DocumentTitle title={rezept.name + " (bearbeite)"}/>
+    <ImageList namespace={rezept._lineage} />
     <textarea id="editor" onChange={keyHandler} value={text}/>
   </div>
 }
@@ -92,10 +101,13 @@ const Viewer: Content = ({rezept}) => {
   }
   const vdom = renderMdast(rezept.mdast, schema);
 
-  let vdom = parse(rezept.html, {replace: postprocess}) as JSX.Element[]
+  console.log(rezept.name);
+  console.log(rezept._id);
+  console.log(rezept._lineage);
+
   return (<>
     <DocumentTitle title={rezept.name}/>
-    <div onContextMenu={clickHandler}>{vdom}</div>
+    <div className="page" onContextMenu={clickHandler}>{vdom}</div>
   </>);
 }
 
@@ -105,41 +117,27 @@ export const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={
-          <Page>
+          <ContentWrapper>
             <Hello/>
-          </Page>
+          </ContentWrapper>
         }/>
         <Route path='/create' element={
-          <Page>
+          <ContentWrapper>
             <Editor/>
-          </Page>
+          </ContentWrapper>
         }/>
         <Route path='/:rezept' element={
-          <Page>
+          <ContentWrapper>
             <Viewer/>
-          </Page>
+          </ContentWrapper>
         }/>
         <Route path='/:rezept/edit' element={
-          <Page>
+          <ContentWrapper>
             <Editor/>
-          </Page>
+          </ContentWrapper>
         }/>
       </Routes>
     </BrowserRouter>
   )
 }
 
-/*
-export default withTracker(props => {
-  const rezHandle = Meteor.subscribe('rezepte')
-  const tagHandle = Meteor.subscribe('tags')
-
-  return {
-    user: Meteor.user(),
-    rezepteLoading: !rezHandle.ready(),
-    tagsLoading: !tagHandle.ready(),
-    rezepte: Rezepte.find({}, {sort: {title: 1}}).fetch(),
-    tags: Tags.find({}).fetch()
-  }
-})(App)
- */

@@ -5,14 +5,16 @@ import classNames from "classnames";
 
 export function Image({id, alt}) {
   const src = `${Imgs.downloadRoute}/imgs/${id}/full/${id}`;
-  return <img className="asdf" src={src} alt={alt}/>
+  return <img src={src} alt={alt}/>
 }
 
-export function ImageList(props) {
+export function ImageList(props: {namespace: string}) {
   const isLoadingImages = useSubscribe('files.imgs.all');
   let [dragInProgress, setDragInProgress] = useState("");
 
-  const imagesCursor = useTracker(() => Imgs.find().fetch().reverse(), []);
+  const imagesCursor = useTracker(() =>
+    Imgs.find({'meta.namespace': props.namespace}).fetch().reverse(),
+   []);
 
   let images;
   if (isLoadingImages()) {
@@ -20,7 +22,7 @@ export function ImageList(props) {
   } else {
     images = imagesCursor.map(img => {
       console.log(img.createdAt);
-      return <li className={dragInProgress == img._id ? "gone" : undefined}>
+      return <li key={img._id} className={dragInProgress == img._id ? "gone" : undefined}>
         <img draggable="true"
              src={Imgs.link(img, 'thumbnail')}
              alt={img.name}
@@ -43,17 +45,49 @@ export function ImageList(props) {
 
   return <aside id="images">
     <ul id="imagelist">
-      <Uploader dragInProgress={dragInProgress.length > 0}/>
+      <Uploader dragInProgress={dragInProgress.length > 0} namespace={props.namespace}/>
       {images}
     </ul>
   </aside>
 }
 
 
-function Uploader(props: { dragInProgress: boolean }) {
+function Uploader(props: { dragInProgress: boolean, namespace: string }) {
 
   let [dragOver, setDragOver] = useState(false);
   let [progress, setProgress] = useState(-1);
+
+  const insert = (files: FileList) => {
+    for (const file of files) {
+      Imgs.insert({
+        file: file,
+        meta: {namespace: props.namespace},
+        chunkSize: 'dynamic',
+        onStart: () => {
+          setProgress(0)
+        },
+        onProgress: (progress) => {
+          setProgress((currentProgress) => currentProgress >= 0 ? progress / 100.0 : -1);
+        },
+        onUploaded: (error, fileRef) => {
+          setProgress(-1);
+          if (error) {
+            alert('Error during upload: ' + error);
+            return;
+          }
+          let label = fileRef.name.split('.')[0];
+        },
+      }, true);
+    }
+
+  }
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
+    if (event.currentTarget.files?.length) {
+      insert(event.currentTarget.files);
+    }
+  }
+
 
   const handleDrop: React.DragEventHandler = event => {
 
@@ -61,28 +95,8 @@ function Uploader(props: { dragInProgress: boolean }) {
     event.stopPropagation();
 
     if (event.dataTransfer?.files.length) {
-      for (const file of event.dataTransfer.files) {
-        Imgs.insert({
-          file: file,
-          chunkSize: 'dynamic',
-          onStart: () => {
-            setProgress(0)
-          },
-          onProgress: (progress) => {
-            setProgress((currentProgress) => currentProgress >= 0 ? progress / 100.0 : -1);
-          },
-          onUploaded: (error, fileRef) => {
-            setDragOver(false);
-            setProgress(-1);
-            if (error) {
-              alert('Error during upload: ' + error);
-              return;
-            }
-            let label = fileRef.name.split('.')[0];
-          },
-        }, true);
-      }
-      return;
+      setDragOver(false);
+      insert(event.dataTransfer.files);
     }
     let img_id = event.dataTransfer.getData('text/x-img-id');
     if (img_id) {
@@ -99,20 +113,25 @@ function Uploader(props: { dragInProgress: boolean }) {
 
   const printing = progress >= 0 ?
     <li id="blueprint" style={{marginTop: `-${5.5 * (1 - progress)}em`}}></li> : undefined;
+
   const className = classNames({
     'over': dragOver,
     'x': props.dragInProgress
   });
 
-  console.log("render progress " + progress);
   return <>
-    <li id="dropzone"
-        className={className}
-        onDrop={handleDrop}
-        onDragEnter={() => setDragOver(true)}
-        onDragExit={() => setDragOver(false)}
-        onDragOver={nop}>
-    </li>
+    <label
+      id="dropzone"
+      className={className}
+      onDrop={handleDrop}
+      onDragEnter={() => setDragOver(true)}
+      onDragExit={() => setDragOver(false)}
+      onDragOver={nop}>
+      <input type="file"
+             accept="image/*"
+             multiple={true}
+             onChange={handleChange}/>
+    </label>
     {printing}
   </>
 }

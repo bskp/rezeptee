@@ -1,15 +1,15 @@
 import {matchHeading, matchParagraph, matchType} from "mdast-react-render/lib/utils";
 import React from "react";
 import {Image} from "./Images";
+import { Link } from "react-router-dom";
 
 const List = ({children, data, attributes = {}}) => data.ordered
   ? <ol start={data.start} {...attributes}>{children}</ol>
   : <ul>{children}</ul>
 
-const textRule = {
-  matchMdast: matchType("text"),
-  component: ({value}) => <>{value}</>
-}
+const isExternalURL = (url) => {
+  return new URL(url, location.origin).origin !== location.origin;
+};
 
 const paragraphRule = {
   matchMdast: matchParagraph,
@@ -22,6 +22,19 @@ const paragraphRule = {
     {
       matchMdast: matchType('emphasis'),
       component: ({children}) => <em>{children}</em>
+    },
+    {
+      matchMdast: matchType('break'),
+      component: () => <br />
+    },
+    {
+      matchMdast: matchType('link'),
+      props: node => ({
+        url: node.url,
+        isExternal: isExternalURL(node.url)
+      }),
+      component: ({url, isExternal, children}) =>
+        isExternal ? <a href={url} target='_blank'>{children}</a> : <Link to={url}>{children}</Link>
     },
   ]
 }
@@ -74,7 +87,10 @@ const schema = {
               matchMdast: matchType("listItem"),
               component: ({children}) => <li>{children}</li>,
               rules: [
-                textRule,
+                {
+                  matchMdast: matchType("text"),
+                  component: ({value}) => <>{value}</>
+                },
                 {
                   matchMdast: matchType("quantity"),
                   props: node => ({value: node.value}),

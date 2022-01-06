@@ -4,11 +4,10 @@
 @chrome: #444;
 
 // Dimensions
-@margin: 350px;
-@gutter: 80px;
-@activate_col: 18px;
-@list_std: 270px;
-@list_touch: 380px;
+@leftCol: 14rem;
+@gutter: 2rem;
+@activate_col: 2rem;
+@list: 18rem;
 
 // Fixes
 
@@ -23,6 +22,11 @@ input, select, textarea {
   background-color: inherit;
   text-align: inherit;
   margin: 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
 }
 
 // Layout
@@ -40,7 +44,6 @@ body {
   display: contents;
 }
 
-
 aside#list {
   color: @sheet;
   z-index: 1;
@@ -51,14 +54,9 @@ aside#list {
   font: 0.6em 'DIN', Helvetica, Arial, sans-serif;
   // TODO proper font-download!
 
-  width: @list_std;
+  width: @list;
 
   padding: 0.5em 0.5em 0.5em 1.2em;
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
 
   li a {
     display: inline-block;
@@ -123,9 +121,7 @@ aside#list {
         left: -0.8em;
       }
     }
-  }
-
-  // taglist
+  } // taglist
 
   ul#rezepte {
     padding-left: 7em;
@@ -144,9 +140,7 @@ aside#list {
       }
     }
   }
-}
-
-// aside
+} // aside
 
 #content {
   min-height: 100vh;
@@ -155,7 +149,7 @@ aside#list {
   box-sizing: border-box;
 
   padding: 1em 2em 5em;
-  padding-left: @margin;
+  padding-left: @leftCol;
 
   background-color: @sheet;
   box-shadow: 0 0 20px;
@@ -164,6 +158,20 @@ aside#list {
   overflow-y: scroll;
   overflow-x: hidden;
 
+  #editor {
+    font-family: camingo, monospace;
+    font-size: 16px;
+    padding-bottom: 5em;
+    white-space: pre-wrap;
+    .noFocusBorder;
+    width: calc(100% + @leftCol / 2);
+    margin-left: calc(-1 * @leftCol / 2);
+    height: 100vh;
+  }
+
+}
+
+.page {
   strong {
     font-weight: normal;
     //background-color: yellow;
@@ -181,17 +189,6 @@ aside#list {
     color: #c50409;
   }
 
-  #editor {
-    font-family: camingo, monospace;
-    font-size: 16px;
-    padding-bottom: 5em;
-    white-space: pre-wrap;
-    .noFocusBorder;
-    width: calc(100% + @margin/2);
-    margin-left: calc(-1*@margin/2);
-    height: 100vh;
-  }
-
   p, ol, ul {
     padding-left: 0;
     margin-top: 0;
@@ -206,45 +203,17 @@ aside#list {
   }
 
   img {
-    width: 100%;
+    width: calc(100% + 1em);
     border-radius: 1.5em;
     border: 1px solid transparent;
     min-height: 8em;
     background-color: #eee;
-  }
-
-  #tags {
-    display: none;
-  }
-
-  table {
-    font-size: 0.9em;
-    border-collapse: collapse;
-
-    p {
-      margin: 0;
-      padding: 0;
-    }
-
-    td:first-child {
-      font-style: italic;
-      width: 50%;
-    }
-
-    td {
-      //vertical-align: top;
-      border-top: 1px solid #ddd;
-      padding: 0.1em 0;
-    }
-
-    tr:first-child td {
-      border-top-style: none;
-    }
+    margin: 0 -0.5em 1em;
   }
 }
 
 aside#images{
-  width: calc(@margin/2 - 1em);
+  width: calc(@leftCol /2 - 1em);
 
   position: fixed;
   left: 0.2em;
@@ -252,28 +221,34 @@ aside#images{
 
   box-sizing: border-box;
 
-  li {
+  ul {
+    margin: 0;
+  }
+
+  li, label {
     display: block;
     width: 100%;
-    border-radius: 0.8em;
     margin-bottom: 0.5em;
+    border-radius: 0.8em;
 
-    background-color: #222;
+    &.gone {
+      opacity: 0.5;
+    }
 
     img {
       display: block;
+      background-color: rgba(0, 0, 0, 0.1);
+      width: 100%;
+      min-height: 4em;
       border-radius: inherit;
-      min-height: unset;
       cursor: -moz-grab;
       cursor: -webkit-grab;
       cursor: grab;
       opacity: 1;
 
-      transition: 5s opacity;
+      font-size: 0;
 
-      &.gone {
-        //opacity: 0.3;
-      }
+      transition: 5s opacity;
 
       &.fresh {
         opacity: 0;
@@ -290,12 +265,18 @@ aside#images{
     transition: 0.1s margin-top;
   }
 
-  li#dropzone {
+  #dropzone {
     border: 3px dashed rgba(0, 0, 0, 0.2);
     text-align: center;
     height: @dropperHeight;
     box-sizing: border-box;
     background-color: transparent;
+    cursor: pointer;
+
+    input {
+      position: relative;
+      left: -100em;
+    }
 
     &:before {
       content: '';
@@ -317,13 +298,12 @@ aside#images{
       transform: rotate(45deg);
     }
 
-    &.over {
+    &.over, &:active {
       background-color: rgba(0, 0, 0, 0.1);
     }
   }
 
 }
-
 
 .hover {
   box-shadow: #0000005c 0px 6px 22px, #00000026 0 1px 5px;
@@ -336,10 +316,9 @@ ul.ingredients {
   font-family: pica;
   font-size: 0.9em;
 
-  width: @margin - @gutter - 10px;
+  width: @leftCol - @gutter - 0em;
   float: left;
-  margin-left: -@margin;
-  padding-left: 10px;
+  margin-left: -@leftCol;
 
   li span {
     padding: 0 0.4em;
@@ -365,7 +344,7 @@ ul.ingredients {
 // Typo
 
 body {
-  font-family: double_pica;
+  font-family: double_pica, serif;
   font-size: 25px;
   cursor: default;
 }
@@ -376,7 +355,7 @@ h1 {
   text-transform: uppercase;
   font-size: 2.6em;
   text-align: left;
-  margin-left: -0.05em;
+  margin-left: -0.05rem;
 
   &::before {
     content: 'n';
@@ -384,12 +363,11 @@ h1 {
     font-style: normal;
     text-align: right;
     font-family: flowers2;
-    display: block;
-    width: @margin - @gutter;
-    position: relative;
-    left: -@margin;
-    top: -4px;
-    height: 0;
+    display: inline-block;
+    width: 10rem;
+    vertical-align: -3px;
+    margin-left: -(10rem + @gutter);
+    margin-right: @gutter;
   }
 }
 
@@ -416,6 +394,10 @@ a {
   color: inherit;
 }
 
+.contentwrapper {
+  display: contents;
+}
+
 #mode_flip {
   display: none;
   position: fixed;
@@ -427,16 +409,15 @@ a {
   cursor: pointer;
 }
 
-body.offset {
+.offset {
   aside {
-    margin-left: -@list_touch+@activate_col;
+    margin-left: -@list -@activate_col;
   }
 
   #mode_flip {
-    right: 0;
+    right: @list;
     left: 0;
     width: auto;
-    background-color: fade(#444, 20%);
   }
 }
 
@@ -449,24 +430,41 @@ body.offset {
       display: block;
     }
   }
-
-  aside {
-    font-size: 18px;
-    width: @list_touch;
-    margin-left: -@list_touch+@activate_col;
+  .page img {
+    filter: brightness(100%);
   }
 
-  body.offset {
+  aside#list {
+    font-size: 18px;
+    width: @list;
+    margin-left: -@list+@activate_col;
+  }
+
+  aside#list, #content, #images {
+    transition: 0.5s;
+  }
+
+  .offset {
     #content {
-      margin-left: -@list_touch+@activate_col;
+      margin-left: -@list+@activate_col;
+      background-color: #999;
+
+      .page img {
+        filter: brightness(50%);
+      }
+
+      #images {
+        left: -@list+@activate_col;
+      }
     }
 
-    aside {
+
+    aside#list {
       margin-left: 0;
     }
 
     #mode_flip {
-      right: @list_touch;
+      right: @list;
     }
   }
 
@@ -502,20 +500,20 @@ body.offset {
   }
 }
 
-@media (max-width: (@list_touch - @activate_col)) {
+@media (max-width: (@list - @activate_col)) {
   aside {
     font-size: 0.8em;
-    width: @list_std;
-    margin-left: -@list_std+@activate_col;
+    width: @list;
+    margin-left: -@list+@activate_col;
   }
 
   body.offset {
     #content {
-      margin-left: -@list_std+@activate_col;
+      margin-left: -@list+@activate_col;
     }
 
     #mode_flip {
-      right: @list_std;
+      right: @list;
     }
   }
 }

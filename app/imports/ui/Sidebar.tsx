@@ -6,6 +6,7 @@ import {useFind, useSubscribe} from "meteor/react-meteor-data";
 interface SidebarProps {
   rezept?: Rezept,
   rezepte: Rezept[],
+  toggler: Function,
 }
 
 export const Sidebar = (props: SidebarProps) => {
@@ -44,11 +45,11 @@ export const Sidebar = (props: SidebarProps) => {
           let active = tag.containedIn(props.rezept?.tagNames) ? 'active' : undefined;
           return <li key={tag._id}><a onClick={getFilterTogglingCallback(tag.name)} className={active}>{tag.name}</a></li>
         }
-      )}
+      ) }
     </ul>
     <ul id="rezepte">
       {props.rezepte.map(rezept =>
-        <li key={rezept._id}><NavLink activeClassName="active" to={'/'+rezept.slug}>{rezept.name}</NavLink></li>
+        <li key={rezept._id}><NavLink onClick={() => props.toggler()} activeClassName="active" to={'/'+rezept.slug}>{rezept.name}</NavLink></li>
       )}
       <li key="new"><NavLink to="/create">Neu…</NavLink></li>
     </ul>
