@@ -7,6 +7,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@babel/register": "^7.16.7",
     "@babel/runtime": "^7.15.4",
     "@types/gm": "^1.18.11",
     "@xmldom/xmldom": "^0.8.0",

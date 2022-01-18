@@ -101,10 +101,6 @@ const Viewer: Content = ({rezept}) => {
   }
   const vdom = renderMdast(rezept.mdast, schema);
 
-  console.log(rezept.name);
-  console.log(rezept._id);
-  console.log(rezept._lineage);
-
   return (<>
     <DocumentTitle title={rezept.name}/>
     <div className="page" onContextMenu={clickHandler}>{vdom}</div>

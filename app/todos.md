@@ -1,3 +1,5 @@
+- [ ] Fix ts and mocha config
 - [ ] Tag Parsing
 - [ ] Comment Parsing
+- [ ] Swipe-Gesten auf mobil
 - [ ] Gutter spacing
