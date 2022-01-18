@@ -3,7 +3,7 @@ import {is} from "unist-util-is";
 import {ingredientListNode} from "/imports/api/mdast-recipe-builders";
 import {Children, listItem} from "mdast-builder";
 import {splitIngredients} from "/imports/api/mdast-recipe";
-import {tagList} from "/imports/api/tag-list";
+//import {tagList} from "/imports/api/tag-list";
 
 
 export function remarkRecipe() {
