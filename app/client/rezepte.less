@@ -4,10 +4,10 @@
 @chrome: #444;
 
 // Dimensions
-@leftCol: 14rem;
+@leftCol: 12em;
 @gutter: 2rem;
-@activate_col: 2rem;
-@list: 18rem;
+@activate_col: 2em;
+@list: 18em;
 
 // Fixes
 
@@ -53,7 +53,7 @@ aside#list {
   flex-shrink: 0;
   box-sizing: border-box;
 
-  font: 0.6em 'DIN', Helvetica, Arial, sans-serif;
+  font: 15px 'DIN', Helvetica, Arial, sans-serif;
   // TODO proper font-download!
 
   width: @list;
@@ -422,11 +422,16 @@ a {
   }
 }
 
+@media(max-width: 1200px) {
+  body {
+    font-size: 20px;
+  }
+}
+
+// Tablet-Modus
 @media (max-width: 1024px) {
 
   body {
-    font-size: 20px;
-
     #mode_flip {
       display: block;
     }
@@ -471,6 +476,7 @@ a {
 
 }
 
+// Smartphone-Modus
 @media (max-width: 750px) {
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
   #content {

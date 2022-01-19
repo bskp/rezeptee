@@ -22,7 +22,6 @@ Meteor.methods({
       }
     }
 
-
     // Ensure each mentioned tag exists and is referred to.
     for (let usedTag of rezept.tagNames) {
       let presentTag = Tags.findOne({name: usedTag});

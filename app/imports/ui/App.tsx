@@ -8,23 +8,41 @@ import schema from "./recipe-schema"
 import {renderMdast} from "mdast-react-render";
 import {Meteor} from 'meteor/meteor';
 import {ImageList} from "/imports/ui/Images";
+import TextareaAutosize from 'react-textarea-autosize';
 
 
 const ContentWrapper = (props) => {
-  // TODO: Filter hier reinnehmen!
   const isLoading = useSubscribe('rezepte');
   const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
   let slug = useParams().rezept;
 
   let [sidebarCollapse, setSidebarCollapse] = useState(true);
 
-  let content = <h1>asdff</h1>;
+  let content
   let rezept: Rezept | undefined = undefined;
 
   if (isLoading()) {
     content = <h1>lade...</h1>;
   } else if (slug === undefined) {
-    rezept = new Rezept({markdown: "# Testrez\n\nAsdf.\n"});
+    rezept = new Rezept({markdown: "#outdoor #vegi\n" +
+        "\n" +
+        "Ein Beispielrezept! Der Weg ist das Ziel ~\n" +
+        "\n" +
+        "Sandkuchen à la Bruno\n" +
+        "=====================\n" +
+        "\n" +
+        "Für 2 Personen, ca. 20 min.\n" +
+        "\n" +
+        "    2 Blätter Löwenzahn\n" +
+        "    1 kg Sand, grobkörnig\n" +
+        "    1 l Wasser, brackig\n" +
+        "    10 Margeritenköpfe \n" +
+        "\n" +
+        "\n" +
+        "1. In einem Kessel Wasser abmessen, Sand sorgfältig einrieseln lassen und während 15 min kräftig umrühren.\n" +
+        "2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.\n" +
+        "\n" +
+        "Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr\n"});
     content = React.cloneElement(props.children, {rezept: rezept});
   } else {
     rezept = Rezepte.findOne({slug: slug});
@@ -84,7 +102,7 @@ const Editor: Content = ({rezept}) => {
   return <div onContextMenu={clickHandler}>
     <DocumentTitle title={rezept.name + " (bearbeite)"}/>
     <ImageList namespace={rezept._lineage} />
-    <textarea id="editor" onChange={keyHandler} value={text}/>
+    <TextareaAutosize id="editor" onChange={keyHandler} value={text} minRows={30}/>
   </div>
 }
 

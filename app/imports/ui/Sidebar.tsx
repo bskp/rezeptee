@@ -23,28 +23,53 @@ export const Sidebar = (props: SidebarProps) => {
         .replaceAll(/#? +/g, " ")
         .trim();
       } else {
-        return filter.trim() + " #" + term;
+        return (filter.trim() + " #" + term).trim()
       }
     });
   }
 
-  function handleKey(event) {
-    setFilter(() => event.target.value);
+  function handleKeyDown(event : React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key == 'Escape') {
+      setFilter("")
+      event.currentTarget.blur()
+    }
+  }
+
+  function handleChange(event : React.ChangeEvent<HTMLInputElement>) {
+    setFilter(event.currentTarget.value);
   }
 
   if (isLoading()) {
-    tags = [new Tag({name: 'Lade Tags TODO'})];
+    tags = [new Tag({name: 'Lade Tags…'})];
+  }
+
+  let filtered = props.rezepte
+  for (let term of filter.split(" ")) {
+    term = term.toLowerCase()
+    filtered = filtered.filter(rez => {
+      if (rez.name.includes(term)) return true
+      if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true
+      for (let ingr of rez.ingredientNames) {
+        if (ingr.startsWith(term)) return true
+      }
+      return false
+    })
   }
 
   return <aside id="list">
-    <input type="text" id="suchtext" autoComplete="off" placeholder="Etwas kochen mit…" onChange={handleKey}
+    <input type="text"
+           id="suchtext"
+           autoComplete="off"
+           placeholder="Etwas kochen mit…"
+           onKeyDown={handleKeyDown}
+           onChange={handleChange}
            value={filter}/>
+
     <span onClick={() => setFilter('')} id="clear_filter">×</span>
     <ul id="taglist">
       {tags.map(tag => {
-          // TODO synonyme
           let active = props.rezept?.tagNames.includes(tag.name) ? 'active' : undefined;
-          let bgColor = active ? 'hsl(' + hash(tag.name) + ',20%,50%)' : undefined
+          let bgColor = active ? 'hsl(' + hash(tag.name) + ',30%,50%)' : undefined
           return <li key={tag._id} className={active}>
             <a onClick={getFilterTogglingCallback(tag.name)}
                className={active}
@@ -54,7 +79,7 @@ export const Sidebar = (props: SidebarProps) => {
       })}
     </ul>
     <ul id="rezepte">
-      {props.rezepte.map(rezept =>
+      {filtered.map(rezept =>
         <li key={rezept._lineage}>
           <NavLink onClick={() => props.toggler()}
                    activeClassName="active"

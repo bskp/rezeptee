@@ -25,7 +25,7 @@ export function getTitle(mdast) {
 export function getTags(mdast) {
   let tags = [];
   visit(mdast, 'tag', node => {
-    tags.push(toString(node));
+    tags.push(toString(node).toLowerCase());
   });
   return tags;
 }
@@ -33,7 +33,7 @@ export function getTags(mdast) {
 export function getIngredients(mdast) {
   let ingredients = [];
   visit(mdast, 'ingredient', node => {
-    ingredients.push(toString(node));
+    ingredients.push(toString(node).toLowerCase());
   });
   return ingredients;
 }
