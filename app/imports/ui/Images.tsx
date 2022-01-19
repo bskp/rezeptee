@@ -25,10 +25,9 @@ export function ImageList(props: {namespace: string}) {
         <img draggable="true"
              src={Imgs.link(img, 'thumbnail')}
              alt={img.name}
-             className={(Date.now() - img.updatedAt) < 1000*5 ? "fresh" : undefined}
              onDragStart={event => {
-               //const tag = `\n![${img.name}](${Imgs.link(img, 'thumbnail')})\n`;
-               const tag = `\n![${img.name}](${img._id})\n`;
+               //const tag = `\n![${img.name}](${img._id})\n`;
+               const tag = `\n\n![](${img._id})\n\n`;
                event.dataTransfer.setData('text/plain', tag);
                event.dataTransfer.effectAllowed = 'linkMove';
                event.dataTransfer.setData('text/x-img-id', img._id);

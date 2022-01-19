@@ -3,14 +3,12 @@ import remarkParse from "remark-parse";
 import find from "unist-util-find";
 import {toString} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
-import flattenImageParagraphs from "mdast-flatten-image-paragraphs";
 import remarkRecipe from "/imports/api/remark-recipe";
 
 
 const parser = unified()
   .use(remarkParse)
   .use(remarkRecipe)
-  .use(flattenImageParagraphs);
 
 export const parse = md => {
   const mdast = parser.runSync(parser.parse(md));

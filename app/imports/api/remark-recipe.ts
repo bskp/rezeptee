@@ -1,12 +1,11 @@
 import {map} from "unist-util-map";
 import {is} from "unist-util-is";
-import {Literal, Node} from "unist"
 import {commentNode, ingredientListNode, tagNode} from "/imports/api/mdast-recipe-builders";
-import {Children, emphasis, listItem} from "mdast-builder";
+import {listItem} from "mdast-builder";
 import {splitIngredients} from "/imports/api/mdast-recipe";
-//import {tagList} from "/imports/api/tag-list";
 import type {Plugin, Transformer} from 'unified'
-import {Code, Paragraph, Text, PhrasingContent} from 'mdast'
+import {Code, Paragraph, PhrasingContent, Text} from 'mdast'
+
 
 const remarkRecipe: Plugin = function () {
   const data = this.data()
@@ -29,12 +28,12 @@ const remarkRecipe: Plugin = function () {
 
           if (text.value.startsWith('#')) {
             // Tag
-            let tags : PhrasingContent[] = []
+            let tags: PhrasingContent[] = []
             for (let match of text.value.matchAll(/#?(\S+)($|\s)/g)) {
-              tags.push( tagNode(match[1]) as PhrasingContent )
+              tags.push(tagNode(match[1]) as PhrasingContent)
             }
             return tags
-          } else if (text.value.match(/~ \w+\s*$/)) {
+          } else if (text.value.match(/~ ?\w*\s*$/)) {
             return commentNode(text.value) as PhrasingContent
           }
           return child
@@ -46,7 +45,6 @@ const remarkRecipe: Plugin = function () {
       return node;
     });
   }
-
   return transformer
 
   function add(field, value) {
@@ -56,18 +54,18 @@ const remarkRecipe: Plugin = function () {
 
     list.push(value)
   }
+}
 
-  function expandNestedArrays<Type>(nested : (Type | Type[])[] ): Type[] {
-    let out: Type[] = []
-    for (let slot of nested) {
-      if (Array.isArray(slot)) {
-        out = out.concat(slot)
-      } else {
-        out.push(slot)
-      }
+function expandNestedArrays<Type>(nested: (Type | Type[])[]): Type[] {
+  let out: Type[] = []
+  for (let slot of nested) {
+    if (Array.isArray(slot)) {
+      out = out.concat(slot)
+    } else {
+      out.push(slot)
     }
-    return out
   }
+  return out
 }
 
 export default remarkRecipe

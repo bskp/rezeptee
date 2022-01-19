@@ -1,5 +1,8 @@
-- [ ] Fix ts and mocha config
-- [ ] Tag Parsing
-- [ ] Comment Parsing
 - [ ] Swipe-Gesten auf mobil
-- [ ] Gutter spacing
+- [ ] kompaktes menü auf telifons
+- [ ] eikon
+- [ ] testsrunner fixen
+
+
+- graphicsmagick
+- scroll-reset bei rezeptwahl

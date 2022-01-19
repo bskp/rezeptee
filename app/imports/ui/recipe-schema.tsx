@@ -24,6 +24,14 @@ const paragraphRule = {
       component: ({children}) => <em>{children}</em>
     },
     {
+      matchMdast: matchType('image'),
+      props: node => ({
+        id: node.url,
+        alt: node.alt
+      }),
+      component: Image
+    },
+    {
       matchMdast: matchType('break'),
       component: () => <br />
     },
@@ -63,14 +71,6 @@ const schema = {
           component: ({children}) => <h2>{children}</h2>
         },
         paragraphRule,
-        {
-          matchMdast: matchType('image'),
-          props: node => ({
-            id: node.url,
-            alt: node.alt
-          }),
-          component: Image
-        },
         {
           matchMdast: matchType('list'),
           component: List,

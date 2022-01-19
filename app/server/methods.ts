@@ -1,10 +1,19 @@
 import {Meteor} from "meteor/meteor";
 import {Imgs, Rezepte, Rezept, Tag, Tags, Zutaten, Zutat} from "../imports/api/models";
+import {WebApp} from "meteor/webapp";
 
 Meteor.publish('rezepte', () => Rezepte.find({active: true}));
 Meteor.publish('zutaten', () => Zutaten.find());
 Meteor.publish('tags', () => Tags.find({usedIn: {$exists: true, $not: {$size: 0}}}));
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
+
+Meteor.startup(function() {
+  WebApp.addHtmlAttributeHook(function() {
+    return {
+      "lang": "de"
+    }
+  })
+});
 
 Meteor.methods({
 
@@ -44,7 +53,7 @@ Meteor.methods({
     }
 
     // Ensure references in Tags-DB: Is every single one still mentioned?
-    Tags.find({usedIn: rezept._lineage}).forEach( tag => {
+    Tags.find({usedIn: rezept._lineage}).forEach(tag => {
       if (rezept.tagNames.includes(tag.name)) return;
       tag.usedIn = tag.usedIn.filter(l => l != rezept._lineage)
       console.log("Removed reference to Tag " + tag.name)

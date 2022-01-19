@@ -1,6 +1,7 @@
 import {Rezept, Tag, Tags} from "../api/models";
 import React, {useState} from "react";
 import NavLink from "./NavLink";
+// @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 
 interface SidebarProps {
@@ -13,7 +14,7 @@ export const Sidebar = (props: SidebarProps) => {
   const [filter, setFilter] = useState('');
 
   const isLoading = useSubscribe('tags');
-  let tags: Tag[] = useFind(() => Tags.find({}, {sort: {name: 1}}));
+  let tags: Tag[] = useFind(() => Tags.find({name: {$ne: 'privat'}}, {sort: {name: 1}}));
 
   function getFilterTogglingCallback(term: string) {
     return () => setFilter(filter => {
@@ -43,11 +44,12 @@ export const Sidebar = (props: SidebarProps) => {
     tags = [new Tag({name: 'Lade Tags…'})];
   }
 
-  let filtered = props.rezepte
+  let filtered = props.rezepte.filter(rez => !rez.tagNames.includes('privat'))
+
   for (let term of filter.split(" ")) {
     term = term.toLowerCase()
     filtered = filtered.filter(rez => {
-      if (rez.name.includes(term)) return true
+      if (rez.name.toLowerCase().includes(term)) return true
       if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true
       for (let ingr of rez.ingredientNames) {
         if (ingr.startsWith(term)) return true
@@ -88,7 +90,7 @@ export const Sidebar = (props: SidebarProps) => {
         </li>
       )}
       <li key="create">
-        <NavLink to="/create">Neu…</NavLink>
+        <NavLink to="/create">Neues Rezept…</NavLink>
       </li>
     </ul>
   </aside>

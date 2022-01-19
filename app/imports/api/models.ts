@@ -120,10 +120,12 @@ const bound = Meteor.bindEnvironment((callback) => {
 
 const createSizeVersion = function (img: FileRef<any>, version_label: string, transform: (i: gm.State) => gm.State) {
   const version_path = `${fs_storage}/${version_label}/${img._id}.${img.extension}`;
+  console.log("version path: " + version_path)
 
   transform(gm(img.path)).write(version_path, (err) => {
     fs.stat(version_path, (err, stats) => {
       bound(() => {
+        if (err) console.log(err)
         let upd = {
           $set: {}
         };
