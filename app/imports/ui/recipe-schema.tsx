@@ -28,6 +28,15 @@ const paragraphRule = {
       component: () => <br />
     },
     {
+      matchMdast: matchType('tag'),
+      component: () => ""
+    },
+    {
+      matchMdast: matchType('comment'),
+      props: node => ({value: node.value}),
+      component: ({value}) => <em>{value}</em>
+    },
+    {
       matchMdast: matchType('link'),
       props: node => ({
         url: node.url,

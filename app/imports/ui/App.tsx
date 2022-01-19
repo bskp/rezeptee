@@ -13,7 +13,7 @@ import {ImageList} from "/imports/ui/Images";
 const ContentWrapper = (props) => {
   // TODO: Filter hier reinnehmen!
   const isLoading = useSubscribe('rezepte');
-  const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {title: 1}}));
+  const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
   let slug = useParams().rezept;
 
   let [sidebarCollapse, setSidebarCollapse] = useState(true);

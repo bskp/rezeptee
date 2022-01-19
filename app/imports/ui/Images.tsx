@@ -21,7 +21,6 @@ export function ImageList(props: {namespace: string}) {
     images = <li>Lade Bilder…</li>
   } else {
     images = imagesCursor.map(img => {
-      console.log(img.createdAt);
       return <li key={img._id} className={dragInProgress == img._id ? "gone" : undefined}>
         <img draggable="true"
              src={Imgs.link(img, 'thumbnail')}

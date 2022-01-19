@@ -36,6 +36,7 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.5",
     "@types/chai-as-promised": "^7.1.4",
+    "@types/color-convert": "^2.0.0",
     "@types/core-js": "^2.5.5",
     "@types/meteor": "^1.4.84",
     "@types/mocha": "^9.0.0",

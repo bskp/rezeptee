@@ -4,7 +4,7 @@ import slug from 'slug'
 import {Random} from 'meteor/random';
 import {_} from "meteor/underscore";
 import {Node} from "unist";
-import {getIngredients, getTitle, parse} from "./document";
+import {getIngredients, getTags, getTitle, parse} from "./document";
 import {Mongo} from 'meteor/mongo';
 import {Meteor} from 'meteor/meteor';
 import fs from "fs";
@@ -72,7 +72,7 @@ export class Rezept {
 
     this.name = getTitle(mdast);
     this.ingredientNames = getIngredients(mdast);
-    this.tagNames = [];
+    this.tagNames = getTags(mdast)
 
     this.mdast = mdast;
     this.slug = slug(this.name);
@@ -81,19 +81,14 @@ export class Rezept {
 
 export class Tag {
   constructor(doc: object) {
-    this._id = ''
     _.extend(this, doc);
   }
 
-  _id?: string;
-  name: string;
-  color: string;
-  description: string;
-
-  containedIn(tagNames?: Array<string>): boolean {
-    if (tagNames === undefined) return false;
-    return tagNames.includes(this.name);
-  }
+  _id: string
+  name: string
+  color: string
+  usedIn: string[]
+  description: string
 }
 
 export class Zutat {

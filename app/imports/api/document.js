@@ -4,7 +4,7 @@ import find from "unist-util-find";
 import {toString} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
 import flattenImageParagraphs from "mdast-flatten-image-paragraphs";
-import {remarkRecipe} from "/imports/api/remark-recipe";
+import remarkRecipe from "/imports/api/remark-recipe";
 
 
 const parser = unified()
@@ -14,13 +14,20 @@ const parser = unified()
 
 export const parse = md => {
   const mdast = parser.runSync(parser.parse(md));
-  console.log(mdast);
   return mdast;
 }
 
 export function getTitle(mdast) {
   let h1 = find(mdast, {type: "heading", depth: 1});
   return toString(h1 || "(Ohne Titel)");
+}
+
+export function getTags(mdast) {
+  let tags = [];
+  visit(mdast, 'tag', node => {
+    tags.push(toString(node));
+  });
+  return tags;
 }
 
 export function getIngredients(mdast) {

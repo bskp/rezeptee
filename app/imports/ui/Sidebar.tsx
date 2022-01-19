@@ -43,14 +43,19 @@ export const Sidebar = (props: SidebarProps) => {
     <ul id="taglist">
       {tags.map(tag => {
           // TODO synonyme
-          let active = tag.containedIn(props.rezept?.tagNames) ? 'active' : undefined;
-          return <li key={tag._id}><a onClick={getFilterTogglingCallback(tag.name)} className={active}>{tag.name}</a></li>
-        }
-      )}
+          let active = props.rezept?.tagNames.includes(tag.name) ? 'active' : undefined;
+          let bgColor = active ? 'hsl(' + hash(tag.name) + ',20%,50%)' : undefined
+          return <li key={tag._id} className={active}>
+            <a onClick={getFilterTogglingCallback(tag.name)}
+               className={active}
+               style={{backgroundColor: bgColor}}
+            >{tag.name}</a>
+          </li>
+      })}
     </ul>
     <ul id="rezepte">
       {props.rezepte.map(rezept =>
-        <li key={rezept._id}>
+        <li key={rezept._lineage}>
           <NavLink onClick={() => props.toggler()}
                    activeClassName="active"
                    to={'/' + rezept.slug}>{rezept.name}
@@ -64,3 +69,13 @@ export const Sidebar = (props: SidebarProps) => {
   </aside>
 }
 
+function hash(str){
+  // From http://werxltd.com
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    let char = str.charCodeAt(i);
+    hash = ((hash<<5)-hash)+char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
