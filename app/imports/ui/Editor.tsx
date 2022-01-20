@@ -1,4 +1,4 @@
-import React, {ChangeEvent, EventHandler, MouseEventHandler, useState} from "react";
+import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Rezept} from "/imports/api/models";
 import {Meteor} from "meteor/meteor";
@@ -12,17 +12,41 @@ export const Editor: Content = function({rezept}) {
   let [dirty, setDirty] = useState(false)
   let navigate = useNavigate();
 
-
-  const keyHandler: EventHandler<ChangeEvent<HTMLTextAreaElement>> = (event) => {
+  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     let text = event.currentTarget.value
     if (dirty) {
-      text = text.replace(/(\n\s*){3,}/g, "\n\n")
+      text = text.replace(/(\n(\s*)){3,}/g, "\n\n$2")
       setDirty(false)
     }
     setText(text);
   }
 
-  const clickHandler: MouseEventHandler = event => {
+  const handleKeyDown: React.KeyboardEventHandler = event => {
+    const t = event.currentTarget as HTMLTextAreaElement
+    let row = t.value.substring(0, t.selectionStart).split("\n").pop() || ""
+    if (event.key == 'Tab') {
+      t.setRangeText("    ", t.selectionStart, t.selectionEnd, "end")
+      event.preventDefault()
+      return
+    }
+    if (event.key == 'Enter') {
+      if (row.match(/    \S+/)) {
+        t.setRangeText("\n    ", t.selectionStart, t.selectionEnd, "end")
+        event.preventDefault()
+        return
+      }
+    }
+    if (event.key == 'Backspace') {
+      if (row.endsWith("    ")){
+        t.setRangeText("", t.selectionStart - 4, t.selectionEnd, "end")
+        event.preventDefault()
+        return
+      }
+    }
+  }
+
+
+  const handleContextMenu: React.MouseEventHandler = event => {
     save();
     event.preventDefault();
   }
@@ -33,26 +57,28 @@ export const Editor: Content = function({rezept}) {
 
   const save = () => {
     rezept.markdown = text;
-    Meteor.call('saveRezept', rezept, (error, isValid) => {
+    Meteor.call('saveRezept', rezept, (error, newSlug) => {
       if (error !== undefined) {
         console.log(error);
       }
-      navigate(`/${rezept.slug}`);
+      if (newSlug != rezept.slug) navigate(`/${newSlug}`);
+      if (newSlug === undefined) navigate("/")
     });
   }
 
-  return <div onContextMenu={clickHandler}>
+  return <div onContextMenu={handleContextMenu}>
     <DocumentTitle title={rezept.name + " (bearbeite)"}/>
     <ImageList namespace={rezept._lineage}/>
     <TextareaAutosize id="editor"
-                      onChange={keyHandler}
+                      onChange={handleChange}
                       onDrop={handleDrop}
+                      onKeyDown={handleKeyDown}
                       value={text}
                       minRows={30}/>
   </div>
 }
 
-export const template = new Rezept({
+export const getTemplateRecipe = () => new Rezept({
   markdown: "#outdoor #vegi\n" +
     "\n" +
     "Ein Beispielrezept! Der Weg ist das Ziel ~\n" +

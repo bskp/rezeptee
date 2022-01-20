@@ -1,11 +1,9 @@
 import React, {FunctionComponent} from 'react';
 import {Rezept} from "../api/models";
-import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
-import DocumentTitle from "react-document-title";
-import schema from "./recipe-schema"
-import {renderMdast} from "mdast-react-render";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {ContentWrapper} from "/imports/ui/ContentWrapper";
-import {Editor, template} from "/imports/ui/Editor";
+import {Editor, getTemplateRecipe} from "/imports/ui/Editor";
+import {Viewer} from "/imports/ui/Viewer";
 
 
 type ContentProps = {
@@ -13,29 +11,6 @@ type ContentProps = {
 }
 
 export type Content = FunctionComponent<ContentProps>;
-
-function Hello() {
-  return <h1>Hallo!</h1>
-}
-
-const Viewer: Content = ({rezept}) => {
-  let navigate = useNavigate();
-
-  const clickHandler = event => {
-    navigate(`/${rezept.slug}/edit`)
-    event.preventDefault();
-  }
-
-  if (!rezept.hasOwnProperty('mdast')) {
-    rezept._parse()
-  }
-  const vdom = renderMdast(rezept.mdast, schema);
-
-  return (<>
-    <DocumentTitle title={rezept.name}/>
-    <div className="page" onContextMenu={clickHandler}>{vdom}</div>
-  </>);
-}
 
 export const App = () => {
 
@@ -48,7 +23,7 @@ export const App = () => {
           </ContentWrapper>
         }/>
         <Route path='/create' element={
-          <ContentWrapper rezept={template}>
+          <ContentWrapper rezeptProvider={getTemplateRecipe}>
             <Editor/>
           </ContentWrapper>
         }/>

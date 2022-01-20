@@ -6,7 +6,7 @@ if [ $# -eq 0 ]
 fi
 if [ $# -eq 1 ]
   then
-    echo "Pass an additional second argument to specifiy the source namespace root (e.g. Rechords)"
+    echo "Pass an additional second argument to specifiy the source namespace root (e.g. rezept-ee)"
     exit
 fi
 
@@ -20,3 +20,4 @@ mongo_connection_string="mongodb://localhost:3001"
 
 cd ../backups || exit
 cat $dump | mongorestore $mongo_connection_string --nsFrom=$db_source_name.* --nsTo=meteor.* --archive --gzip --drop
+rsync --recursive --exclude=".*" images/* ../app/images

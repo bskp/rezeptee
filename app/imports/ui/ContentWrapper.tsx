@@ -6,7 +6,7 @@ import {Sidebar} from "/imports/ui/Sidebar";
 
 type ContentWrapperProps = {
   children: React.FunctionComponentElement<{ rezept: Rezept }>
-  rezept?: Rezept
+  rezeptProvider?: Function
   slug?: string
 };
 
@@ -21,7 +21,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
   if (isLoading()) {
     content = <h1>lade...</h1>;
   } else {
-    rezept = props.rezept || Rezepte.findOne({slug: slug})
+    rezept = (props.rezeptProvider && props.rezeptProvider()) || Rezepte.findOne({slug: slug})
     const nA = <h1>{slug} wurde leider nicht gefunden.</h1>;
     content = rezept ? React.cloneElement(props.children, {rezept: rezept}) : nA
   }

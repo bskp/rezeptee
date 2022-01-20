@@ -87,5 +87,7 @@ Meteor.methods({
       delete rezept._id;  // Triggers creation of a new ID
       Rezepte.insert(rezept);
     }
+
+    return rezept?.slug
   }
 });
