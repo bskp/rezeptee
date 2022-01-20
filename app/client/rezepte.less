@@ -7,7 +7,7 @@
 @leftCol: 12em;
 @gutter: 2rem;
 @activate_col: 2em;
-@list: 18em;
+@list: 20em;
 
 // Fixes
 
@@ -53,8 +53,7 @@ aside#list {
   flex-shrink: 0;
   box-sizing: border-box;
 
-  font: 15px 'DIN', Helvetica, Arial, sans-serif;
-  // TODO proper font-download!
+  font: 14.5px 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
 
   width: @list;
 
@@ -62,9 +61,10 @@ aside#list {
 
   li a {
     display: inline-block;
-    padding-top: 0.3em;
+    padding-top: 0.15em;
     padding-bottom: 0.1em;
     text-decoration: none;
+    letter-spacing: -0.015em;
 
     &:hover {
       text-decoration: none;
@@ -105,14 +105,14 @@ aside#list {
     li a {
       cursor: pointer;
       text-transform: uppercase;
-      font-weight: bold;
+      font-weight: 600;
       font-size: 0.9em;
 
       padding-left: 5em;
       margin-left: -5em;
-      margin-bottom: 0.1em;
+      margin-bottom: 0.15em;
       border-radius: 2px;
-      padding-right: 0.3em;
+      padding-right: 0.5em;
 
       transform-origin: left center;
       transform: rotate(-10deg);
@@ -124,7 +124,7 @@ aside#list {
       &:hover:before {
         content: '#';
         position: absolute;
-        left: -0.8em;
+        margin-left: -0.8em;
       }
     }
   } // taglist
@@ -135,11 +135,13 @@ aside#list {
     box-sizing: border-box;
     height: 100%;
     padding-bottom: 4em;
+    letter-spacing: -0.03em;
 
     li a {
       display: block;
       border-bottom: 1px solid #666;
       padding-left: 0.05em;
+      font-weight: 400;
 
       &:hover {
         background-color: #666;
@@ -169,14 +171,13 @@ aside#list {
   overflow-x: hidden;
 
   #editor {
-    font-family: camingo, monospace;
+    font-family: camingocode, monospace;
     font-size: 16px;
     padding-bottom: 5em;
     white-space: pre-wrap;
     .noFocusBorder;
     width: calc(100% + @leftCol / 2);
     margin-left: calc(-1 * @leftCol / 2);
-    height: 100vh;
   }
 
 }

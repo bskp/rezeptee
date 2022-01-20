@@ -5,4 +5,4 @@
 
 - scroll-reset bei rezeptwahl
 - font für menu mitschicken
-- redirektion bei umbenennung
+- verlassen-warnung

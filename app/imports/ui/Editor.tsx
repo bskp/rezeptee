@@ -7,7 +7,7 @@ import DocumentTitle from "react-document-title";
 import TextareaAutosize from "react-textarea-autosize";
 import {Content} from "/imports/ui/App";
 
-export const Editor: Content = function({rezept}) {
+export const Editor: Content = function ({rezept}) {
   let [text, setText] = useState(rezept.markdown);
   let [dirty, setDirty] = useState(false)
   let navigate = useNavigate();
@@ -23,25 +23,34 @@ export const Editor: Content = function({rezept}) {
 
   const handleKeyDown: React.KeyboardEventHandler = event => {
     const t = event.currentTarget as HTMLTextAreaElement
-    let row = t.value.substring(0, t.selectionStart).split("\n").pop() || ""
+    const row = t.value.substring(0, t.selectionStart).split("\n").pop() || ""
+
     if (event.key == 'Tab') {
       t.setRangeText("    ", t.selectionStart, t.selectionEnd, "end")
       event.preventDefault()
       return
     }
-    if (event.key == 'Enter') {
-      if (row.match(/    \S+/)) {
-        t.setRangeText("\n    ", t.selectionStart, t.selectionEnd, "end")
-        event.preventDefault()
-        return
-      }
-    }
     if (event.key == 'Backspace') {
-      if (row.endsWith("    ")){
+      if (row.endsWith("    ")) {
         t.setRangeText("", t.selectionStart - 4, t.selectionEnd, "end")
         event.preventDefault()
         return
       }
+    }
+    if (event.key == 'Enter') {
+      const newRow = (current: RegExp, next) => {
+        let match = row.match(current)
+        if (match == null) return false
+        let newRow = match[0].replace(current, next)
+        t.setRangeText(newRow, t.selectionStart, t.selectionEnd, "end")
+        event.preventDefault()
+        return true
+      }
+      if (
+        newRow(/^((    )+) *\S+/, "\n$1") ||
+        newRow(/^( *[\-+*]) *\S+/, "\n$1 ") ||
+        newRow(/^ *(\d+). *\S+/, (all, d) => "\n" + (Number.parseInt(d, 10) + 1) + ". ")
+      ) return
     }
   }
 
@@ -61,8 +70,7 @@ export const Editor: Content = function({rezept}) {
       if (error !== undefined) {
         console.log(error);
       }
-      if (newSlug != rezept.slug) navigate(`/${newSlug}`);
-      if (newSlug === undefined) navigate("/")
+      navigate(`/${newSlug || ""}`);
     });
   }
 
