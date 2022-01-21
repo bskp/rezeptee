@@ -1,9 +1,10 @@
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent, useEffect} from 'react';
 import {Rezept} from "../api/models";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {ContentWrapper} from "/imports/ui/ContentWrapper";
 import {Editor, getTemplateRecipe} from "/imports/ui/Editor";
 import {Viewer} from "/imports/ui/Viewer";
+import {attachTouchHandlers} from "/imports/ui/preventBodyScroll";
 
 
 type ContentProps = {
@@ -13,6 +14,10 @@ type ContentProps = {
 export type Content = FunctionComponent<ContentProps>;
 
 export const App = () => {
+
+  useEffect(() => {
+    attachTouchHandlers()
+  })
 
   return (
     <BrowserRouter>

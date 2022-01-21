@@ -38,7 +38,6 @@ body {
   width: 100%;
   background-color: @chrome;
   display: flex;
-  position: fixed;
 }
 
 #react-target {
@@ -46,18 +45,21 @@ body {
   display: contents;
 }
 
-aside#list {
+aside#sidebar {
   color: @sheet;
   z-index: 1;
   flex-grow: 0;
   flex-shrink: 0;
   box-sizing: border-box;
 
+  display: flex;
+  flex-direction: column;
+
   font: 14.5px 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
 
   width: @list;
-
-  padding: 0.5em 0.5em 0.5em 1.2em;
+  padding: 0;
+  margin: 0;
 
   li a {
     display: inline-block;
@@ -71,19 +73,17 @@ aside#list {
     }
   }
 
+
   #suchtext {
-    margin-right: -2em;
     background-color: #666;
-    border-radius: 0.5em;
     padding: 0.2em 0.6em 0;
-    width: 100%;
+    margin: 0.5em;
     line-height: 2em;
+    border-radius: 0.5em;
+    width: calc(100% - 1em);
     box-sizing: border-box;
   }
 
-  #suchtext #clear_filter {
-    display: inline-block;
-  }
   #suchtext:placeholder-shown + #clear_filter {
     display: none;
   }
@@ -96,11 +96,29 @@ aside#list {
     text-align: center;
     width: 1.2em;
     height: 1.2em;
+    margin-left: -1.7em;
+  }
+
+  #lists {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
   }
 
   ul#taglist {
-    position: absolute;
-    margin-top: 2em;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding-left: 1em;
+    padding-top: 1em;
+    width: 40%;
+    direction: rtl;
+    margin: 0;
+
+    li {
+      direction: ltr;
+      text-align: left;
+    }
 
     li a {
       cursor: pointer;
@@ -130,12 +148,12 @@ aside#list {
   } // taglist
 
   ul#rezepte {
-    padding-left: 7em;
     overflow-y: scroll;
     box-sizing: border-box;
-    height: 100%;
-    padding-bottom: 4em;
+    margin: 0;
+    padding-right: 0.5em;
     letter-spacing: -0.03em;
+    width: 60%;
 
     li a {
       display: block;
@@ -443,13 +461,13 @@ a {
     filter: brightness(100%);
   }
 
-  aside#list {
+  aside#sidebar {
     font-size: 18px;
     width: @list;
     margin-left: -@list+@activate_col;
   }
 
-  aside#list, #content, #images {
+  aside#sidebar, #content, #images {
     transition: 0.5s;
   }
 
@@ -468,7 +486,7 @@ a {
     }
 
 
-    aside#list {
+    aside#sidebar {
       margin-left: 0;
     }
 

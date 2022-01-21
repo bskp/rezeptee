@@ -29,19 +29,19 @@ export const Sidebar = (props: SidebarProps) => {
     });
   }
 
-  function handleKeyDown(event : React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key == 'Escape') {
       setFilter("")
       event.currentTarget.blur()
     }
   }
 
-  function handleChange(event : React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setFilter(event.currentTarget.value);
   }
 
   if (isLoading()) {
-    tags = [new Tag({name: 'Lade Tags…'})];
+    tags = [];
   }
 
   let filtered = props.rezepte.filter(rez => !rez.tagNames.includes('privat'))
@@ -58,18 +58,21 @@ export const Sidebar = (props: SidebarProps) => {
     })
   }
 
-  return <aside id="list">
-    <input type="text"
-           id="suchtext"
-           autoComplete="off"
-           placeholder="Etwas kochen mit…"
-           onKeyDown={handleKeyDown}
-           onChange={handleChange}
-           value={filter}/>
+  return <aside id="sidebar">
+    <div id="filter">
+      <input type="text"
+             id="suchtext"
+             autoComplete="off"
+             placeholder="Etwas kochen mit…"
+             onKeyDown={handleKeyDown}
+             onChange={handleChange}
+             value={filter}/>
 
-    <span onClick={() => setFilter('')} id="clear_filter">×</span>
-    <ul id="taglist">
-      {tags.map(tag => {
+      <span onClick={() => setFilter('')} id="clear_filter">×</span>
+    </div>
+    <div id="lists">
+      <ul id="taglist" >
+        {tags.map(tag => {
           let active = props.rezept?.tagNames.includes(tag.name) ? 'active' : undefined;
           let bgColor = active ? 'hsl(' + hash(tag.name) + ',30%,50%)' : undefined
           return <li key={tag._id} className={active}>
@@ -78,30 +81,31 @@ export const Sidebar = (props: SidebarProps) => {
                style={{backgroundColor: bgColor}}
             >{tag.name}</a>
           </li>
-      })}
-    </ul>
-    <ul id="rezepte">
-      {filtered.map(rezept =>
-        <li key={rezept._lineage}>
-          <NavLink onClick={() => props.toggler()}
-                   activeClassName="active"
-                   to={'/' + rezept.slug}>{rezept.name}
-          </NavLink>
+        })}
+      </ul>
+      <ul id="rezepte" >
+        <li key="create">
+          <NavLink to="/create">Neues Rezept…</NavLink>
         </li>
-      )}
-      <li key="create">
-        <NavLink to="/create">Neues Rezept…</NavLink>
-      </li>
-    </ul>
+        {filtered.map(rezept =>
+          <li key={rezept._lineage}>
+            <NavLink onClick={() => props.toggler()}
+                     activeClassName="active"
+                     to={'/' + rezept.slug}>{rezept.name}
+            </NavLink>
+          </li>
+        )}
+      </ul>
+    </div>
   </aside>
 }
 
-function hash(str){
+function hash(str) {
   // From http://werxltd.com
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     let char = str.charCodeAt(i);
-    hash = ((hash<<5)-hash)+char;
+    hash = ((hash << 5) - hash) + char;
     hash = hash & hash; // Convert to 32bit integer
   }
   return hash;

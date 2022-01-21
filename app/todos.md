@@ -3,6 +3,6 @@
 - [ ] eikon
 - [ ] testsrunner fixen
 
-- scroll-reset bei rezeptwahl
-- font für menu mitschicken
 - verlassen-warnung
+- tilde nicht rendern
+- mengen umrechnen

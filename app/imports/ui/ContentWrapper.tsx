@@ -1,7 +1,7 @@
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {Rezept, Rezepte} from "/imports/api/models";
 import {useParams} from "react-router-dom";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
 
 type ContentWrapperProps = {
@@ -12,8 +12,17 @@ type ContentWrapperProps = {
 
 export function ContentWrapper(props: ContentWrapperProps) {
   const isLoading = useSubscribe('rezepte');
+  const ref = useRef(null)
   const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
   let slug = props.slug || useParams().rezept;
+
+  // Detect content change
+  const previousSlug = usePrevious(slug);
+  if (previousSlug != slug) {
+    if (ref.current !== null) { // @ts-ignore
+      ref.current.scrollTop = 0;
+    }
+  }
 
   let [sidebarCollapse, setSidebarCollapse] = useState(true);
   let content, rezept
@@ -31,10 +40,18 @@ export function ContentWrapper(props: ContentWrapperProps) {
   }
 
   return <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}>
-    <section id="content">
+    <section id="content" ref={ref}>
       {content}
     </section>
     <Sidebar rezept={rezept} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
     <div onClick={handleSidebarToggle} id="mode_flip"></div>
   </div>
+}
+
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
 }
