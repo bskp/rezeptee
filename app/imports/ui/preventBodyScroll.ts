@@ -2,21 +2,14 @@
 
 /**
  * Attaches touchmove- and touchstart handlers to prevent bubbling of scroll-events to the body.
- * This is only an issue on iOS Safari.
+ * This is only an issue on Webkit-based browsers with touch events.
  */
 export function attachTouchHandlers() {
 
-  // Enable by default if the browser supports -webkit-overflow-scrolling
-  // Test this by setting the property with JavaScript on an element that exists in the DOM
-  // Then, see if the property is reflected in the computed style
-  const testDiv = document.createElement('div');
-  document.documentElement.appendChild(testDiv);
-  // @ts-ignore
-  testDiv.style.WebkitOverflowScrolling = 'touch';
-  const scrollSupport = 'getComputedStyle' in window && window.getComputedStyle(testDiv)['-webkit-overflow-scrolling'] === 'touch';
-  document.documentElement.removeChild(testDiv);
-
-  if (!scrollSupport) return
+  const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
+  const isWebkit = /AppleWebKit\/(\S+)/.test(navigator.userAgent)
+  if (!isTouch || !isWebkit) return
+  console.log("Webkit on touch device detected.")
 
   const findScrollableParent = (el: HTMLElement) => {
     while (el !== document.body) {

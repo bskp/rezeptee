@@ -238,6 +238,7 @@ aside#sidebar {
     min-height: 8em;
     background-color: #eee;
     margin: 0 -0.5em 1em;
+    max-width: 26em;
   }
 }
 
@@ -426,7 +427,7 @@ a {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 30px;
+  width: 4em;
   z-index: 100;
   cursor: pointer;
 }
@@ -468,7 +469,7 @@ a {
   }
 
   aside#sidebar, #content, #images {
-    transition: 0.5s;
+    transition: 0.3s;
   }
 
   .offset {
@@ -499,6 +500,9 @@ a {
 
 // Smartphone-Modus
 @media (max-width: 750px) {
+  aside#sidebar {
+    margin-left: -@list+(@activate_col/2);
+  }
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
   #content {
     padding-left: 50px;
