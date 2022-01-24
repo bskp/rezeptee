@@ -4,7 +4,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {ContentWrapper} from "/imports/ui/ContentWrapper";
 import {Editor, getTemplateRecipe} from "/imports/ui/Editor";
 import {Viewer} from "/imports/ui/Viewer";
-import {attachTouchHandlers} from "/imports/ui/preventBodyScroll";
+import {attachTouchHandlers} from "/imports/ui/preventBodyBounce";
 
 
 type ContentProps = {

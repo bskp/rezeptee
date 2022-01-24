@@ -47,7 +47,8 @@ export function attachTouchHandlers() {
 
     let changeAge = 0;
     let prevScrollTop = scrollable?.scrollTop
-    const checkBounds = ts => {
+    // TODO per timestamp, nicht call-count
+    const checkBounds = timestamp => {
       if (scrollable.scrollTop == prevScrollTop) {
         changeAge += 1
       } else {

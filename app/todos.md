@@ -1,8 +1,11 @@
-- [ ] Swipe-Gesten auf mobil
-- [ ] kompaktes menü auf telifons
-- [ ] eikon
-- [ ] testsrunner fixen
+TODO
+====
 
-- verlassen-warnung
+- eikon
 - tilde nicht rendern
 - mengen umrechnen
+- feintuning gutter / weissraum
+- bearbeiten auf mobil
+- verlassen-warnung
+- Swipe-Gesten auf mobil
+- testsrunner fixen

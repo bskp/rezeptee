@@ -1,6 +1,12 @@
 {
   "name":"Rezept.ee",
-  "short_name": "Rezepte",
+  "short_name": "Rezepte.ee",
   "description": "Rezepte-Wiki",
-  "display": "standalone"
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "buch_adaptive.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }]
 }
