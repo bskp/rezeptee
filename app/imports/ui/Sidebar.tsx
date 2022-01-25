@@ -89,8 +89,7 @@ export const Sidebar = (props: SidebarProps) => {
         </li>
         {filtered.map(rezept =>
           <li key={rezept._lineage}>
-            <NavLink onClick={() => props.toggler()}
-                     activeClassName="active"
+            <NavLink activeClassName="active"
                      to={'/' + rezept.slug}>{rezept.name}
             </NavLink>
           </li>

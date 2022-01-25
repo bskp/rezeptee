@@ -114,6 +114,7 @@ aside#sidebar {
     width: 40%;
     direction: rtl;
     margin: 0;
+    padding-bottom: 1em;
 
     li {
       direction: ltr;
@@ -154,6 +155,7 @@ aside#sidebar {
     padding-right: 0.5em;
     letter-spacing: -0.03em;
     width: 60%;
+    padding-bottom: 1em;
 
     li a {
       display: block;
@@ -225,6 +227,19 @@ aside#sidebar {
     li {
       margin-bottom: 0.5em;
     }
+  }
+
+  ol, ul {
+    li p {
+      display: contents;
+    }
+  }
+
+  ul li:before {
+    content: "–";
+    width: 1em;
+    display: inline-block;
+    margin-left: -1em;
   }
 
   a {
@@ -303,8 +318,7 @@ aside#images{
     cursor: pointer;
 
     input {
-      position: relative;
-      left: -100em;
+      width: 0;
     }
 
     &:before {
@@ -351,6 +365,10 @@ ul.ingredients {
 
   li span {
     margin: 0 0.1em;
+  }
+
+  li:before {
+    content: none;
   }
 
   .quantity {
@@ -469,26 +487,17 @@ a {
   }
 
   aside#sidebar, #content, #images {
-    transition: 0.3s;
+    transition: background-color 0.3s;
   }
 
   .offset {
     #content {
-      margin-left: -@list+@activate_col;
-      background-color: #999;
+      transform: translateX(-@list+@activate_col);
+      background-color: #ccc;
 
       .page img {
         filter: brightness(50%);
       }
-
-      #images {
-        left: -@list+@activate_col;
-      }
-    }
-
-
-    aside#sidebar {
-      margin-left: 0;
     }
 
     #mode_flip {
@@ -541,7 +550,7 @@ a {
 
   body.offset {
     #content {
-      margin-left: -@list+@activate_col;
+      transform: translateX(-@list+@activate_col);
     }
 
     #mode_flip {

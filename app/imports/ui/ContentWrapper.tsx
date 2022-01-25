@@ -1,7 +1,7 @@
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {Rezept, Rezepte} from "/imports/api/models";
 import {useParams} from "react-router-dom";
-import React, {useEffect, useRef, useState} from "react";
+import React, {TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
 
 type ContentWrapperProps = {
@@ -35,12 +35,48 @@ export function ContentWrapper(props: ContentWrapperProps) {
     content = rezept ? React.cloneElement(props.children, {rezept: rezept}) : nA
   }
 
-  let handleSidebarToggle: React.MouseEventHandler = event => {
+  let handleSidebarToggle = () => {
     setSidebarCollapse(current => !current);
   }
 
-  return <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}>
-    <section id="content" ref={ref}>
+  const sidebar = 18*18;
+  let base = sidebarCollapse ? 0 : -sidebar
+
+  let [start, setStart] = useState(0);
+  let [swipe, setSwipe] = useState(0);
+  const touchStartHandler : TouchEventHandler = event => {
+    const pageX = event.touches[0].pageX;
+    setStart(pageX);
+    ref.current.style.transition = "";
+  };
+
+  const touchMoveHandler : TouchEventHandler = event => {
+    let swipe = event.touches[0].pageX - start
+    console.log(swipe)
+    setSwipe(swipe)
+    swipe += base
+    swipe = swipe > 0 ? 0 : swipe;
+    swipe = swipe < -sidebar ? - sidebar : swipe;
+    // @ts-ignore
+    ref.current.style.transform = "translateX(" + swipe + "px)"
+  };
+
+  const touchEndHandler : TouchEventHandler = event => {
+    // @ts-ignore
+    const minDistance = 30;
+    if (swipe < -minDistance) setSidebarCollapse(false)
+    if (swipe > minDistance) setSidebarCollapse(true)
+    ref.current.style.transition = "0.5s";
+    ref.current.style.transform = `translateX(${base}px)`
+  };
+
+
+  return <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
+              onTouchStart={touchStartHandler}
+              onTouchMove={touchMoveHandler}
+              onTouchEnd={touchEndHandler}>
+
+    <section id="content" ref={ref} style={{transform: `translateX(${base}px)`}}>
       {content}
     </section>
     <Sidebar rezept={rezept} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
