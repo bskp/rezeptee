@@ -45,23 +45,25 @@ export function attachTouchHandlers() {
     const scrollable = findScrollableParent(e.target as HTMLElement)
     if (!scrollable) return;
 
-    let changeAge = 0;
+    let lastChange = undefined;
     let prevScrollTop = scrollable?.scrollTop
-    // TODO per timestamp, nicht call-count
+
     const checkBounds = timestamp => {
-      if (scrollable.scrollTop == prevScrollTop) {
-        changeAge += 1
-      } else {
+
+      if (scrollable.scrollTop != prevScrollTop) {
         prevScrollTop = scrollable.scrollTop
-        changeAge = 0
+        lastChange = timestamp
       }
+
+      // Keep viewport 1px away from scroll bounds
       if (scrollable.scrollTop === 0) {
         scrollable.scrollTop += 1
       } else if (scrollable.scrollHeight === scrollable.scrollTop + scrollable.offsetHeight) {
         scrollable.scrollTop += -1
       }
-      if (changeAge < 10) {
-        // Elastic scroll has not ended yet.
+
+      if (lastChange == undefined || (timestamp - lastChange) < 100) {
+        // Scroll bounce is still in progress.
         window.requestAnimationFrame(checkBounds)
       }
     };
