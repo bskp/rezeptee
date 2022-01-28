@@ -1,5 +1,5 @@
 import {Rezept, Tag, Tags} from "../api/models";
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import NavLink from "./NavLink";
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
@@ -58,17 +58,23 @@ export const Sidebar = (props: SidebarProps) => {
     })
   }
 
+  let input = useRef()
+
   return <aside id="sidebar">
     <div id="filter">
       <input type="text"
              id="suchtext"
+             ref={input}
              autoComplete="off"
              placeholder="Etwas kochen mit…"
              onKeyDown={handleKeyDown}
              onChange={handleChange}
              value={filter}/>
 
-      <span onClick={() => setFilter('')} id="clear_filter">×</span>
+      <span onClick={() => {
+        setFilter('')
+        input.current?.focus()
+      }} id="clear_filter">×</span>
     </div>
     <div id="lists">
       <ul id="taglist" >

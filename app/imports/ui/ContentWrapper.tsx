@@ -39,35 +39,41 @@ export function ContentWrapper(props: ContentWrapperProps) {
     setSidebarCollapse(current => !current);
   }
 
-  const sidebar = 18*18;
-  let base = sidebarCollapse ? 0 : -sidebar
-
-  let [start, setStart] = useState(0);
+  let [start, setStart] = useState({x: 0, y: 0});
   let [swipe, setSwipe] = useState(0);
+
   const touchStartHandler : TouchEventHandler = event => {
-    const pageX = event.touches[0].pageX;
-    setStart(pageX);
-    ref.current.style.transition = "";
+    const t = event.touches[0]
+    setStart({x: t.pageX, y: t.pageY);
+    ref.current.style.transition = ''
   };
 
   const touchMoveHandler : TouchEventHandler = event => {
-    let swipe = event.touches[0].pageX - start
-    console.log(swipe)
-    setSwipe(swipe)
-    swipe += base
-    swipe = swipe > 0 ? 0 : swipe;
-    swipe = swipe < -sidebar ? - sidebar : swipe;
+    let dX = event.touches[0].pageX - start.x
+    let dY = event.touches[0].pageY - start.y
+    console.log(dX)
+    setSwipe(dX)
+
+    // require minimum swipe distance and angle
+    if (Math.abs(dX) < 10 || Math.abs(dY) > Math.abs(dX)) {
+      dX = 0
+    }
+
     // @ts-ignore
-    ref.current.style.transform = "translateX(" + swipe + "px)"
+    ref.current.style.transform = "translateX(" + dX + "px)"
   };
+
+  const finalizeSwipe = () => {
+    ref.current.style.transform = 'translateX(0)'
+    ref.current.style.transition = '0.5s'
+  }
 
   const touchEndHandler : TouchEventHandler = event => {
     // @ts-ignore
     const minDistance = 30;
     if (swipe < -minDistance) setSidebarCollapse(false)
     if (swipe > minDistance) setSidebarCollapse(true)
-    ref.current.style.transition = "0.5s";
-    ref.current.style.transform = `translateX(${base}px)`
+    finalizeSwipe()
   };
 
 
@@ -76,9 +82,11 @@ export function ContentWrapper(props: ContentWrapperProps) {
               onTouchMove={touchMoveHandler}
               onTouchEnd={touchEndHandler}>
 
-    <section id="content" ref={ref} style={{transform: `translateX(${base}px)`}}>
-      {content}
-    </section>
+    <div ref={ref} id="nudger">
+      <section id="content">
+        {content}
+      </section>
+    </div>
     <Sidebar rezept={rezept} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
     <div onClick={handleSidebarToggle} id="mode_flip"></div>
   </div>
@@ -90,4 +98,10 @@ function usePrevious(value) {
     ref.current = value;
   });
   return ref.current;
+}
+
+function clipValue(value: number, lower: number, upper: number) {
+  value = value > upper ? upper : value;
+  value = value < lower ? lower : value;
+  return value
 }

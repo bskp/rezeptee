@@ -47,7 +47,6 @@ body {
 
 aside#sidebar {
   color: @sheet;
-  z-index: 1;
   flex-grow: 0;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -173,6 +172,10 @@ aside#sidebar {
     }
   }
 } // aside
+
+#nudger {
+  overflow: hidden;
+}
 
 #content {
   min-height: 100vh;
@@ -487,7 +490,7 @@ a {
   }
 
   aside#sidebar, #content, #images {
-    transition: background-color 0.3s;
+    transition: 0.3s;
   }
 
   .offset {
@@ -515,6 +518,7 @@ a {
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
   #content {
     padding-left: 50px;
+    z-index: 10;
 
     // Weissraum rechts des Texts reduzieren
     padding-right: 1em;
