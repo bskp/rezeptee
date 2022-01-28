@@ -41,11 +41,13 @@ export function ContentWrapper(props: ContentWrapperProps) {
 
   let [start, setStart] = useState({x: 0, y: 0});
   let [swipe, setSwipe] = useState(0);
+  let [trans, setTrans] = useState('');
 
   const touchStartHandler : TouchEventHandler = event => {
     const t = event.touches[0]
-    setStart({x: t.pageX, y: t.pageY);
-    ref.current.style.transition = ''
+    setStart({x: t.pageX, y: t.pageY});
+    setTrans(ref.current.style.transition);
+    ref.current.style.transition = 'transform 0s';
   };
 
   const touchMoveHandler : TouchEventHandler = event => {
@@ -55,7 +57,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
     setSwipe(dX)
 
     // require minimum swipe distance and angle
-    if (Math.abs(dX) < 10 || Math.abs(dY) > Math.abs(dX)) {
+    if (Math.abs(dX) < 20 || Math.abs(dY) > Math.abs(dX)) {
       dX = 0
     }
 
@@ -64,8 +66,8 @@ export function ContentWrapper(props: ContentWrapperProps) {
   };
 
   const finalizeSwipe = () => {
+    ref.current.style.transition = trans;
     ref.current.style.transform = 'translateX(0)'
-    ref.current.style.transition = '0.5s'
   }
 
   const touchEndHandler : TouchEventHandler = event => {
@@ -82,11 +84,9 @@ export function ContentWrapper(props: ContentWrapperProps) {
               onTouchMove={touchMoveHandler}
               onTouchEnd={touchEndHandler}>
 
-    <div ref={ref} id="nudger">
-      <section id="content">
-        {content}
-      </section>
-    </div>
+    <section ref={ref} id="content">
+      {content}
+    </section>
     <Sidebar rezept={rezept} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
     <div onClick={handleSidebarToggle} id="mode_flip"></div>
   </div>
