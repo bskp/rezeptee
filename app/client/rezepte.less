@@ -5,9 +5,10 @@
 
 // Dimensions
 @leftCol: 12em;
-@gutter: 2rem;
-@activate_col: 2em;
-@list: 20em;
+@gutter: 3rem;
+@activate_col: 50px;
+@list: 350px;
+@list_desktop: 300px;
 
 // Fixes
 
@@ -47,6 +48,7 @@ body {
 
 aside#sidebar {
   color: @sheet;
+  z-index: 1;
   flex-grow: 0;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -54,9 +56,9 @@ aside#sidebar {
   display: flex;
   flex-direction: column;
 
-  font: 14.5px 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
+  font: 16px 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
 
-  width: @list;
+  width: @list_desktop;
   padding: 0;
   margin: 0;
 
@@ -189,8 +191,6 @@ aside#sidebar {
   overflow-y: scroll;
   overflow-x: hidden;
 
-  transition: 0.5s;
-
   #editor {
     font-family: camingocode, monospace;
     font-size: 16px;
@@ -292,6 +292,8 @@ aside#images{
       cursor: grab;
       opacity: 1;
       font-size: 0;
+
+      transition: 5s opacity;
 
       &.fresh {
         opacity: 0;
@@ -444,14 +446,14 @@ a {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 4em;
+  width: 50px;
   z-index: 100;
   cursor: pointer;
 }
 
 .offset {
   aside {
-    margin-left: -@list -@activate_col;
+    //margin-left: -@list -@activate_col;
   }
 
   #mode_flip {
@@ -486,23 +488,21 @@ a {
   }
 
   aside#sidebar, #content, #images {
-    //transition: margin-left 0.3s;
+    transition: background-color 0.3s;
   }
 
-  .offset {
+  #content {
+    transform: translateX(-@list+@activate_col);
+  }
+
+    .offset {
     #content {
-      margin-left: @activate_col - @list;
       background-color: #ccc;
 
       .page img {
         filter: brightness(50%);
       }
     }
-
-    aside#sidebar {
-      margin-left: 0;
-    }
-
 
     #mode_flip {
       right: @list;
@@ -516,10 +516,13 @@ a {
   aside#sidebar {
     margin-left: -@list+(@activate_col/2);
   }
+  #content {
+    transform: translateX(-@list+(@activate_col/2));
+  }
+
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
   #content {
     padding-left: 50px;
-    z-index: 10;
 
     // Weissraum rechts des Texts reduzieren
     padding-right: 1em;
@@ -546,18 +549,23 @@ a {
   }
 }
 
-@media (max-width: (@list - @activate_col)) {
-  aside {
-    font-size: 0.8em;
-    width: @list;
-    margin-left: -@list+@activate_col;
+// Vollbreiten-Modus
+@media (max-width: @list+@activate_col) {
+  aside#sidebar {
+    font-size: 0.9em;
+    width: 100%;
+    margin-left: -100%;
+  }
+  #content {
+    transform: translateX(-100%);
+    padding-left: 20px;
+
+    ol, ul {
+      padding-left: 1em;
+    }
   }
 
   body.offset {
-    #content {
-      //transform: translateX(-@list+@activate_col);
-      margin-left: @activate_col - @list
-    }
 
     #mode_flip {
       right: @list;

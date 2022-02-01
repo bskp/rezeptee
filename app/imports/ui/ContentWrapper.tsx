@@ -40,42 +40,49 @@ export function ContentWrapper(props: ContentWrapperProps) {
   }
 
   let [start, setStart] = useState({x: 0, y: 0});
-  let [swipe, setSwipe] = useState(0);
-  let [trans, setTrans] = useState('');
+  let [swipe, setSwipe] = useState({x: 0, y: 0});
+  let [offsetTransform, setOffsetTransform] = useState("");
 
   const touchStartHandler : TouchEventHandler = event => {
     const t = event.touches[0]
-    setStart({x: t.pageX, y: t.pageY});
-    setTrans(ref.current.style.transition);
-    ref.current.style.transition = 'transform 0s';
+    setStart({x: t.pageX, y: t.pageY})
+    setOffsetTransform(window.getComputedStyle(ref.current).transform)
+    ref.current.style.transition = "" // disable animation
   };
 
   const touchMoveHandler : TouchEventHandler = event => {
     let dX = event.touches[0].pageX - start.x
     let dY = event.touches[0].pageY - start.y
-    console.log(dX)
-    setSwipe(dX)
 
-    // require minimum swipe distance and angle
-    if (Math.abs(dX) < 20 || Math.abs(dY) > Math.abs(dX)) {
+    // Check swipe angle (<45°) and dead zone
+    const deadZone = 10;
+    if (Math.abs(dY) > Math.abs(dX) || Math.abs(dX) < deadZone) {
       dX = 0
+    } else {
+      dX = dX - Math.sign(dX)*deadZone
+    }
+
+    // restrict swiping direction
+    if (sidebarCollapse) {
+      if (dX > 0) dX = 0;
+    } else {
+      if (dX < 0) dX = 0;
     }
 
     // @ts-ignore
-    ref.current.style.transform = "translateX(" + dX + "px)"
+    ref.current.style.transform = offsetTransform + " translateX(" + dX + "px)"
+    setSwipe({x: dX, y: dY})
   };
 
-  const finalizeSwipe = () => {
-    ref.current.style.transition = trans;
-    ref.current.style.transform = 'translateX(0)'
-  }
+  let baseTransform = sidebarCollapse ? "translateX(0)" : ""
 
   const touchEndHandler : TouchEventHandler = event => {
     // @ts-ignore
-    const minDistance = 30;
-    if (swipe < -minDistance) setSidebarCollapse(false)
-    if (swipe > minDistance) setSidebarCollapse(true)
-    finalizeSwipe()
+    const minDistance = 10;
+    if (Math.abs(swipe.x) > minDistance) setSidebarCollapse(!sidebarCollapse)
+    setSwipe({x: 0, y: 0})
+    ref.current.style.transition = "0.5s";
+    ref.current.style.transform = baseTransform;
   };
 
 
@@ -84,7 +91,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
               onTouchMove={touchMoveHandler}
               onTouchEnd={touchEndHandler}>
 
-    <section ref={ref} id="content">
+    <section id="content" ref={ref} style={{transform: baseTransform}}>
       {content}
     </section>
     <Sidebar rezept={rezept} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
@@ -98,10 +105,4 @@ function usePrevious(value) {
     ref.current = value;
   });
   return ref.current;
-}
-
-function clipValue(value: number, lower: number, upper: number) {
-  value = value > upper ? upper : value;
-  value = value < lower ? lower : value;
-  return value
 }

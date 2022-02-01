@@ -1,11 +1,17 @@
 TODO
 ====
 
-- eikon
 - tilde nicht rendern
+- fehlende elemente renderbar
+- css aufräumen
 - mengen umrechnen
-- feintuning gutter / weissraum
 - bearbeiten auf mobil
 - verlassen-warnung
-- Swipe-Gesten auf mobil
 - testsrunner fixen
+
+
+Getan
+---------
+- feintuning gutter / weissraum
+- Swipe-Gesten auf mobil
+- eikon
