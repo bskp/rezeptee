@@ -469,6 +469,16 @@ a {
   }
 }
 
+
+.togglerWidth(@toggler) {
+  aside#sidebar {
+    margin-left: -@list+(@toggler);
+  }
+  #content {
+    transform: translateX(-@list+(@toggler));
+  }
+}
+
 // Tablet-Modus
 @media (max-width: 1024px) {
 
@@ -481,21 +491,18 @@ a {
     filter: brightness(100%);
   }
 
-  aside#sidebar {
-    font-size: 18px;
-    width: @list;
-    margin-left: -@list+@activate_col;
-  }
-
   aside#sidebar, #content, #images {
     transition: background-color 0.3s;
   }
 
-  #content {
-    transform: translateX(-@list+@activate_col);
+  aside#sidebar {
+    font-size: 18px;
+    width: @list;
   }
 
-    .offset {
+  .togglerWidth(@activate_col);
+
+  .offset {
     #content {
       background-color: #ccc;
 
@@ -513,12 +520,7 @@ a {
 
 // Smartphone-Modus
 @media (max-width: 750px) {
-  aside#sidebar {
-    margin-left: -@list+(@activate_col/2);
-  }
-  #content {
-    transform: translateX(-@list+(@activate_col/2));
-  }
+  .togglerWidth(@activate_col/2);
 
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
   #content {
@@ -549,8 +551,13 @@ a {
   }
 }
 
+// Kleines Smartphone
+@media (max-width: @list + @activate_col) {
+  .togglerWidth(@activate_col/4);
+}
+
 // Vollbreiten-Modus
-@media (max-width: @list+@activate_col) {
+@media (max-width: @list) {
   aside#sidebar {
     font-size: 0.9em;
     width: 100%;
