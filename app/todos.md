@@ -1,10 +1,10 @@
 TODO
 ====
 
+- mengen umrechnen
 - tilde nicht rendern
 - fehlende elemente renderbar
 - css aufräumen
-- mengen umrechnen
 - bearbeiten auf mobil
 - verlassen-warnung
 - testsrunner fixen

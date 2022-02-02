@@ -47,7 +47,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
     const t = event.touches[0]
     setStart({x: t.pageX, y: t.pageY})
     setOffsetTransform(window.getComputedStyle(ref.current).transform)
-    ref.current.style.transition = "" // disable animation
+    ref.current.style.transition = "0s" // disable animation
   };
 
   const touchMoveHandler : TouchEventHandler = event => {
