@@ -1,7 +1,8 @@
 import {matchHeading, matchParagraph, matchType} from "mdast-react-render/lib/utils";
-import React from "react";
+import React, {useRef} from "react";
 import {Image} from "./Images";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
+import {ItemQuantity} from "/imports/ui/ItemQuantity";
 
 const List = ({children, data, attributes = {}}) => data.ordered
   ? <ol start={data.start} {...attributes}>{children}</ol>
@@ -33,7 +34,7 @@ const paragraphRule = {
     },
     {
       matchMdast: matchType('break'),
-      component: () => <br />
+      component: () => <br/>
     },
     {
       matchMdast: matchType('tag'),
@@ -94,7 +95,7 @@ const schema = {
           rules: [
             {
               matchMdast: matchType("listItem"),
-              component: ({children}) => <li>{children}</li>,
+              component: IngredientItem,
               rules: [
                 {
                   matchMdast: matchType("text"),
@@ -103,7 +104,7 @@ const schema = {
                 {
                   matchMdast: matchType("quantity"),
                   props: node => ({value: node.value}),
-                  component: ({value}) => <span className={"quantity"}>{value}</span>,
+                  component: ItemQuantity,
                 },
                 {
                   matchMdast: matchType("unit"),
@@ -122,6 +123,17 @@ const schema = {
       ]
     }
   ]
+}
+
+function IngredientItem(props: { children }) {
+
+  const ref = useRef()
+  const clickHandler: React.MouseEventHandler = event => {
+    const quantityNode = ref.current.querySelector('.quantity');
+    if (quantityNode) quantityNode.click()
+  }
+
+  return <li onClick={clickHandler} ref={ref}>{props.children}</li>;
 }
 
 export default schema

@@ -372,6 +372,27 @@ ul.ingredients {
     content: none;
   }
 
+  li {
+    cursor: pointer;
+
+    &:hover span.quantity,
+    input.quantity {
+      background-color: #ddd;
+      border-radius: 0.2em;
+      margin: 0 0;
+      padding: 0 0.1em;
+    }
+
+  }
+
+  input.quantity {
+    outline: none;
+
+    &.invalid {
+      color: darkred;
+    }
+  }
+
   .quantity {
   }
 
@@ -487,9 +508,6 @@ a {
       display: block;
     }
   }
-  .page img {
-    filter: brightness(100%);
-  }
 
   aside#sidebar, #content, #images {
     //transition: background-color 0.3s;
@@ -530,6 +548,7 @@ a {
     padding-right: 1em;
 
     ul.ingredients {
+      font-size: 1em;
       float: none;
       position: initial;
       margin-left: 0;
