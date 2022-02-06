@@ -66,6 +66,7 @@ function QuantityEditor(props: QuantityProps) {
   })
 
   const size = inputQuantity.length / 2 + 1
+  const step = 10**Math.floor(Math.log10(quantity) - 0.01)
 
   return <input type="number"
                 className={"quantity" + (valid ? "" : " invalid")}
@@ -74,6 +75,7 @@ function QuantityEditor(props: QuantityProps) {
                 size={1}
                 style={{width: `${size}em`}}
                 value={inputQuantity}
+                step={step}
                 onKeyDown={handleKeyDown}
                 onBlur={() => props.setEditing(false)}
                 onChange={handleChange}/>

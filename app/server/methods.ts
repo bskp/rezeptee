@@ -18,7 +18,8 @@ Meteor.startup(function() {
 Meteor.methods({
 
   saveRezept(remoteObject: Rezept) {
-    let rezept = new Rezept(remoteObject); // Re-attach class methods and perform parsing
+    let rezept = new Rezept(remoteObject); // Re-attach class methods
+    rezept._parse();
 
     // Compare with stored Rezept versions
     // TODO: respect creation date

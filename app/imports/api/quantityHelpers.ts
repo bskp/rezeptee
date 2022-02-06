@@ -8,11 +8,11 @@ export function expandTypographicalFractions(text: string) {
 }
 
 export function insertTypographicalFractions(text: string) {
-  text = text.replace(/\b1\/2\b/, '½');
-  text = text.replace(/\b1\/4\b/, '¼');
-  text = text.replace(/\b3\/4\b/, '¾');
-  text = text.replace(/\b1\/3\b/, '⅓');
-  text = text.replace(/\b2\/3\b/, '⅔');
+  text = text.replace(/ ?\b1\/2\b/, '½');
+  text = text.replace(/ ?\b1\/4\b/, '¼');
+  text = text.replace(/ ?\b3\/4\b/, '¾');
+  text = text.replace(/ ?\b1\/3\b/, '⅓');
+  text = text.replace(/ ?\b2\/3\b/, '⅔');
   return text.trim();
 }
 
@@ -48,8 +48,9 @@ export function parseFractionalNumber(expression : string) : number {
   expression = expandTypographicalFractions(expression)
   if (!expression.includes('/')) return Number.parseFloat(expression)
 
-  const [nominator, denominator] = expression.split('/', 2)
-  return Number.parseInt(nominator, 10) / Number.parseInt(denominator, 10)
+  const [prefix, denominator] = expression.split('/', 2)
+  const [nominator, wholes="0"] = prefix.split(' ', 2).reverse()
+  return Number.parseInt(wholes) + Number.parseInt(nominator, 10) / Number.parseInt(denominator, 10)
 }
 
 export function createFractionalNumber(number : number) : string {
@@ -59,9 +60,11 @@ export function createFractionalNumber(number : number) : string {
   for (let denominator = 2; denominator <= 4; denominator++) {
     const error = (number*denominator)%1.0;
     if (error < 0.001) {
-      let nominator = Math.round(number*denominator);
-      if (nominator > 10) continue;
-      let text = ` ${nominator}/${denominator}`
+      let wholes = Math.floor(number)
+      if (wholes > 10) continue
+      if (wholes == 0) wholes = ''
+      let nominator = Math.round(number*denominator) - wholes*denominator
+      let text = `${wholes} ${nominator}/${denominator}`
       return insertTypographicalFractions(text)
     }
   }

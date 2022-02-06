@@ -10,6 +10,8 @@ import {Meteor} from 'meteor/meteor';
 import fs from "fs";
 import gm from "gm";
 
+const CURRENT_PARSER_VERSION = 0;
+
 const tags = {
   whiteList: {
     a: ["href", "title"],
@@ -55,27 +57,41 @@ export class Rezept {
   // Set upon saving
   _id: string;
   active: boolean;
-  previous_version_id: string;
+  previous_version_id: number;
 
-  constructor(doc: { markdown: string, _lineage?: string, _id?: string }) {
+  constructor(doc: Rezept) {
+    // Set by server upon saving
     this.markdown = doc.markdown;
     this._lineage = doc._lineage ? doc._lineage : this._lineage;
+    this.active = doc.active
+    this.previous_version_id = doc.previous_version_id
+
+    if (doc._parser_version == CURRENT_PARSER_VERSION) {
+      this._parser_version = doc._parser_version
+      this.name = doc.name
+      this.slug = doc.slug
+      this.mdast = doc.mdast
+      this.tagNames = doc.tagNames
+      this.ingredientNames = doc.ingredientNames
+    } else {
+      this._parse();
+    }
+
     // @ts-ignore
     this._id = doc._id ? doc._id : undefined;
-    this._parse();
+
   }
 
   _parse() {
-    this._parser_version = 0;
+    this._parser_version = CURRENT_PARSER_VERSION;
 
     let mdast = parse(this.markdown);
 
     this.name = getTitle(mdast);
-    this.ingredientNames = getIngredients(mdast);
-    this.tagNames = getTags(mdast)
-
-    this.mdast = mdast;
     this.slug = slug(this.name);
+    this.mdast = mdast;
+    this.tagNames = getTags(mdast)
+    this.ingredientNames = getIngredients(mdast);
   }
 }
 
