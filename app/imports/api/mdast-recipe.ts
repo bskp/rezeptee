@@ -26,13 +26,17 @@ l = 10 dl
 dl = 100 ml
 EL = 3 KL
 EL = 15 ml
-Dose = 400 g
 Pfund = 500 g
+Dutzend = 12
+Kilo = kg
+Bd = Bund
 `
 const conversionLookup = {};
-for (const match of conversions.matchAll(/(\w+) = (\d+) ?(\w+)\n/g)) {
-  const [all, coarseUnit, factorString, fineUnit] = match;
+for (const match of conversions.matchAll(/(\w+) = (\d*) ?(\w+)?\n/g)) {
+  let [ , coarseUnit, factorString=1, fineUnit=""] = match;
   let factor = Number(factorString);
+  coarseUnit = coarseUnit.toLowerCase();
+  fineUnit = fineUnit.toLowerCase();
   const ensure = unit => {
     if (!(unit in conversionLookup)) conversionLookup[unit] = {};
   }

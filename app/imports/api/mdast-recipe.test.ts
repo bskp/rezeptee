@@ -39,6 +39,25 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, expected);
   });
 
+  it('Composed Typographical Fractional Quantity', () => {
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "1 1/2"
+      },
+      {
+        "type": "unit",
+        "value": "EL"
+      },
+      {
+        "type": "ingredient",
+        "value": "Maisstärke"
+      }
+    ]
+    const mdast = splitIngredients("1½ EL Maisstärke")
+    assert.deepEqual(mdast, expected);
+  });
+
   it('No Quantities', () => {
     const expected = [
       {
