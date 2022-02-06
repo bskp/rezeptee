@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import {renderMdast} from 'mdast-react-render';
 import schema from "/imports/ui/recipe-schema";
-import React from "react";
+import React, {useState} from "react";
 import DocumentTitle from "react-document-title"
 import {Content} from "/imports/ui/App";
 import { useSearchParams } from "react-router-dom";
@@ -21,9 +21,26 @@ export const Viewer: Content = ({rezept}) => {
   const factor = Number.parseFloat(queryParams.get(FACTOR_PARAM_NAME) || "1")
   const factorValue = {factor, setFactor}
 
-  const clickHandler = event => {
+  const navigateToEdit = () => {
     navigate(`/${rezept.slug}/edit`)
+  }
+
+  let [secondTap, setSecondTap] = useState(false)
+  const touchStartHandler = event => {
+    if (!secondTap) {
+      setSecondTap(true)
+      setTimeout( () => {console.log("vorbei"); setSecondTap(false)}, 200)
+      console.log("los")
+      return false
+    }
+    console.log("yess")
     event.preventDefault();
+    navigateToEdit()
+  }
+
+  const contextMenuHandler = event => {
+    event.preventDefault();
+    navigateToEdit()
   }
 
   if (!rezept.hasOwnProperty('mdast')) {
@@ -35,7 +52,9 @@ export const Viewer: Content = ({rezept}) => {
   return (<>
     <DocumentTitle title={rezept.name}/>
     <FactorContext.Provider value={factorValue}>
-      <div className="page" onContextMenu={clickHandler}>{vdom}</div>
+      <div className="page"
+           onTouchStart={touchStartHandler}
+           onContextMenu={contextMenuHandler}>{vdom}</div>
     </FactorContext.Provider>
   </>);
 }

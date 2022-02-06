@@ -8,13 +8,13 @@ export function Image({id, alt}) {
   return <img src={src} alt={alt}/>
 }
 
-export function ImageList(props: {namespace: string}) {
+export function ImageList(props: { namespace: string }) {
   const isLoadingImages = useSubscribe('files.imgs.all');
   let [dragInProgress, setDragInProgress] = useState("");
 
   const imagesCursor = useTracker(() =>
-    Imgs.find({'meta.namespace': props.namespace}).fetch().reverse(),
-   []);
+      Imgs.find({'meta.namespace': props.namespace}).fetch().reverse(),
+    []);
 
   let images;
   if (isLoadingImages()) {
@@ -41,12 +41,10 @@ export function ImageList(props: {namespace: string}) {
     });
   }
 
-  return <aside id="images">
-    <ul id="imagelist">
-      <Uploader dragInProgress={dragInProgress.length > 0} namespace={props.namespace}/>
-      {images}
-    </ul>
-  </aside>
+  return <ul id="imagelist">
+    <Uploader dragInProgress={dragInProgress.length > 0} namespace={props.namespace}/>
+    {images}
+  </ul>
 }
 
 

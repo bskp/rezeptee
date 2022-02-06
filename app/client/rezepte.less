@@ -1,6 +1,7 @@
 // Colors
 
 @sheet: #fff;
+@grey: #ddd;
 @chrome: #444;
 
 // Dimensions
@@ -56,7 +57,8 @@ aside#sidebar {
   display: flex;
   flex-direction: column;
 
-  font: 16px 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-family: 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
 
   width: @list_desktop;
   padding: 0;
@@ -260,7 +262,7 @@ aside#sidebar {
   }
 }
 
-aside#images{
+aside#tools{
   width: calc(@leftCol /2 - 1em);
 
   position: fixed;
@@ -268,6 +270,26 @@ aside#images{
   top: 0.5em;
 
   box-sizing: border-box;
+
+  .button {
+    display: block;
+    font-family: 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: #bbb;
+    border: 3px solid @grey;
+    font-size: 16px;
+    padding: 0.5em 0;
+    border-radius: 0.5em;
+    margin-bottom: 0.5em;
+
+    cursor: pointer;
+
+    &:hover {
+      background-color: @grey;
+      color: white;
+    }
+  }
 
   ul {
     margin: 0;
@@ -285,7 +307,7 @@ aside#images{
 
     img {
       display: block;
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: @grey;
       width: 100%;
       min-height: 4em;
       border-radius: inherit;
@@ -306,12 +328,12 @@ aside#images{
   li#blueprint {
     height: @dropperHeight;
     box-sizing: border-box;
-    background-color: hsla(0, 0, 0, 0.2);
+    background-color: @grey;
     transition: 0.1s margin-top;
   }
 
   #dropzone {
-    border: 3px dashed rgba(0, 0, 0, 0.2);
+    border: 3px dashed @grey;
     text-align: center;
     height: @dropperHeight;
     box-sizing: border-box;
@@ -343,7 +365,7 @@ aside#images{
     }
 
     &.over, &:active {
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: @grey;
     }
   }
 
@@ -507,10 +529,6 @@ a {
     #mode_flip {
       display: block;
     }
-  }
-
-  aside#sidebar, #content, #images {
-    //transition: background-color 0.3s;
   }
 
   aside#sidebar {

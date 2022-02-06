@@ -76,7 +76,11 @@ export const Editor: Content = function ({rezept}) {
 
   return <div onContextMenu={handleContextMenu}>
     <DocumentTitle title={rezept.name + " (bearbeite)"}/>
-    <ImageList namespace={rezept._lineage}/>
+    <aside id="tools">
+      <ImageList namespace={rezept._lineage}/>
+      <a onClick={save} className="button">Sichern</a>
+      <a onClick={() => navigate(`/${rezept.slug}`)} className="button">Verwerfen</a>
+    </aside>
     <TextareaAutosize id="editor"
                       onChange={handleChange}
                       onDrop={handleDrop}
