@@ -1,13 +1,16 @@
 Rezept.ee
 =========
 
-Alle andern: 
-- Dokumentformat exakt für Rezepte
-- ocr
-- import von rezepten
-- strukturiertes format
+Ein simples Kochbuch-Wiki, zu sehen auf [rezept.ee](https://rezept.ee/).
 
-Warum dies?
-- es ist ein koch_buch, nicht ein -app. Halt einfach auf digital
-- nennt mich vorgestrig, es ist mir egal!
-- 
+Ziele
+-----
+
+- Soll sich wie ein Koch**buch** anfühlen, nicht wie eine Koch**app**
+- Eintragen neuer Rezepte soll schnell und einfach gehen, so wie eben die gute alte Fresszettel-Rezeptsammlung in der Schuhschachtel
+
+Nicht-Ziele
+-----------
+
+- Automatischer import von anderen Formaten, Texterkennung, usw, weil:  
+  Die Sammlung soll nicht möglichst gross sein, sondern eher eine Vervollständigung zu anderen online-Rezeptsammlungen
