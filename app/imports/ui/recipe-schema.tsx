@@ -54,8 +54,36 @@ const paragraphRule = {
       component: ({url, isExternal, children}) =>
         isExternal ? <a href={url} target='_blank'>{children}</a> : <Link to={url}>{children}</Link>
     },
+    {
+      matchMdast: matchType('inlineCode'),
+      props: node => ({value: node.value}),
+      component: ({value}) => <code>{value}</code>
+    },
   ]
 }
+
+const makeListRule = function(allowedContents) {
+  return {
+    matchMdast: matchType('list'),
+    component: List,
+    props: node => ({
+      data: {
+        ordered: node.ordered,
+        start: node.start
+      }
+    }),
+    rules: [
+      {
+        matchMdast: matchType('listItem'),
+        component: ({children}) => <li>{children}</li>,
+        rules: allowedContents
+      }
+    ]
+  }
+}
+
+const terminalListRule = makeListRule([paragraphRule])
+const listRule = makeListRule([paragraphRule, terminalListRule])
 
 const schema = {
   rules: [
@@ -72,23 +100,7 @@ const schema = {
           component: ({children}) => <h2>{children}</h2>
         },
         paragraphRule,
-        {
-          matchMdast: matchType('list'),
-          component: List,
-          props: node => ({
-            data: {
-              ordered: node.ordered,
-              start: node.start
-            }
-          }),
-          rules: [
-            {
-              matchMdast: matchType('listItem'),
-              component: ({children}) => <li>{children}</li>,
-              rules: [paragraphRule]
-            }
-          ]
-        },
+        listRule,
         {
           matchMdast: matchType("ingredientList"),
           component: ({children}) => <ul className="ingredients">{children}</ul>,
@@ -126,7 +138,6 @@ const schema = {
 }
 
 function IngredientItem(props: { children }) {
-
   const ref = useRef()
   const clickHandler: React.MouseEventHandler = event => {
     const quantityNode = ref.current.querySelector('.quantity');

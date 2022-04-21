@@ -3,13 +3,13 @@ import {text} from "mdast-builder";
 import {ingredientNode, quantityNode, unitNode} from "./mdast-recipe-builders";
 import {
   expandTypographicalFractions,
-  insertTypographicalFractions
-} from "/imports/api/quantityHelpers";
+  insertTypographicalFractions,
+} from "./quantityHelpers";
 
 
 export function splitIngredients(row: string) {
   row = expandTypographicalFractions(row);
-  const matches = row.matchAll(/(\d+(?:\/\d+)?) *(Pfund|Dose|Bund|Bd|[KTE]L|[kdcm]?[lg]?\b)/g);
+  const matches = row.matchAll(/(\d+(?: \d)?(?:[\/.,]\d+)?) *(Pfund|Dose|Bund|Bd|[KTE]L|[kdcm]?[lg]?\b)/g);
 
   let children : Node[] = [];
   let consumed = 0;

@@ -1,8 +1,8 @@
 import {map} from "unist-util-map";
 import {is} from "unist-util-is";
-import {commentNode, ingredientListNode, tagNode} from "/imports/api/mdast-recipe-builders";
+import {commentNode, ingredientListNode, tagNode} from "./mdast-recipe-builders";
 import {listItem} from "mdast-builder";
-import {splitIngredients} from "/imports/api/mdast-recipe";
+import {splitIngredients} from "./mdast-recipe";
 import type {Plugin, Transformer} from 'unified'
 import {Code, Paragraph, PhrasingContent, Text} from 'mdast'
 

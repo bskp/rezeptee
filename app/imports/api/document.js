@@ -3,8 +3,7 @@ import remarkParse from "remark-parse";
 import find from "unist-util-find";
 import {toString} from "mdast-util-to-string";
 import {visit} from "unist-util-visit";
-import remarkRecipe from "/imports/api/remark-recipe";
-
+import remarkRecipe from "./remark-recipe.ts";
 
 const parser = unified()
   .use(remarkParse)

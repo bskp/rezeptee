@@ -1,7 +1,10 @@
 {
   "extension": ["ts"],
-  "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm", "no-warnings"],
+  "node-option": [
+    "experimental-specifier-resolution=node",
+    "loader=ts-node/esm",
+    "no-warnings"
+  ],
   "spec": ["**/*.test.ts"],
-  "ignore": ["node_modules/**"],
-  "require": "@babel/register"
+  "ignore": ["node_modules/**"]
 }

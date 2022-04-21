@@ -6,7 +6,7 @@ describe('Ingredient Node parsing', () => {
     const expected = [
       {
         "type": "quantity",
-        "value": "3/4"
+        "value": "¾"
       },
       {
         "type": "unit",
@@ -20,11 +20,12 @@ describe('Ingredient Node parsing', () => {
     const mdast = splitIngredients("¾dl Suppe")
     assert.deepEqual(mdast, expected);
   });
+
   it('Fractional Quantity', () => {
     const expected = [
       {
         "type": "quantity",
-        "value": "3/4"
+        "value": "¾"
       },
       {
         "type": "unit",
@@ -39,11 +40,49 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, expected);
   });
 
+  it('Quantity with decimal comma', () => {
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "1,4"
+      },
+      {
+        "type": "unit",
+        "value": "dl"
+      },
+      {
+        "type": "ingredient",
+        "value": "Milch"
+      }
+    ]
+    const mdast = splitIngredients("1,4dl Milch")
+    assert.deepEqual(mdast, expected);
+  });
+
+  it('Quantity with decimal point', () => {
+    const expected = [
+      {
+        "type": "quantity",
+        "value": "1.3"
+      },
+      {
+        "type": "unit",
+        "value": "dl"
+      },
+      {
+        "type": "ingredient",
+        "value": "Milch"
+      }
+    ]
+    const mdast = splitIngredients("1.3dl Milch")
+    assert.deepEqual(mdast, expected);
+  });
+
   it('Composed Typographical Fractional Quantity', () => {
     const expected = [
       {
         "type": "quantity",
-        "value": "1 1/2"
+        "value": "1½"
       },
       {
         "type": "unit",

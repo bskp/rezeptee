@@ -3,6 +3,7 @@
     /* Basic Options */
     "target": "es2018",
     "module": "esNext",
+    "moduleResolution": "node",
     "lib": ["esnext", "dom", "DOM.Iterable"],
     "allowJs": true,
     "checkJs": false,
@@ -27,9 +28,8 @@
       /* Support absolute /imports/* with a leading '/' */
       "/*": ["*"]
     },
-    "moduleResolution": "node",
     "resolveJsonModule": true,
-    //"types": ["node", "mocha"],
+    "types": ["node", "mocha"],
     "esModuleInterop": true,
     "preserveSymlinks": true,
 
@@ -38,6 +38,7 @@
   },
   "exclude": [
     "./.meteor/**",
-    "./packages/**"
+    "./packages/**",
+    "./node_modules/"
   ]
 }

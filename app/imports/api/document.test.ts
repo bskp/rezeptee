@@ -66,7 +66,7 @@ const mdast_result = {
 describe('Markdown to react parsing', () => {
   it('Markdown to mdast', () => {
 
-    let md = "# A h1 title";
+    let md = "A h1 title\n=======\n";
 
     let actual = parse(md);
     actual = removePosition(actual, true);

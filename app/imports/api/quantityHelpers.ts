@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export function expandTypographicalFractions(text: string) {
   text = text.replace('½', ' 1/2');
   text = text.replace('¼', ' 1/4');
@@ -16,6 +18,13 @@ export function insertTypographicalFractions(text: string) {
   return text.trim();
 }
 
+export function normalizeDecimalPoint(text: string) {
+  return text.replace(',', '.')
+}
+
+export function denormalizeDecimalPoint(text: string) {
+  return text.replace('.', ',')
+}
 
 export const conversions = `
 kg = 1000 g
@@ -46,6 +55,7 @@ for (const match of conversions.matchAll(/(\w+) = (\d*) ?(\w+)?\n/g)) {
 
 export function parseFractionalNumber(expression : string) : number {
   expression = expandTypographicalFractions(expression)
+  expression = normalizeDecimalPoint(expression)
   if (!expression.includes('/')) return Number.parseFloat(expression)
 
   const [prefix, denominator] = expression.split('/', 2)
@@ -54,7 +64,7 @@ export function parseFractionalNumber(expression : string) : number {
 }
 
 export function createFractionalNumber(number : number) : string {
-  if (Number.isInteger(number)) return String(number);
+  if (Number.isInteger(number)) return String(number)
 
   // Try to factorize with denominators from 2..4
   for (let denominator = 2; denominator <= 4; denominator++) {
@@ -62,13 +72,13 @@ export function createFractionalNumber(number : number) : string {
     if (error < 0.001) {
       let wholes = Math.floor(number)
       if (wholes > 10) continue
-      if (wholes == 0) wholes = ''
       let nominator = Math.round(number*denominator) - wholes*denominator
-      let text = `${wholes} ${nominator}/${denominator}`
+      let wholesText = wholes == 0 ? '' : wholes.toString()
+      let text = `${wholesText} ${nominator}/${denominator}`
       return insertTypographicalFractions(text)
     }
   }
 
   // No fraction found
-  return number.toFixed(2).replace('.', ',');
+  return denormalizeDecimalPoint(number.toFixed(2))
 }

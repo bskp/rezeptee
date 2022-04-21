@@ -1,6 +1,7 @@
 {
   "name": "rezeptee",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "meteor --exclude-archs web.browser.legacy --port 0:3000",
     "visualize": "meteor --production --extra-packages bundle-visualizer",
