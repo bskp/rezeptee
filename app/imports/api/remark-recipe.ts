@@ -10,6 +10,7 @@ import {Code, Paragraph, PhrasingContent, Text} from 'mdast'
 const remarkRecipe: Plugin = function () {
   const data = this.data()
 
+  // Disable ATX-Headers -- Hashes (#) are used for tags instead
   add('micromarkExtensions', {disable: {null: ['headingAtx']}})
 
   const transformer: Transformer = (tree) => {

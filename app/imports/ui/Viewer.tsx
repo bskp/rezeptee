@@ -1,14 +1,14 @@
 import {useNavigate} from "react-router-dom";
 import {renderMdast} from 'mdast-react-render';
 import schema from "/imports/ui/recipe-schema";
-import React, {useState} from "react";
+import React, {TouchEventHandler} from "react";
 import DocumentTitle from "react-document-title"
 import {Content} from "/imports/ui/App";
 import { useSearchParams } from "react-router-dom";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
-export const FactorContext = React.createContext({factor: 1, setFactor: f => {} })
+export const FactorContext = React.createContext({factor: 1, setFactor: () => {} })
 
 export const Viewer: Content = ({rezept}) => {
   let navigate = useNavigate();
@@ -25,17 +25,12 @@ export const Viewer: Content = ({rezept}) => {
     navigate(`/${rezept.slug}/edit`)
   }
 
-  let [secondTap, setSecondTap] = useState(false)
-  const touchStartHandler = event => {
-    if (!secondTap) {
-      setSecondTap(true)
-      setTimeout( () => {console.log("vorbei"); setSecondTap(false)}, 200)
-      console.log("los")
-      return false
+
+  const touchStartHandler : TouchEventHandler = (event) => {
+    if (event.touches.length == 3) {
+      event.preventDefault();
+      navigateToEdit()
     }
-    console.log("yess")
-    event.preventDefault();
-    navigateToEdit()
   }
 
   const contextMenuHandler = event => {

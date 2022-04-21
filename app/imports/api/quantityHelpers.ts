@@ -1,4 +1,3 @@
-import exp from "constants";
 
 export function expandTypographicalFractions(text: string) {
   text = text.replace('½', ' 1/2');
@@ -20,10 +19,6 @@ export function insertTypographicalFractions(text: string) {
 
 export function normalizeDecimalPoint(text: string) {
   return text.replace(',', '.')
-}
-
-export function denormalizeDecimalPoint(text: string) {
-  return text.replace('.', ',')
 }
 
 export const conversions = `
@@ -80,5 +75,6 @@ export function createFractionalNumber(number : number) : string {
   }
 
   // No fraction found
-  return denormalizeDecimalPoint(number.toFixed(2))
+  const numberFormatter = new Intl.NumberFormat('de-de', {maximumFractionDigits: 2})
+  return numberFormatter.format(number)
 }
