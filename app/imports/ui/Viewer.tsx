@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
-export const FactorContext = React.createContext({factor: 1, setFactor: () => {} })
+export const FactorContext = React.createContext({factor: 1, setFactor: factor => {} })
 
 export const Viewer: Content = ({rezept}) => {
   let navigate = useNavigate();

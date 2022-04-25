@@ -12,7 +12,7 @@ type ContentWrapperProps = {
 
 export function ContentWrapper(props: ContentWrapperProps) {
   const isLoading = useSubscribe('rezepte');
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
   const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
   let slug = props.slug || useParams().rezept;
 
@@ -44,6 +44,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
   let [offsetTransform, setOffsetTransform] = useState("");
 
   const touchStartHandler : TouchEventHandler = event => {
+    if (!ref.current) return
     const t = event.touches[0]
     setStart({x: t.pageX, y: t.pageY})
     setOffsetTransform(window.getComputedStyle(ref.current).transform)
@@ -77,7 +78,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
   let baseTransform = sidebarCollapse ? "translateX(0)" : ""
 
   const touchEndHandler : TouchEventHandler = event => {
-    // @ts-ignore
+    if (!ref.current) return
     const minDistance = 10;
     if (Math.abs(swipe.x) > minDistance) setSidebarCollapse(!sidebarCollapse)
     setSwipe({x: 0, y: 0})

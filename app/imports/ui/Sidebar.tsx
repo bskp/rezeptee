@@ -58,7 +58,7 @@ export const Sidebar = (props: SidebarProps) => {
     })
   }
 
-  let input = useRef()
+  let input = useRef<HTMLInputElement>(null)
 
   return <aside id="sidebar">
     <div id="filter">

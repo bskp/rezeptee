@@ -2,15 +2,19 @@ TODO
 ====
 
 - "filter löschen" am ende der liste
-- pinch-geste nicht als doppeltap
 - bugfix chrome/linux für d+d
 - tilde nicht rendern / blockquotes
-- fehlende elemente renderbar
 - css aufräumen
 - redli für mengenanpassung auf touchdevices
 - verlassen-warnung
 - testsrunner fixen
+- infoblasen tags
 
+testen
+------
+
+- fehlende elemente renderbar
+- pinch-geste nicht als doppeltap
 
 Getan
 ---------

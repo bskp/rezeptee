@@ -56,12 +56,12 @@ function QuantityEditor(props: QuantityProps) {
     }
   }
 
-  const ref = useRef()
+  const ref = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (inputQuantity == quantity.toString() && factor == 1) {
-      ref.current.select();
+      ref.current?.select();
     } else {
-      ref.current.focus();
+      ref.current?.focus();
     }
   })
 
