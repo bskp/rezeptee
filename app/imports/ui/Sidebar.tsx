@@ -4,6 +4,7 @@ import NavLink from "./NavLink";
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {Taglist} from "/imports/ui/Taglist";
+import {useMatomo} from "@datapunt/matomo-tracker-react";
 
 interface SidebarProps {
   rezept?: Rezept,
@@ -13,6 +14,7 @@ interface SidebarProps {
 
 export const Sidebar = (props: SidebarProps) => {
   const [filter, setFilter] = useState('');
+  const { trackSiteSearch } = useMatomo();
 
   function getFilterTogglingCallback(term: string) {
     return () => setFilter(filter => {
@@ -52,6 +54,14 @@ export const Sidebar = (props: SidebarProps) => {
     })
   }
 
+  const handleBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+    trackSiteSearch({
+      keyword: filter,
+      category: '',
+      count: filtered.length
+    })
+  };
+
   let input = useRef<HTMLInputElement>(null)
 
   return <aside id="sidebar">
@@ -63,6 +73,7 @@ export const Sidebar = (props: SidebarProps) => {
              placeholder="Etwas kochen mit…"
              onKeyDown={handleKeyDown}
              onChange={handleChange}
+             onBlur={handleBlur}
              value={filter}/>
 
       <span onClick={() => {
