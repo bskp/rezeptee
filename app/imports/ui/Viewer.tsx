@@ -2,9 +2,9 @@ import {useNavigate} from "react-router-dom";
 import {renderMdast} from 'mdast-react-render';
 import schema from "/imports/ui/recipe-schema";
 import React, {TouchEventHandler} from "react";
-import DocumentTitle from "react-document-title"
 import {Content} from "/imports/ui/App";
 import { useSearchParams } from "react-router-dom";
+import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
@@ -45,7 +45,7 @@ export const Viewer: Content = ({rezept}) => {
   const vdom = renderMdast(rezept.mdast, schema)
 
   return (<>
-    <DocumentTitle title={rezept.name}/>
+    <TrackingDocumentTitle title={rezept.name}/>
     <FactorContext.Provider value={factorValue}>
       <div className="page"
            onTouchStart={touchStartHandler}

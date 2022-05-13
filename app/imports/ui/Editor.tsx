@@ -3,9 +3,9 @@ import {useNavigate} from "react-router-dom";
 import {Rezept} from "/imports/api/models";
 import {Meteor} from "meteor/meteor";
 import {ImageList} from "/imports/ui/Images";
-import DocumentTitle from "react-document-title";
 import TextareaAutosize from "react-textarea-autosize";
 import {Content} from "/imports/ui/App";
+import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 
 export const Editor: Content = function ({rezept}) {
   let [text, setText] = useState(rezept.markdown);
@@ -75,7 +75,7 @@ export const Editor: Content = function ({rezept}) {
   }
 
   return <div onContextMenu={handleContextMenu}>
-    <DocumentTitle title={rezept.name + " (bearbeite)"}/>
+    <TrackingDocumentTitle title={rezept.name + " (bearbeite)"}/>
     <aside id="tools">
       <ImageList namespace={rezept._lineage}/>
       <a onClick={save} className="button">Sichern</a>
