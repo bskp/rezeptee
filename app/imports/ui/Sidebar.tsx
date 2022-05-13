@@ -1,8 +1,9 @@
-import {Rezept, Tag, Tags} from "../api/models";
+import {Rezept} from "../api/models";
 import React, {useRef, useState} from "react";
 import NavLink from "./NavLink";
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import {Taglist} from "/imports/ui/Taglist";
 
 interface SidebarProps {
   rezept?: Rezept,
@@ -12,9 +13,6 @@ interface SidebarProps {
 
 export const Sidebar = (props: SidebarProps) => {
   const [filter, setFilter] = useState('');
-
-  const isLoading = useSubscribe('tags');
-  let tags: Tag[] = useFind(() => Tags.find({name: {$ne: 'privat'}}, {sort: {name: 1}}));
 
   function getFilterTogglingCallback(term: string) {
     return () => setFilter(filter => {
@@ -40,11 +38,7 @@ export const Sidebar = (props: SidebarProps) => {
     setFilter(event.currentTarget.value);
   }
 
-  if (isLoading()) {
-    tags = [];
-  }
-
-  let filtered = props.rezepte.filter(rez => !rez.tagNames.includes('privat'))
+  let filtered = props.rezepte.filter(rez => !rez.tagNames.includes('meta'))
 
   for (let term of filter.split(" ")) {
     term = term.toLowerCase()
@@ -77,18 +71,7 @@ export const Sidebar = (props: SidebarProps) => {
       }} id="clear_filter">×</span>
     </div>
     <div id="lists">
-      <ul id="taglist" >
-        {tags.map(tag => {
-          let active = props.rezept?.tagNames.includes(tag.name) ? 'active' : undefined;
-          let bgColor = active ? 'hsl(' + hash(tag.name) + ',30%,50%)' : undefined
-          return <li key={tag._id} className={active}>
-            <a onClick={getFilterTogglingCallback(tag.name)}
-               className={active}
-               style={{backgroundColor: bgColor}}
-            >{tag.name}</a>
-          </li>
-        })}
-      </ul>
+      <Taglist activeTags={props.rezept?.tagNames} togglerCallbackFactory={getFilterTogglingCallback}/>
       <ul id="rezepte" >
         <li key="create">
           <NavLink to="/create">Neues Rezept…</NavLink>
@@ -105,13 +88,3 @@ export const Sidebar = (props: SidebarProps) => {
   </aside>
 }
 
-function hash(str) {
-  // From http://werxltd.com
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    let char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return hash;
-}
