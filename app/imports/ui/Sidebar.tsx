@@ -84,9 +84,13 @@ export const Sidebar = (props: SidebarProps) => {
     <div id="lists">
       <Taglist activeTags={props.rezept?.tagNames} togglerCallbackFactory={getFilterTogglingCallback}/>
       <ul id="rezepte" >
-        <li key="create">
-          <NavLink to="/create">Neues Rezept…</NavLink>
+        <li key="intro">
+          <NavLink to="/">Rezept.ee Intro</NavLink>
         </li>
+        <li key="create">
+          <NavLink to="/create">Neues Rezept</NavLink>
+        </li>
+        <hr noshade="noshade" />
         {filtered.map(rezept =>
           <li key={rezept._lineage}>
             <NavLink activeClassName="active"

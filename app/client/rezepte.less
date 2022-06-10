@@ -31,6 +31,18 @@ ul {
   padding: 0;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}
+
 // Layout
 
 body {
@@ -160,6 +172,11 @@ aside#sidebar {
     width: 60%;
     padding-bottom: 1em;
 
+    hr {
+      border: none;
+      margin: 1em 0 0;
+    }
+
     li a {
       display: block;
       border-bottom: 1px solid #666;
@@ -199,6 +216,8 @@ aside#sidebar {
     font-family: camingocode, monospace;
     font-size: 16px;
     padding-bottom: 5em;
+    padding-top: 1em;
+    margin-top: -1em;
     white-space: pre-wrap;
     .noFocusBorder;
     width: calc(100% + @leftCol / 2);
@@ -429,7 +448,7 @@ ul.ingredients {
 
 body {
   font-family: double_pica, serif;
-  font-size: 25px;
+  font-size: 24px;
   cursor: default;
 }
 
@@ -495,20 +514,10 @@ a {
 }
 
 .offset {
-  aside {
-    //margin-left: -@list -@activate_col;
-  }
-
   #mode_flip {
     right: @list;
     left: 0;
     width: auto;
-  }
-}
-
-@media(max-width: 1200px) {
-  body {
-    font-size: 20px;
   }
 }
 
@@ -522,8 +531,28 @@ a {
   }
 }
 
+// Grosse Bildschirme
+@media screen and (min-width: 1200px) {
+  #content {
+    padding-left: 28vw
+  }
+
+  ul.ingredients {
+    width: calc(28vw - 2em);
+    margin-left: -28vw;
+  }
+
+}
+
+@media(max-width: 1200px) {
+  body {
+    font-size: 20px;
+  }
+}
+
+
 // Tablet-Modus
-@media (max-width: 1024px) {
+@media screen and (max-width: 1024px) {
 
   body {
     #mode_flip {
@@ -555,7 +584,7 @@ a {
 }
 
 // Smartphone-Modus
-@media (max-width: 750px) {
+@media screen and (max-width: 750px) {
   .togglerWidth(@activate_col/2);
 
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
@@ -589,7 +618,7 @@ a {
 }
 
 // Kleines Smartphone
-@media (max-width: @list + @activate_col) {
+@media screen and(max-width: @list + @activate_col) {
   .togglerWidth(@activate_col/4);
 }
 
@@ -619,10 +648,12 @@ a {
 
 @media print {
   body {
-    font-size: 16pt;
+    font-size: 14pt;
   }
 
-  aside,
+  * { overflow: visible !important; }
+
+  aside#sidebar,
   #edit_btn {
     display: none;
   }
