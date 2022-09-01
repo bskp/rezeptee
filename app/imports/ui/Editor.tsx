@@ -48,7 +48,7 @@ export const Editor: Content = function ({rezept}) {
       }
       if (
         newRow(/^((    )+) *\S+/, "\n$1") ||
-        newRow(/^( *[\-+*] ) *\S+/, "\n$1 ") ||
+        newRow(/^( *[\-+*]) +\S+/, "\n$1 ") ||
         newRow(/^ *(\d+). *\S+/, (all, d) => "\n" + (Number.parseInt(d, 10) + 1) + ". ")
       ) return
     }

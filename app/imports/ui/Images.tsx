@@ -26,10 +26,9 @@ export function ImageList(props: { namespace: string }) {
              src={Imgs.link(img, 'thumbnail')}
              alt={img.name}
              onDragStart={event => {
-               //const tag = `\n![${img.name}](${img._id})\n`;
                const tag = `\n\n![](${img._id})\n\n`;
                event.dataTransfer.setData('text/plain', tag);
-               event.dataTransfer.effectAllowed = 'linkMove';
+               event.dataTransfer.effectAllowed = 'copy';
                event.dataTransfer.setData('text/x-img-id', img._id);
                setDragInProgress(img._id);
              }}

@@ -48,7 +48,7 @@ export const Sidebar = (props: SidebarProps) => {
       if (rez.name.toLowerCase().includes(term)) return true
       if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true
       for (let ingr of rez.ingredientNames) {
-        if (ingr.startsWith(term)) return true
+        if (ingr.includes(term)) return true
       }
       return false
     })
