@@ -270,19 +270,45 @@ aside#sidebar {
     color: #000;
   }
 
-  img {
-    width: calc(100% + 1em);
-    border-radius: 1.5em;
-    border: 1px solid transparent;
-    min-height: 8em;
-    background-color: #eee;
+  div.img {
     margin: 0 -0.5em 1em;
+    width: calc(100% + 1em);
     max-width: 26em;
+
+    img {
+      border-radius: 1.5em;
+      border: 1px solid transparent;
+      min-height: 8em;
+      width: 100%;
+      background-color: #eee;
+    }
+
+    .legend {
+      font-family: 'pica';
+      font-style: italic;
+      text-align: center;
+      font-size: 0.8em;
+    }
   }
+
+  hr {
+    display: block;
+    text-align: center;
+    border: none;
+    margin: 1.6em 0 1.6em -4em;
+
+    &::before {
+      content: 'OPQ';
+      font-family: flowers1;
+      color: black;
+      font-size: 1.6em;
+    }
+  }
+
 }
 
-aside#tools{
-  width: calc(@leftCol /2 - 1em);
+aside#tools {
+  width: calc(@leftCol / 2 - 1em);
 
   position: fixed;
   left: 0.2em;
@@ -544,7 +570,7 @@ a {
 
 }
 
-@media(max-width: 1200px) {
+@media (max-width: 1200px) {
   body {
     font-size: 20px;
   }
@@ -629,6 +655,7 @@ a {
     width: 100%;
     margin-left: -100%;
   }
+
   #content {
     transform: translateX(-100%);
     padding-left: 20px;
@@ -651,7 +678,9 @@ a {
     font-size: 14pt;
   }
 
-  * { overflow: visible !important; }
+  * {
+    overflow: visible !important;
+  }
 
   aside#sidebar,
   #edit_btn {

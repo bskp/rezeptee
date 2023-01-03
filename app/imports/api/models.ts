@@ -12,34 +12,6 @@ import gm from "gm";
 
 const CURRENT_PARSER_VERSION = 0;
 
-const tags = {
-  whiteList: {
-    a: ["href", "title"],
-    span: ["class"],
-    div: ["class", "id"],
-    i: [],
-    b: [],
-    h1: [],
-    h2: [],
-    h3: [],
-    h4: [],
-    section: ["class", "id"],
-    ul: ["class"],
-    u: [],
-    ol: [],
-    li: [],
-    p: ["class", "id"],
-    br: [],
-    strong: [],
-    em: [],
-    code: ["class"],
-    s: [],
-    pre: [],
-    img: ["src", "alt"],
-    abbr: ["class", "title", "data-fingers"]
-  }
-};
-
 
 export class Rezept {
   // Set through instantiation / copy constructor

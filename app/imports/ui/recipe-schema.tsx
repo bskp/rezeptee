@@ -99,6 +99,10 @@ const schema = {
           matchMdast: matchHeading(2),
           component: ({children}) => <h2>{children}</h2>
         },
+        {
+          matchMdast: matchType('thematicBreak'),
+            component: ({value}) => <hr>{value}</hr>
+        },
         paragraphRule,
         listRule,
         {
@@ -111,7 +115,7 @@ const schema = {
               rules: [
                 {
                   matchMdast: matchType("text"),
-                  component: ({value}) => <>{value}</>
+                  component: () => <hr />,
                 },
                 {
                   matchMdast: matchType("quantity"),

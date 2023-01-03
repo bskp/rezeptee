@@ -5,7 +5,10 @@ import classNames from "classnames";
 
 export function Image({id, alt}) {
   const src = `${Imgs.downloadRoute}/imgs/${id}/full/${id}`;
-  return <img src={src} alt={alt}/>
+  return <div className="img">
+    <img src={src} alt={alt}/>
+    <div className="legend">{alt}</div>
+  </div>
 }
 
 export function ImageList(props: { namespace: string }) {

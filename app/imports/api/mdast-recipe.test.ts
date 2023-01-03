@@ -3,7 +3,8 @@ import assert from "assert";
 
 describe('Ingredient Node parsing', () => {
   it('Typographical Fractional Quantity', () => {
-    const expected = [
+    const mdast = splitIngredients("¾dl Suppe")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "¾"
@@ -16,13 +17,12 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Suppe"
       }
-    ]
-    const mdast = splitIngredients("¾dl Suppe")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 
   it('Fractional Quantity', () => {
-    const expected = [
+    const mdast = splitIngredients("3/4 dl Suppe")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "¾"
@@ -35,13 +35,12 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Suppe"
       }
-    ]
-    const mdast = splitIngredients("3/4 dl Suppe")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 
   it('Quantity with decimal comma', () => {
-    const expected = [
+    const mdast = splitIngredients("1,4dl Milch")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "1,4"
@@ -54,13 +53,12 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Milch"
       }
-    ]
-    const mdast = splitIngredients("1,4dl Milch")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 
   it('Quantity with decimal point', () => {
-    const expected = [
+    const mdast = splitIngredients("1.3dl Milch")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "1.3"
@@ -73,13 +71,12 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Milch"
       }
-    ]
-    const mdast = splitIngredients("1.3dl Milch")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 
   it('Composed Typographical Fractional Quantity', () => {
-    const expected = [
+    const mdast = splitIngredients("1½ EL Maisstärke")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "1½"
@@ -92,24 +89,22 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Maisstärke"
       }
-    ]
-    const mdast = splitIngredients("1½ EL Maisstärke")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 
   it('No Quantities', () => {
-    const expected = [
+    const mdast = splitIngredients("Hagelzucker")
+    assert.deepEqual(mdast, [
       {
         "type": "ingredient",
         "value": "Hagelzucker"
       }
-    ]
-    const mdast = splitIngredients("Hagelzucker")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 
   it('Word boundary after unit', () => {
-    const expected = [
+    const mdast = splitIngredients("1 kleine Tomate")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "1"
@@ -118,13 +113,12 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "kleine Tomate"
       }
-    ]
-    const mdast = splitIngredients("1 kleine Tomate")
-    assert.deepEqual(mdast, expected);
+    ]);
   })
 
   it('Prosaic units', () => {
-    const expected = [
+    const mdast = splitIngredients("1 Dose Mais")
+    assert.deepEqual(mdast, [
       {
         "type": "quantity",
         "value": "1"
@@ -137,13 +131,30 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Mais"
       }
-    ]
-    const mdast = splitIngredients("1 Dose Mais")
-    assert.deepEqual(mdast, expected);
+    ]);
+  })
+
+  it('Prosaic units which start with SI prefixes', () => {
+    const mdast = splitIngredients("8 dünne Plätzli")
+    assert.deepEqual(mdast, [
+      {
+        "type": "quantity",
+        "value": "8"
+      },
+      {
+        "type": "unit",
+        "value": ""
+      },
+      {
+        "type": "ingredient",
+        "value": "dünne Plätzli"
+      }
+    ]);
   })
 
   it('Multitple Quantities per Row', () => {
-    const expected = [
+    const mdast = splitIngredients("ca. 6-10 EL Zucker")
+    assert.deepEqual(mdast, [
       {
         "type": "text",
         "value": "ca."
@@ -168,8 +179,6 @@ describe('Ingredient Node parsing', () => {
         "type": "ingredient",
         "value": "Zucker"
       }
-    ]
-    const mdast = splitIngredients("ca. 6-10 EL Zucker")
-    assert.deepEqual(mdast, expected);
+    ]);
   });
 });
