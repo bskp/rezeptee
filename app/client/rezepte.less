@@ -445,7 +445,7 @@ ul.ingredients {
     &:hover span.quantity,
     input.quantity {
       background-color: #ddd;
-      border-radius: 0.2em;
+      border-radius: 0.4em;
       margin: 0 0;
       padding: 0 0.1em;
     }
@@ -454,18 +454,14 @@ ul.ingredients {
 
   input.quantity {
     outline: none;
-
-    &.invalid {
-      color: darkred;
-    }
-  }
-
-  .quantity {
   }
 
   .unit {
     margin-left: 0;
-    margin-right: 0.2em;
+
+    &:empty {
+      display: none;
+    }
   }
 
 }

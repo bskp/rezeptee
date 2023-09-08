@@ -3,7 +3,8 @@ module.exports = {
   servers: {
     one: {
       host: process.env.SSH_HOST,
-      username: process.env.SSH_USER
+      username: process.env.SSH_USER,
+      pem: '~/.ssh/id_rsa',
     }
   },
 
@@ -24,7 +25,7 @@ module.exports = {
     },
 
     env: {
-      PORT: process.env.INTERNAL_PORT,
+      PORT: process.env.PROXY_PORT,
       ROOT_URL: 'https://' + process.env.DOMAIN,
       MONGO_URL: 'mongodb://mongodb/meteor',
       MONGO_OPLOG_URL: 'mongodb://mongodb/local',
@@ -39,15 +40,7 @@ module.exports = {
 
     // Show progress bar while uploading bundle to server
     // You might need to disable it on CI servers
-    enableUploadProgressBar: true
-  },
-
-  hooks: {
-    'pre.meteor.deploy': {
-      remoteCommand:
-      // If no config exists, a default one is added to /etc/caddy/mup-sites
-      'CONF="/etc/caddy/mup-sites/' + process.env.DOMAIN + '" && test -f "$CONF" || echo "' + process.env.DOMAIN + ' {\n\treverse_proxy :' + process.env.INTERNAL_PORT + '\n}" > $CONF && sudo systemctl restart caddy'
-    }
+    enableUploadProgressBar: false
   },
 
   mongo: {

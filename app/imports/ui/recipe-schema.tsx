@@ -125,7 +125,7 @@ const schema = {
                 {
                   matchMdast: matchType("unit"),
                   props: node => ({value: node.value}),
-                  component: ({value}) => <span className={"unit"}>{value}</span>,
+                  component: ({value}) => <span className={"unit"}>{value.trim()}</span>,
                 },
                 {
                   matchMdast: matchType("ingredient"),
@@ -142,10 +142,12 @@ const schema = {
 }
 
 function IngredientItem(props: { children }) {
-  const ref = useRef()
+  const ref = useRef<HTMLLIElement>(null)
   const clickHandler: React.MouseEventHandler = event => {
-    const quantityNode = ref.current.querySelector('.quantity');
-    if (quantityNode) quantityNode.click()
+    const quantityNode = ref?.current?.querySelector('.quantity');
+    if (quantityNode) { // @ts-ignore
+      quantityNode.click()
+    }
   }
 
   return <li onClick={clickHandler} ref={ref}>{props.children}</li>;
