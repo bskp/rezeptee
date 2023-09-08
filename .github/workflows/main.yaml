@@ -45,7 +45,7 @@ jobs:
         run: curl https://install.meteor.com/ | sh
 
       - name: Bundle the app and upload to Hoster
-        run: cd ./deploy && npx mup deploy
+        run: npx mup deploy
         env:
           SSH_USER: ${{ vars.SSH_USER }}
           SSH_HOST: ${{ vars.SSH_HOST }}
