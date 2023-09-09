@@ -1,8 +1,6 @@
 import {Rezept} from "../api/models";
 import React, {useRef, useState} from "react";
-import NavLink from "./NavLink";
-// @ts-ignore
-import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import {NavLink} from "react-router-dom";
 import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 
@@ -90,12 +88,10 @@ export const Sidebar = (props: SidebarProps) => {
         <li key="create">
           <NavLink to="/create">Neues Rezept…</NavLink>
         </li>
-        <hr noshade="noshade" />
+        <hr />
         {filtered.map(rezept =>
           <li key={rezept._lineage}>
-            <NavLink activeClassName="active"
-                     to={'/' + rezept.slug}>{rezept.name}
-            </NavLink>
+            <NavLink to={'/' + rezept.slug}>{rezept.name}</NavLink>
           </li>
         )}
       </ul>

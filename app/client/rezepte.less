@@ -9,7 +9,7 @@
 @gutter: 3rem;
 @activate_col: 50px;
 @list: 350px;
-@list_desktop: 300px;
+@list_desktop: 400px;
 
 // Fixes
 
@@ -281,6 +281,8 @@ aside#sidebar {
       min-height: 8em;
       width: 100%;
       background-color: #eee;
+      filter: brightness(100%) contrast(100%);
+      transition: filter 0.5s;
     }
 
     .legend {
@@ -356,8 +358,6 @@ aside#tools {
       width: 100%;
       min-height: 4em;
       border-radius: inherit;
-      cursor: -moz-grab;
-      cursor: -webkit-grab;
       cursor: grab;
       opacity: 1;
       font-size: 0;
@@ -417,7 +417,7 @@ aside#tools {
 }
 
 .hover {
-  box-shadow: #0000005c 0px 6px 22px, #00000026 0 1px 5px;
+  box-shadow: #0000005c 0 6px 22px, #00000026 0 1px 5px;
 }
 
 ul.ingredients {
@@ -563,12 +563,17 @@ a {
     width: calc(28vw - 2em);
     margin-left: -28vw;
   }
-
 }
 
 @media (max-width: 1200px) {
   body {
     font-size: 20px;
+  }
+}
+
+@media (max-width: 1400px) {
+  aside#sidebar {
+    width: calc(@list_desktop*0.8);
   }
 }
 
@@ -594,7 +599,7 @@ a {
       background-color: #ccc;
 
       .page img {
-        filter: brightness(50%);
+        filter: brightness(80%) contrast(80%);
       }
     }
 

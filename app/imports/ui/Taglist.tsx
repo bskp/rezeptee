@@ -1,6 +1,5 @@
-import {Rezept, Rezepte, Tag, Tags} from "../api/models";
-import React, {useRef, useState} from "react";
-import NavLink from "./NavLink";
+import {Rezepte, Tag, Tags} from "../api/models";
+import React, {useRef} from "react";
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {visit} from "unist-util-visit";
