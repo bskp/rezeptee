@@ -25,8 +25,8 @@ module.exports = {
     },
 
     env: {
-      PORT: process.env.PROXY_PORT,
-      ROOT_URL: 'https://' + process.env.DOMAIN,
+      PORT: 7000,
+      ROOT_URL: 'https://rezept.ee',
       MONGO_URL: 'mongodb://mongodb/meteor',
       MONGO_OPLOG_URL: 'mongodb://mongodb/local',
     },
