@@ -73,9 +73,11 @@ function QuantityEditor(props: QuantityProps) {
                 min={0}
                 ref={ref}
                 size={1}
+                autoFocus
                 style={{width: `${size}em`}}
                 value={inputQuantity}
                 step={step}
+                inputMode="decimal"
                 onKeyDown={handleKeyDown}
                 onBlur={() => props.setEditing(false)}
                 onChange={handleChange}/>

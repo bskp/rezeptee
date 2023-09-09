@@ -1,3 +1,4 @@
+// @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {Rezept, Rezepte} from "/imports/api/models";
 import {useParams} from "react-router-dom";
@@ -77,10 +78,12 @@ export function ContentWrapper(props: ContentWrapperProps) {
 
   let baseTransform = sidebarCollapse ? "translateX(0)" : ""
 
-  const touchEndHandler : TouchEventHandler = event => {
+  const touchEndHandler : TouchEventHandler = () => {
     if (!ref.current) return
     const minDistance = 10;
-    if (Math.abs(swipe.x) > minDistance) setSidebarCollapse(!sidebarCollapse)
+    if (Math.abs(swipe.x) > minDistance) {
+      setSidebarCollapse(!sidebarCollapse)
+    }
     setSwipe({x: 0, y: 0})
     ref.current.style.transition = "0.5s";
     ref.current.style.transform = baseTransform;
