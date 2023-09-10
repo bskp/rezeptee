@@ -12,15 +12,15 @@ interface SidebarProps {
 
 export const Sidebar = (props: SidebarProps) => {
   const [filter, setFilter] = useState('');
-  const { trackSiteSearch } = useMatomo();
+  const {trackSiteSearch} = useMatomo();
 
   function getFilterTogglingCallback(term: string) {
     return () => setFilter(filter => {
       if (filter.includes(term)) {
         return filter
-        .replaceAll(term, " ")
-        .replaceAll(/#? +/g, " ")
-        .trim();
+          .replaceAll(term, " ")
+          .replaceAll(/#? +/g, " ")
+          .trim();
       } else {
         return (filter.trim() + " #" + term).trim()
       }
@@ -61,6 +61,10 @@ export const Sidebar = (props: SidebarProps) => {
   };
 
   let input = useRef<HTMLInputElement>(null)
+  const introCreateNew = <>
+    <li key="intro"><NavLink to="/">Einführung</NavLink></li>
+    <li key="create"><NavLink to="/create">Neues Rezept…</NavLink></li>
+  </>
 
   return <aside id="sidebar">
     <div id="filter">
@@ -81,14 +85,9 @@ export const Sidebar = (props: SidebarProps) => {
     </div>
     <div id="lists">
       <Taglist activeTags={props.rezept?.tagNames} togglerCallbackFactory={getFilterTogglingCallback}/>
-      <ul id="rezepte" >
-        <li key="intro">
-          <NavLink to="/">Einführung</NavLink>
-        </li>
-        <li key="create">
-          <NavLink to="/create">Neues Rezept…</NavLink>
-        </li>
-        <hr />
+      <ul id="rezepte">
+        {filter == '' ? introCreateNew : undefined}
+        <hr/>
         {filtered.map(rezept =>
           <li key={rezept._lineage}>
             <NavLink to={'/' + rezept.slug}>{rezept.name}</NavLink>

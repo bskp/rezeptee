@@ -106,6 +106,10 @@ const schema = {
         paragraphRule,
         listRule,
         {
+          matchMdast: matchType('blockquote'),
+          component: ({children}) => <em>{children}</em>,
+        },
+        {
           matchMdast: matchType("ingredientList"),
           component: ({children}) => <ul className="ingredients">{children}</ul>,
           rules: [
