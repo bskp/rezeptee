@@ -1,6 +1,6 @@
 import {map} from "unist-util-map";
 import {is} from "unist-util-is";
-import {commentNode, ingredientListNode, tagNode} from "./mdast-recipe-builders";
+import {ingredientListNode, tagNode} from "./mdast-recipe-builders";
 import {listItem} from "mdast-builder";
 import {splitIngredients} from "./mdast-recipe";
 import type {Plugin, Transformer} from 'unified'
@@ -34,8 +34,6 @@ const remarkRecipe: Plugin = function () {
               tags.push(tagNode(match[1]) as PhrasingContent)
             }
             return tags
-          } else if (text.value.match(/~ ?\w*\s*$/)) {
-            return commentNode(text.value) as PhrasingContent
           }
           return child
         });

@@ -41,11 +41,6 @@ const paragraphRule = {
       component: () => ""
     },
     {
-      matchMdast: matchType('comment'),
-      props: node => ({value: node.value}),
-      component: ({value}) => <em>{value}</em>
-    },
-    {
       matchMdast: matchType('link'),
       props: node => ({
         url: node.url,
@@ -107,7 +102,7 @@ const schema = {
         listRule,
         {
           matchMdast: matchType('blockquote'),
-          component: ({children}) => <em>{children}</em>,
+          component: ({children}) => <blockquote>{children}</blockquote>,
         },
         {
           matchMdast: matchType("ingredientList"),
@@ -147,7 +142,7 @@ const schema = {
 
 function IngredientItem(props: { children }) {
   const ref = useRef<HTMLLIElement>(null)
-  const clickHandler: React.MouseEventHandler = event => {
+  const clickHandler: React.MouseEventHandler = () => {
     const quantityNode = ref?.current?.querySelector('.quantity');
     if (quantityNode) { // @ts-ignore
       quantityNode.click()
