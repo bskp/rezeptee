@@ -38,18 +38,24 @@ export const Editor: Content = function ({rezept}) {
       }
     }
     if (event.key == 'Enter') {
-      const newRow = (current: RegExp, next) => {
-        let match = row.match(current)
+      const autocomplete = (given: RegExp, completeWith) => {
+        let match = row.match(given)
         if (match == null) return false
-        let newRow = match[0].replace(current, next)
-        t.setRangeText(newRow, t.selectionStart, t.selectionEnd, "end")
+        if (match[2] == '') {
+          // Nothing was added after the autocompletion.
+          // This means the list/indentation ends, and we remove the previously inserted continuations.
+          t.setRangeText("", t.selectionStart - row.length, t.selectionEnd, "end")
+          return true
+        }
+        let replacement = "\n" + match[0].replace(given, completeWith)
+        t.setRangeText(replacement, t.selectionStart, t.selectionEnd, "end")
         event.preventDefault()
         return true
       }
       if (
-        newRow(/^((    )+) *\S+/, "\n$1") ||
-        newRow(/^( *[\-+*]) +\S+/, "\n$1 ") ||
-        newRow(/^ *(\d+). *\S+/, (all, d) => "\n" + (Number.parseInt(d, 10) + 1) + ". ")
+        autocomplete(/^((?: {4})+) *(\S*)/, "$1") ||
+        autocomplete(/^( *[\-+*]) *(\S*)/, "$1 ") ||
+        autocomplete(/^ *(\d+)\. *(\S*)/, (all, d) => (Number.parseInt(d, 10) + 1) + ". ")
       ) return
     }
   }
