@@ -21,10 +21,13 @@ export const Viewer: Content = ({rezept}) => {
   const factor = Number.parseFloat(queryParams.get(FACTOR_PARAM_NAME) || "1")
   const factorValue = {factor, setFactor}
 
+  if (typeof rezept === 'string') {
+    return <h1>{rezept}</h1>;
+  }
+
   const navigateToEdit = () => {
     navigate(`/${rezept.slug}/edit`)
   }
-
 
   const touchStartHandler : TouchEventHandler = (event) => {
     if (event.touches.length == 3) {

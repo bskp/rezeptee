@@ -64,6 +64,7 @@ export const Sidebar = (props: SidebarProps) => {
   const introCreateNew = <>
     <li key="intro"><NavLink to="/">Einführung</NavLink></li>
     <li key="create"><NavLink to="/create">Neues Rezept…</NavLink></li>
+    <li key="changes"><NavLink to="/changes">Aktuell</NavLink></li>
   </>
 
   return <aside id="sidebar">

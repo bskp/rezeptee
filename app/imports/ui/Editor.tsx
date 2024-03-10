@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Rezept} from "/imports/api/models";
+import {Rezept, Rezepte} from "/imports/api/models";
 import {Meteor} from "meteor/meteor";
 import {ImageList} from "/imports/ui/Images";
 import TextareaAutosize from "react-textarea-autosize";
 import {Content} from "/imports/ui/App";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 
-export const Editor: Content = function ({rezept}) {
+export const Editor = ({rezept}) => {
   let [text, setText] = useState(rezept.markdown);
   let [dirty, setDirty] = useState(false)
   let navigate = useNavigate();
@@ -59,7 +59,6 @@ export const Editor: Content = function ({rezept}) {
       ) return
     }
   }
-
 
   const handleContextMenu: React.MouseEventHandler = event => {
     save();
@@ -116,4 +115,4 @@ export const getTemplateRecipe = () => new Rezept({
     "2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.\n" +
     "\n" +
     "Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr\n"
-});
+} as unknown as Rezept);

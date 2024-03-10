@@ -11,7 +11,7 @@ describe('Ingredient Node parsing', () => {
       },
       {
         "type": "unit",
-        "value": "dl"
+        "value": "dl "
       },
       {
         "type": "ingredient",
@@ -29,7 +29,7 @@ describe('Ingredient Node parsing', () => {
       },
       {
         "type": "unit",
-        "value": "dl"
+        "value": "dl "
       },
       {
         "type": "ingredient",
@@ -47,7 +47,7 @@ describe('Ingredient Node parsing', () => {
       },
       {
         "type": "unit",
-        "value": "dl"
+        "value": "dl "
       },
       {
         "type": "ingredient",
@@ -65,7 +65,7 @@ describe('Ingredient Node parsing', () => {
       },
       {
         "type": "unit",
-        "value": "dl"
+        "value": "dl "
       },
       {
         "type": "ingredient",
