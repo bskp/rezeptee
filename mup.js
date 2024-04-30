@@ -4,7 +4,7 @@ module.exports = {
     one: {
       host: process.env.SSH_HOST,
       username: process.env.SSH_USER,
-      pem: '~/.ssh/id_rsa',
+      pem: '~/.ssh/id_rsa_github_actor',
     }
   },
 
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   mongo: {
-    version: '3.4.1',
+    version: '5.0.26',
     servers: {
       one: {}
     }
