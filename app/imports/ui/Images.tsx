@@ -51,10 +51,8 @@ export function ImageList(props: { namespace: string }) {
 
 
 function Uploader(props: { dragInProgress: boolean, namespace: string }) {
-
   let [dragOver, setDragOver] = useState(false);
   let [progress, setProgress] = useState(-1);
-
   const insert = (files: FileList) => {
     for (const file of files) {
       Imgs.insert({
@@ -88,7 +86,6 @@ function Uploader(props: { dragInProgress: boolean, namespace: string }) {
 
 
   const handleDrop: React.DragEventHandler = event => {
-
     event.preventDefault();
     event.stopPropagation();
 

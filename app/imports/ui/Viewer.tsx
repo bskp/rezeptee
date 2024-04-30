@@ -1,16 +1,17 @@
-import {useNavigate} from "react-router-dom";
-import {renderMdast} from 'mdast-react-render';
+import {useLoaderData, useNavigate} from "react-router-dom";
+import {renderMdast} from '@republik/mdast-react-render';
 import schema from "/imports/ui/recipe-schema";
 import React, {TouchEventHandler} from "react";
 import {Content} from "/imports/ui/App";
 import { useSearchParams } from "react-router-dom";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
+import {Rezept} from "/imports/api/models";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
 export const FactorContext = React.createContext({factor: 1, setFactor: factor => {} })
 
-export const Viewer: Content = ({rezept}) => {
+export const Viewer = () => {
   let navigate = useNavigate();
 
   // Provide "factor" from URL Search Param as context variable
@@ -20,6 +21,8 @@ export const Viewer: Content = ({rezept}) => {
   }
   const factor = Number.parseFloat(queryParams.get(FACTOR_PARAM_NAME) || "1")
   const factorValue = {factor, setFactor}
+
+  const rezept = useLoaderData() as Rezept | string;
 
   if (typeof rezept === 'string') {
     return <h1>{rezept}</h1>;

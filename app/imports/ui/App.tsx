@@ -9,7 +9,6 @@ import {Viewer} from "/imports/ui/Viewer";
 import {attachTouchHandlers} from "/imports/ui/preventBodyBounce";
 import {Changes} from "/imports/ui/Changes";
 
-
 type ContentProps = {
   rezept: Rezept | string
 }

@@ -1,7 +1,6 @@
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {Rezept, Rezepte} from "/imports/api/models";
-import {useParams} from "react-router-dom";
 import React, {TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
 
