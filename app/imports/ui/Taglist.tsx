@@ -1,9 +1,8 @@
-import React, {useRef} from "react";
-import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import React, {useContext, useRef} from "react";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
-import {Tag, Tags} from "/imports/api/models/tag";
 import {Rezepte} from "/imports/api/models/rezept";
+import {DataLoadingContext} from "/imports/ui/ContentWrapper";
 
 interface TaglistProps {
   activeTags?: string[],
@@ -11,10 +10,14 @@ interface TaglistProps {
 }
 
 export const Taglist = (props: TaglistProps) => {
+  let tags: string[] = [];
+  let isLoading = useContext(DataLoadingContext);
 
-  const isLoadingTags = useSubscribe('tags');
-  let tags: Tag[] = useFind(() => Tags.find({name: {$ne: 'meta'}}, {sort: {name: 1}}));
-  if (isLoadingTags()) tags = [];
+  if (!isLoading) {
+    let set = new Set(Rezepte.find({}).map(r => r.tagNames).flat());
+    set.delete('meta');
+    tags = Array.from(set).sort();
+  }
 
   let tagInfoRecipe = Rezepte.findOne({slug: 'tags'});
 
@@ -36,15 +39,15 @@ export const Taglist = (props: TaglistProps) => {
 
   return <ul id="taglist" >
         {tags.map(tag => {
-          let active = props.activeTags?.includes(tag.name) ? 'active' : undefined;
-          let bgColor = active ? 'hsl(' + hash(tag.name) + ',30%,50%)' : undefined
-          return <li key={tag._id} className={active}>
-            <a onClick={(event) => props.togglerCallbackFactory(tag.name)(event.metaKey)}
+          let active = props.activeTags?.includes(tag) ? 'active' : undefined;
+          let bgColor = active ? 'hsl(' + hash(tag) + ',30%,50%)' : undefined
+          return <li key={tag} className={active}>
+            <a onClick={(event) => props.togglerCallbackFactory(tag)(event.metaKey)}
                className={active}
-               title={tagInfo[tag.name]}
+               title={tagInfo[tag]}
                style={{backgroundColor: bgColor}}
                //onMouseEnter={setTooltip(tagInfo[tag.name])}
-            >{tag.name}</a>
+            >{tag}</a>
           </li>
         })}
         <div id="tooltip" ref={tooltip}></div>

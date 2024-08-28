@@ -1,7 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import {WebApp} from "meteor/webapp";
 import {Rezept, Rezepte} from "/imports/api/models/rezept";
-import {Tag, Tags} from "/imports/api/models/tag";
 import {Imgs} from "/imports/api/models/imgs";
 
 Meteor.publish('rezepte', (collection: string | null) =>
@@ -20,7 +19,6 @@ Meteor.publish('rezepte', (collection: string | null) =>
       ]
     }));
 
-Meteor.publish('tags', () => Tags.find({usedIn: {$exists: true, $not: {$size: 0}}}));
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
 
 Meteor.startup(function () {
@@ -47,35 +45,6 @@ Meteor.methods({
         Rezepte.update(stored._id, rezept);
       }
     }
-
-    // Ensure each mentioned tag exists and is referred to.
-    for (let usedTag of rezept.tagNames) {
-      let presentTag = Tags.findOne({name: usedTag});
-      if (presentTag == undefined) {
-        // create new Tag in DB
-        presentTag = new Tag({
-          name: usedTag,
-          description: "",
-        })
-        delete presentTag._id;  // Triggers creation of a new ID
-        presentTag._id = Tags.insert(presentTag);
-      }
-      if (!presentTag.usedIn?.includes(rezept._lineage)) {
-        // Amend missing recipe reference in Tag
-        presentTag.usedIn = presentTag.usedIn ? presentTag.usedIn : []
-        presentTag.usedIn.push(rezept._lineage);
-      }
-
-      Tags.update(presentTag._id, presentTag);
-    }
-
-    // Ensure references in Tags-DB: Is every single one still mentioned?
-    Tags.find({usedIn: rezept._lineage}).forEach(tag => {
-      if (rezept.tagNames.includes(tag.name)) return;
-      tag.usedIn = tag.usedIn.filter(l => l != rezept._lineage)
-      console.log("Removed reference to Tag " + tag.name)
-      Tags.update(tag._id, tag)
-    });
 
     // Archive previous version
     if (stored !== undefined) {
