@@ -19,22 +19,25 @@ export const Sidebar = (props: SidebarProps) => {
   const activeTags = useContext(RezeptContext).rezept?.tagNames ?? [];
 
   function getFilterTogglingCallback(term: string) {
-    return () => setFilter(filter => {
+    return (addTerms: boolean) => setFilter(filter => {
       if (filter.includes(term)) {
         return filter
           .replaceAll(term, " ")
           .replaceAll(/#? +/g, " ")
           .trim();
-      } else {
-        return (filter.trim() + " #" + term).trim()
       }
+      if (!addTerms) {
+        return "#" + term.trim()
+      }
+      return (filter.trim() + " #" + term).trim()
     });
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key == 'Escape') {
-      setFilter("")
-      event.currentTarget.blur()
+      setFilter("");
+      event.currentTarget.blur();
+      event.preventDefault();
     }
   }
 

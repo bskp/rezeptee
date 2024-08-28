@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {MouseEventHandler, useRef} from "react";
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
@@ -40,7 +40,7 @@ export const Taglist = (props: TaglistProps) => {
           let active = props.activeTags?.includes(tag.name) ? 'active' : undefined;
           let bgColor = active ? 'hsl(' + hash(tag.name) + ',30%,50%)' : undefined
           return <li key={tag._id} className={active}>
-            <a onClick={props.togglerCallbackFactory(tag.name)}
+            <a onClick={(event) => props.togglerCallbackFactory(tag.name)(event.metaKey)}
                className={active}
                title={tagInfo[tag.name]}
                style={{backgroundColor: bgColor}}
