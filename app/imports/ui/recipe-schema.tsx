@@ -41,6 +41,10 @@ const paragraphRule = {
       component: () => ""
     },
     {
+      matchMdast: matchType('collection'),
+      component: () => ""
+    },
+    {
       matchMdast: matchType('link'),
       props: node => ({
         url: node.url,

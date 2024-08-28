@@ -8,9 +8,8 @@ export class Tag {
 
   _id?: string
   name: string
-  color: string
   usedIn: string[]
-  description: string
+  collections?: string[]
 }
 export const Tags = new Mongo.Collection<Tag>("tags", {
   transform(doc) {

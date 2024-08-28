@@ -16,7 +16,7 @@ export const parse = md => {
 
 export function getTitle(mdast) {
   let h1 = find(mdast, {type: "heading", depth: 1});
-  return toString(h1 || "(Ohne Titel)");
+  return toString(h1 ?? "(Ohne Titel)");
 }
 
 export function getTags(mdast) {
@@ -25,6 +25,14 @@ export function getTags(mdast) {
     tags.push(toString(node).toLowerCase());
   });
   return tags;
+}
+
+export function getCollections(mdast)  {
+  let collections = [];
+  visit(mdast, 'collection', node => {
+    collections.push(toString(node).toLowerCase());
+  });
+  return collections;
 }
 
 export function getIngredients(mdast) {

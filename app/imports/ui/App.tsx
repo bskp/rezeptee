@@ -1,6 +1,6 @@
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
-import React, {FunctionComponent, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 import {ContentWrapper} from "/imports/ui/ContentWrapper";
 import {Editor, EditorCreate} from "/imports/ui/Editor";

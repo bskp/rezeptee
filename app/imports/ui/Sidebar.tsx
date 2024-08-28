@@ -3,7 +3,7 @@ import {NavLink} from "react-router-dom";
 import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptResolver";
-import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import {useFind} from "meteor/react-meteor-data";
 import {Rezept, Rezepte} from "/imports/api/models/rezept";
 
 interface SidebarProps {
@@ -11,7 +11,6 @@ interface SidebarProps {
 }
 
 export const Sidebar = (props: SidebarProps) => {
-  const isLoading = useSubscribe('rezepte');
   const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
 
   const [filter, setFilter] = useState('');
@@ -70,8 +69,8 @@ export const Sidebar = (props: SidebarProps) => {
   let input = useRef<HTMLInputElement>(null)
   const introCreateNew = <>
     <li key="intro"><NavLink to="/">Einführung</NavLink></li>
+    <li key="changes"><NavLink to="/changes">Änderungen</NavLink></li>
     <li key="create"><NavLink to="/create">Neues Rezept…</NavLink></li>
-    <li key="changes"><NavLink to="/changes">Aktuell</NavLink></li>
   </>
 
   return <aside id="sidebar">

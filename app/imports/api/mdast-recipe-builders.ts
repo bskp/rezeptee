@@ -32,3 +32,4 @@ export const quantityNode = (value: string) => valueNode("quantity", value);
 export const unitNode = (value: string) => valueNode("unit", value);
 export const ingredientNode = (value: string) => valueNode("ingredient", value);
 export const tagNode = (value: string) => valueNode("tag", value);
+export const collectionNode = (value: string) => valueNode("collection", value);

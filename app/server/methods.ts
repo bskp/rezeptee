@@ -4,12 +4,27 @@ import {Rezept, Rezepte} from "/imports/api/models/rezept";
 import {Tag, Tags} from "/imports/api/models/tag";
 import {Imgs} from "/imports/api/models/imgs";
 
-Meteor.publish('rezepte', () => Rezepte.find({active: true}));
+Meteor.publish('rezepte', (collection: string | null) =>
+  (collection !== null && collection !== undefined) ?
+    Rezepte.find({
+      active: true,
+      collections: {$in: [collection, 'global']}
+    })
+    :
+    Rezepte.find({
+      active: true,
+      $or: [
+        {collections: {$exists: false}},
+        {collections: {$size: 0}},
+        {collections: 'global'}
+      ]
+    }));
+
 Meteor.publish('tags', () => Tags.find({usedIn: {$exists: true, $not: {$size: 0}}}));
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
 
-Meteor.startup(function() {
-  WebApp.addHtmlAttributeHook(function() {
+Meteor.startup(function () {
+  WebApp.addHtmlAttributeHook(function () {
     return {
       "lang": "de"
     }

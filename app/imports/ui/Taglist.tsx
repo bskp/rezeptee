@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useRef} from "react";
+import React, {useRef} from "react";
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
@@ -16,11 +16,10 @@ export const Taglist = (props: TaglistProps) => {
   let tags: Tag[] = useFind(() => Tags.find({name: {$ne: 'meta'}}, {sort: {name: 1}}));
   if (isLoadingTags()) tags = [];
 
-  const isLoadingRezepte = useSubscribe('rezepte');
-  let tagInfoRecipe = Rezepte.findOne({slug: 'tags', active: true})
+  let tagInfoRecipe = Rezepte.findOne({slug: 'tags'});
 
   let tagInfo = {};
-  if (!isLoadingRezepte() && tagInfoRecipe) {
+  if (tagInfoRecipe) {
     visit(tagInfoRecipe.mdast, 'listItem', node => {
       const [tag, description=''] = toString(node).split(':', 2)
       tagInfo[tag] = description

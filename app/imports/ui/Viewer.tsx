@@ -1,13 +1,14 @@
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {renderMdast} from '@republik/mdast-react-render';
 import schema from "/imports/ui/recipe-schema";
-import React, {TouchEventHandler, useContext} from "react";
+import React, {createContext, Dispatch, SetStateAction, TouchEventHandler, useContext} from "react";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
-export const FactorContext = React.createContext({factor: 1, setFactor: factor => {} })
+export const FactorContext =
+  React.createContext<{factor: number, setFactor: Dispatch<SetStateAction<number>>}>({factor: 1, setFactor: factor => {} })
 
 const Viewer_ = ()=> {
   let navigate = useNavigate();
@@ -15,10 +16,13 @@ const Viewer_ = ()=> {
 
   // Provide "factor" from URL Search Param as context variable
   let [queryParams, setQueryParams] = useSearchParams()
-  const setFactor = factor => {
-    setQueryParams({[FACTOR_PARAM_NAME]: factor})
+  const setFactor = (factor: number) => {
+    setQueryParams(currentParams => {
+      currentParams.set(FACTOR_PARAM_NAME, String(factor));
+      return currentParams;
+    });
   }
-  const factor = Number.parseFloat(queryParams.get(FACTOR_PARAM_NAME) || "1")
+  const factor = Number.parseFloat(queryParams.get(FACTOR_PARAM_NAME) ?? "1")
   const factorValue = {factor, setFactor}
 
   const navigateToEdit = () => {

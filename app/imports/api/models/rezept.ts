@@ -1,6 +1,6 @@
 import {Random} from "meteor/random";
 import {Node} from "unist";
-import {getIngredients, getTags, getTitle, parse} from "/imports/api/document";
+import {getCollections, getIngredients, getTags, getTitle, parse} from "/imports/api/document";
 import slug from 'slug';
 import {Mongo} from "meteor/mongo";
 
@@ -16,8 +16,9 @@ export class Rezept {
   name: string;
   slug: string;
   mdast: Node;
-  tagNames: Array<string>;
-  ingredientNames: Array<string>;
+  tagNames: string[];
+  ingredientNames: string[];
+  collections?: string[];
 
   // Set upon saving
   _id: string;
@@ -44,7 +45,6 @@ export class Rezept {
 
     // @ts-ignore
     this._id = doc._id ? doc._id : undefined;
-
   }
 
   _parse() {
@@ -57,6 +57,7 @@ export class Rezept {
     this.mdast = mdast;
     this.tagNames = getTags(mdast)
     this.ingredientNames = getIngredients(mdast);
+    this.collections = getCollections(mdast);
   }
 }
 

@@ -1,9 +1,9 @@
 // @ts-ignore
-import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import {useSubscribe} from "meteor/react-meteor-data";
 import React, {createContext, TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
-import {Outlet} from "react-router-dom";
-import { RezeptContext } from "./RezeptResolver";
+import {Outlet, useSearchParams} from "react-router-dom";
+import {RezeptContext} from "./RezeptResolver";
 import {Rezept} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
@@ -11,7 +11,13 @@ type ContentWrapperProps = {
   slug?: string
 };
 
+export const DataLoadingContext = createContext<boolean>(false);
+
 export function ContentWrapper(props: ContentWrapperProps) {
+  let [queryParams, _] = useSearchParams();
+  const collection = queryParams.get('c');
+  const isLoading = useSubscribe('rezepte', collection);
+
   const ref = useRef<HTMLDivElement>(null)
   let [sidebarCollapse, setSidebarCollapse] = useState(true);
 
@@ -23,7 +29,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
   let [swipe, setSwipe] = useState({x: 0, y: 0});
   let [offsetTransform, setOffsetTransform] = useState("");
 
-  const touchStartHandler : TouchEventHandler = event => {
+  const touchStartHandler: TouchEventHandler = event => {
     if (!ref.current) return
     const t = event.touches[0]
     setStart({x: t.pageX, y: t.pageY})
@@ -31,7 +37,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
     ref.current.style.transition = "0s" // disable animation
   };
 
-  const touchMoveHandler : TouchEventHandler = event => {
+  const touchMoveHandler: TouchEventHandler = event => {
     let dX = event.touches[0].pageX - start.x
     let dY = event.touches[0].pageY - start.y
 
@@ -40,7 +46,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
     if (Math.abs(dY) > Math.abs(dX) || Math.abs(dX) < deadZone) {
       dX = 0
     } else {
-      dX = dX - Math.sign(dX)*deadZone
+      dX = dX - Math.sign(dX) * deadZone
     }
 
     // restrict swiping direction
@@ -57,7 +63,7 @@ export function ContentWrapper(props: ContentWrapperProps) {
 
   let baseTransform = sidebarCollapse ? "translateX(0)" : ""
 
-  const touchEndHandler : TouchEventHandler = () => {
+  const touchEndHandler: TouchEventHandler = () => {
     if (!ref.current) return
     const minDistance = 10;
     if (Math.abs(swipe.x) > minDistance) {
@@ -70,17 +76,20 @@ export function ContentWrapper(props: ContentWrapperProps) {
 
   const [rezept, setRezept] = useState<Rezept>({} as Rezept);
   return <RezeptContext.Provider value={{rezept, setRezept}}>
-  <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
-              onTouchStart={touchStartHandler}
-              onTouchMove={touchMoveHandler}
-              onTouchEnd={touchEndHandler}>
+    <DataLoadingContext.Provider value={isLoading()}>
 
-    <section id="content" ref={ref} style={{transform: baseTransform}}>
-      <Outlet />
-    </section>
-    <Sidebar toggler={() => setSidebarCollapse(true)}/>
-    <div onClick={handleSidebarToggle} id="mode_flip"></div>
-  </div>
+      <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
+           onTouchStart={touchStartHandler}
+           onTouchMove={touchMoveHandler}
+           onTouchEnd={touchEndHandler}>
+
+        <section id="content" ref={ref} style={{transform: baseTransform}}>
+          <Outlet/>
+        </section>
+        <Sidebar toggler={() => setSidebarCollapse(true)}/>
+        <div onClick={handleSidebarToggle} id="mode_flip"></div>
+      </div>
+    </DataLoadingContext.Provider>
   </RezeptContext.Provider>
 }
 

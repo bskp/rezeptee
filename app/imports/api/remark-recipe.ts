@@ -1,6 +1,6 @@
 import {map} from "unist-util-map";
 import {is} from "unist-util-is";
-import {ingredientListNode, tagNode} from "./mdast-recipe-builders";
+import {collectionNode, ingredientListNode, tagNode} from "./mdast-recipe-builders";
 import {listItem} from "mdast-builder";
 import {splitIngredients} from "./mdast-recipe";
 import type {Plugin, Transformer} from 'unified'
@@ -34,6 +34,14 @@ const remarkRecipe: Plugin = function () {
               tags.push(tagNode(match[1]) as PhrasingContent)
             }
             return tags
+          }
+          if (text.value.startsWith('@')) {
+            // Collection assignment
+            let collections: PhrasingContent[] = []
+            for (let match of text.value.matchAll(/@?(\S+)($|\s)/g)) {
+              collections.push(collectionNode(match[1]) as PhrasingContent)
+            }
+            return collections
           }
           return child
         });
