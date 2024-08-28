@@ -1,12 +1,10 @@
 import {Meteor} from "meteor/meteor";
 import {WebApp} from "meteor/webapp";
 import {Rezept, Rezepte} from "/imports/api/models/rezept";
-import {Zutaten} from "/imports/api/models/zutat";
 import {Tag, Tags} from "/imports/api/models/tag";
 import {Imgs} from "/imports/api/models/imgs";
 
 Meteor.publish('rezepte', () => Rezepte.find({active: true}));
-Meteor.publish('zutaten', () => Zutaten.find());
 Meteor.publish('tags', () => Tags.find({usedIn: {$exists: true, $not: {$size: 0}}}));
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
 
