@@ -1,7 +1,7 @@
 // if the database is empty on server start, create some sample data.
 
 import {Meteor} from "meteor/meteor";
-import {Rezept, Rezepte} from "../imports/api/models";
+import {Rezept, Rezepte} from "/imports/api/models/rezept";
 
 export const backup = [
   {

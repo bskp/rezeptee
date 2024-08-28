@@ -1,9 +1,10 @@
-import {Imgs} from "/imports/api/models";
 import React, {useState} from "react";
 import {useSubscribe, useTracker} from "meteor/react-meteor-data";
 import classNames from "classnames";
+import {Imgs} from "/imports/api/models/imgs";
 
 export function Image({id, alt}) {
+  // @ts-ignore
   const src = `${Imgs.downloadRoute}/imgs/${id}/full/${id}`;
   return <div className="img">
     <img src={src} alt={alt}/>
@@ -48,7 +49,6 @@ export function ImageList(props: { namespace: string }) {
     {images}
   </ul>
 }
-
 
 function Uploader(props: { dragInProgress: boolean, namespace: string }) {
   let [dragOver, setDragOver] = useState(false);

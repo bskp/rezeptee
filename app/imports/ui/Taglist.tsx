@@ -1,9 +1,9 @@
-import {Rezepte, Tag, Tags} from "../api/models";
 import React, {useRef} from "react";
-// @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
+import {Tag, Tags} from "/imports/api/models/tag";
+import {Rezepte} from "/imports/api/models/rezept";
 
 interface TaglistProps {
   activeTags?: string[],

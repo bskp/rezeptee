@@ -1,13 +1,15 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Rezept, Rezepte} from "/imports/api/models";
 import {Meteor} from "meteor/meteor";
 import {ImageList} from "/imports/ui/Images";
 import TextareaAutosize from "react-textarea-autosize";
-import {Content} from "/imports/ui/App";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
+import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
+import {Rezept} from "/imports/api/models/rezept";
 
-export const Editor = ({rezept}) => {
+const Editor_ = () => {
+  const rezept = useContext(RezeptContext).rezept;
+
   let [text, setText] = useState(rezept.markdown);
   let [dirty, setDirty] = useState(false)
   let navigate = useNavigate();
@@ -94,6 +96,11 @@ export const Editor = ({rezept}) => {
                       minRows={30}/>
   </div>
 }
+export const Editor = () => <RezeptResolver><Editor_/></RezeptResolver>
+export const EditorCreate = () =>
+  <RezeptContext.Provider value={{rezept: getTemplateRecipe()}}>
+    <Editor_/>
+  </RezeptContext.Provider>
 
 export const getTemplateRecipe = () => new Rezept({
   markdown: "#outdoor #vegi\n" +

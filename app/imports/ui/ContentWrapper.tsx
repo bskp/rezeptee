@@ -1,20 +1,18 @@
 // @ts-ignore
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
-import {Rezept, Rezepte} from "/imports/api/models";
-import React, {TouchEventHandler, useEffect, useRef, useState} from "react";
+import React, {createContext, TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
+import {Outlet} from "react-router-dom";
+import { RezeptContext } from "./RezeptResolver";
+import {Rezept} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
-  children: React.FunctionComponentElement<{ rezept: Rezept }>
   rezeptProvider?: Function
   slug?: string
 };
 
 export function ContentWrapper(props: ContentWrapperProps) {
-  const isLoading = useSubscribe('rezepte');
   const ref = useRef<HTMLDivElement>(null)
-  const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
-
   let [sidebarCollapse, setSidebarCollapse] = useState(true);
 
   let handleSidebarToggle = () => {
@@ -70,18 +68,20 @@ export function ContentWrapper(props: ContentWrapperProps) {
     ref.current.style.transform = baseTransform;
   };
 
-
-  return <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
+  const [rezept, setRezept] = useState<Rezept>({} as Rezept);
+  return <RezeptContext.Provider value={{rezept, setRezept}}>
+  <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
               onTouchStart={touchStartHandler}
               onTouchMove={touchMoveHandler}
               onTouchEnd={touchEndHandler}>
 
     <section id="content" ref={ref} style={{transform: baseTransform}}>
-      {props.children}
+      <Outlet />
     </section>
-    <Sidebar rezept={{slug: 'amaretti'}} rezepte={rezepte} toggler={() => setSidebarCollapse(true)}/>
+    <Sidebar toggler={() => setSidebarCollapse(true)}/>
     <div onClick={handleSidebarToggle} id="mode_flip"></div>
   </div>
+  </RezeptContext.Provider>
 }
 
 function usePrevious(value) {

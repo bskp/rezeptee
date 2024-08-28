@@ -1,18 +1,22 @@
-import {Rezept} from "../api/models";
-import React, {useRef, useState} from "react";
+import React, {useContext, useRef, useState} from "react";
 import {NavLink} from "react-router-dom";
 import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
+import {RezeptContext} from "/imports/ui/RezeptResolver";
+import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import {Rezept, Rezepte} from "/imports/api/models/rezept";
 
 interface SidebarProps {
-  rezept?: Rezept,
-  rezepte: Rezept[],
   toggler: Function,
 }
 
 export const Sidebar = (props: SidebarProps) => {
+  const isLoading = useSubscribe('rezepte');
+  const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
+
   const [filter, setFilter] = useState('');
   const {trackSiteSearch} = useMatomo();
+  const activeTags = useContext(RezeptContext).rezept?.tagNames ?? [];
 
   function getFilterTogglingCallback(term: string) {
     return () => setFilter(filter => {
@@ -38,7 +42,7 @@ export const Sidebar = (props: SidebarProps) => {
     setFilter(event.currentTarget.value);
   }
 
-  let filtered = props.rezepte.filter(rez => !rez.tagNames.includes('meta'))
+  let filtered = rezepte.filter(rez => !rez.tagNames.includes('meta'))
 
   for (let term of filter.split(" ")) {
     term = term.toLowerCase()
@@ -85,7 +89,7 @@ export const Sidebar = (props: SidebarProps) => {
       }} id="clear_filter">×</span>
     </div>
     <div id="lists">
-      <Taglist activeTags={props.rezept?.tagNames} togglerCallbackFactory={getFilterTogglingCallback}/>
+      <Taglist activeTags={activeTags} togglerCallbackFactory={getFilterTogglingCallback}/>
       <ul id="rezepte">
         {filter == '' ? introCreateNew : undefined}
         <hr/>

@@ -1,6 +1,9 @@
 import {Meteor} from "meteor/meteor";
-import {Imgs, Rezepte, Rezept, Tag, Tags, Zutaten, Zutat} from "../imports/api/models";
 import {WebApp} from "meteor/webapp";
+import {Rezept, Rezepte} from "/imports/api/models/rezept";
+import {Zutaten} from "/imports/api/models/zutat";
+import {Tag, Tags} from "/imports/api/models/tag";
+import {Imgs} from "/imports/api/models/imgs";
 
 Meteor.publish('rezepte', () => Rezepte.find({active: true}));
 Meteor.publish('zutaten', () => Zutaten.find());
@@ -59,18 +62,6 @@ Meteor.methods({
       tag.usedIn = tag.usedIn.filter(l => l != rezept._lineage)
       console.log("Removed reference to Tag " + tag.name)
       Tags.update(tag._id, tag)
-    });
-
-
-    rezept.ingredients = rezept.ingredients?.map(zutat => {
-      // TODO include stemming and synomonyms
-      let storedZutat = Zutaten.findOne({name: zutat.name});
-      if (storedZutat !== undefined) {
-        return storedZutat;
-      } else {
-        Zutaten.insert(zutat)
-        return zutat;
-      }
     });
 
     // Archive previous version
