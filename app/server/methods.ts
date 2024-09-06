@@ -62,6 +62,6 @@ Meteor.methods({
       Rezepte.insert(rezept);
     }
 
-    return rezept?.slug
+    return rezept.slug
   }
 });

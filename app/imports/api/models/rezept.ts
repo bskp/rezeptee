@@ -39,6 +39,7 @@ export class Rezept {
       this.mdast = doc.mdast
       this.tagNames = doc.tagNames
       this.ingredientNames = doc.ingredientNames
+      this.collections = doc.collections
     } else {
       this._parse();
     }

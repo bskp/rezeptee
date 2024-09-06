@@ -2,7 +2,7 @@
 import {useSubscribe} from "meteor/react-meteor-data";
 import React, {createContext, TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
-import {Outlet, useSearchParams} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 import {RezeptContext} from "./RezeptResolver";
 import {Rezept} from "/imports/api/models/rezept";
 
@@ -13,10 +13,15 @@ type ContentWrapperProps = {
 
 export const DataLoadingContext = createContext<boolean>(false);
 
+export const getSubdomain = () => {
+  const chunks = window.location.hostname.split('.');
+  if (chunks.length == 3 && chunks[1] == 'rezept' && chunks[2] == 'ee') return chunks[0];
+  if (chunks.length == 2 && chunks[1] == 'localhost') return chunks[0];
+  return null;
+}
+
 export function ContentWrapper(props: ContentWrapperProps) {
-  let [queryParams, _] = useSearchParams();
-  const collection = queryParams.get('c');
-  const isLoading = useSubscribe('rezepte', collection);
+  const isLoading = useSubscribe('rezepte', getSubdomain());
 
   const ref = useRef<HTMLDivElement>(null)
   let [sidebarCollapse, setSidebarCollapse] = useState(true);

@@ -29,7 +29,7 @@ const Viewer_ = ()=> {
     navigate(`/${rezept?.slug}/edit`)
   }
 
-  const touchStartHandler : TouchEventHandler = (event) => {
+  const touchStartHandler: TouchEventHandler = (event) => {
     if (event.touches.length == 3) {
       event.preventDefault();
       navigateToEdit()
@@ -46,6 +46,11 @@ const Viewer_ = ()=> {
   }
 
   const vdom = renderMdast(rezept.mdast, schema)
+  const shareData = {title: rezept.name, url: window.location.href};
+
+  let share = navigator.canShare && navigator.canShare(shareData) ?
+    <a id="share" onClick={() => navigator.share(shareData)}></a>
+    : undefined
 
   return (<>
     <TrackingDocumentTitle title={rezept.name}/>
@@ -53,8 +58,9 @@ const Viewer_ = ()=> {
       <div className="page"
            onTouchStart={touchStartHandler}
            onContextMenu={contextMenuHandler}>{vdom}</div>
+      {share}
     </FactorContext.Provider>
   </>);
 }
 
-export const Viewer = () => <RezeptResolver><Viewer_ /></RezeptResolver>
+export const Viewer = () => <RezeptResolver><Viewer_/></RezeptResolver>

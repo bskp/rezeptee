@@ -1,11 +1,13 @@
 TODO
 ====
 
+- heic upload
+- 
+
+
 - "filter löschen" am ende der liste
 - bugfix chrome/linux für d+d
-- tilde nicht rendern / blockquotes
 - css aufräumen
-- redli für mengenanpassung auf touchdevices
 - verlassen-warnung
 - testsrunner fixen
 - infoblasen tags

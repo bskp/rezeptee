@@ -85,8 +85,8 @@ const Editor_ = () => {
     <TrackingDocumentTitle title={rezept.name + " (bearbeite)"}/>
     <aside id="tools">
       <ImageList namespace={rezept._lineage}/>
-      <a onClick={save} className="button">Sichern</a>
-      <a onClick={() => navigate(`/${rezept.slug}`)} className="button">Verwerfen</a>
+      <a onClick={save} className="button ok"></a>
+      <a onClick={() => navigate(`/${rezept.slug}`)} className="button cancel"></a>
     </aside>
     <TextareaAutosize id="editor"
                       onChange={handleChange}
