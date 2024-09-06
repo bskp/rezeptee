@@ -10,7 +10,7 @@
     "@babel/register": "^7.16.7",
     "@babel/runtime": "^7.15.4",
     "@datapunt/matomo-tracker-react": "^0.5.1",
-    "@republik/mdast-react-render": "https://gitpkg.now.sh/republik/plattform/packages/mdast/mdast-react-render?main&scripts.postinstall=npm%20install%20'https%3A%2F%2Fgitpkg.now.sh%2Frepublik%2Fplattform%2Fpackages%2Ftsconfig%3Fmain'%20%26%26%20npm%20run%20build",
+    "@republik/mdast-react-render": "file:./cached_deps/@republik/mdast-react-render",
     "classnames": "^2.3.1",
     "gm": "^1.23.1",
     "mdast-builder": "^1.1.1",
