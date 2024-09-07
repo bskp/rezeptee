@@ -1,5 +1,5 @@
 import {FileRef, FilesCollection} from "meteor/ostrio:files";
-import {default as gmImport} from "gm";
+const gm = require('gm').subClass({ imageMagick: '7+' });
 import {Meteor} from "meteor/meteor";
 import fs from "fs";
 
@@ -11,8 +11,6 @@ if (Meteor.isDevelopment) {
 const bound = Meteor.bindEnvironment((callback) => {
   return callback();
 });
-
-const gm = gmImport.subClass({ imageMagick: '7+' });
 
 const createSizeVersion = function (img: FileRef<any>, version_label: string, transform: (i: gm.State) => gm.State) {
   const version_path = `${fs_storage}/${version_label}/${img._id}.avif`;
