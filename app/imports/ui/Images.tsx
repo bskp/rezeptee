@@ -12,7 +12,11 @@ export function Image({id, alt}) {
   </div>
 }
 
-export function ImageList(props: { namespace: string }) {
+export const ImageList = (props: {
+  namespace: string,
+  text: string,
+  setText: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const isLoadingImages = useSubscribe('files.imgs.all');
   let [dragInProgress, setDragInProgress] = useState("");
 
@@ -29,6 +33,8 @@ export function ImageList(props: { namespace: string }) {
         <img draggable="true"
              src={Imgs.link(img, 'thumbnail')}
              alt={img.name}
+             onError={$event => $event.currentTarget.classList.add('x')}
+             onLoad={$event => $event.currentTarget.classList.remove('x')}
              onDragStart={event => {
                const tag = `\n\n![](${img._id})\n\n`;
                event.dataTransfer.setData('text/plain', tag);
@@ -44,38 +50,57 @@ export function ImageList(props: { namespace: string }) {
     });
   }
 
+  const confirmImageDeletion = (id: string): boolean => {
+    if (!props.text.includes(id)) {
+      return true;
+    }
+    if (!window.confirm(`Dieses Bild (${id}) wird im Rezept verwendet. Willst du es wirklich löschen?`)) {
+      return false;
+    }
+    const re = new RegExp(`!\\[.*?]\\(${id}\\)`, 'g')
+    props.setText(text => text.replace(re, ''));
+    return true;
+  }
+
   return <ul id="imagelist">
-    <Uploader dragInProgress={dragInProgress.length > 0} namespace={props.namespace}/>
+    <Uploader dragInProgress={dragInProgress.length > 0} namespace={props.namespace}
+              confirmImageDeletion={confirmImageDeletion}/>
     {images}
   </ul>
-}
+};
 
-function Uploader(props: { dragInProgress: boolean, namespace: string }) {
+function Uploader(props: { dragInProgress: boolean, namespace: string, confirmImageDeletion: (id: string) => boolean }) {
   let [dragOver, setDragOver] = useState(false);
   let [progress, setProgress] = useState(-1);
   const insert = (files: FileList) => {
-    for (const file of files) {
+    const progress = Array(files.length).fill(0);
+    [...files].forEach((file, i) => {
+      const fileProgress = (p: number) => {
+        progress[i] = p;
+        const sum = progress.reduceRight((acc, cur) => acc + cur, 0);
+        let ratio = sum / files.length;
+        setProgress(ratio < 1 ? ratio : -1);
+      }
       Imgs.insert({
         file: file,
         meta: {namespace: props.namespace},
         chunkSize: 'dynamic',
         onStart: () => {
-          setProgress(0)
+          fileProgress(0);
         },
         onProgress: (progress) => {
-          setProgress((currentProgress) => currentProgress >= 0 ? progress / 100.0 : -1);
+          //setProgress((currentProgress) => currentProgress >= 0 ? progress / 100.0 : -1);
+          fileProgress(progress / 100);
         },
         onUploaded: (error, fileRef) => {
-          setProgress(-1);
+          fileProgress(1);
           if (error) {
             alert('Error during upload: ' + error);
             return;
           }
-          let label = fileRef.name.split('.')[0];
         },
       }, true);
-    }
-
+    });
   }
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
@@ -94,7 +119,7 @@ function Uploader(props: { dragInProgress: boolean, namespace: string }) {
       insert(event.dataTransfer.files);
     }
     let img_id = event.dataTransfer.getData('text/x-img-id');
-    if (img_id) {
+    if (img_id && props.confirmImageDeletion(img_id)) {
       Imgs.remove({_id: img_id});
       setDragOver(false);
       setProgress(-1);

@@ -1,5 +1,5 @@
 import {FileRef, FilesCollection} from "meteor/ostrio:files";
-import gm from "gm";
+import {default as gmImport} from "gm";
 import {Meteor} from "meteor/meteor";
 import fs from "fs";
 
@@ -12,8 +12,10 @@ const bound = Meteor.bindEnvironment((callback) => {
   return callback();
 });
 
+const gm = gmImport.subClass({ imageMagick: '7+' });
+
 const createSizeVersion = function (img: FileRef<any>, version_label: string, transform: (i: gm.State) => gm.State) {
-  const version_path = `${fs_storage}/${version_label}/${img._id}.${img.extension}`;
+  const version_path = `${fs_storage}/${version_label}/${img._id}.avif`;
 
   transform(gm(img.path)).write(version_path, (err) => {
     fs.stat(version_path, (err, stats) => {
@@ -25,9 +27,9 @@ const createSizeVersion = function (img: FileRef<any>, version_label: string, tr
         upd['$set']['versions.' + version_label] = {
           path: version_path,
           size: stats.size,
-          type: img.type,
+          type: 'image/avif',
           name: img.name,
-          extension: img.extension,
+          extension: '.avif',
         };
         return Imgs.update(img._id, upd);
       });
@@ -44,7 +46,7 @@ export const Imgs = new FilesCollection({
   allowClientCode: true, // Allow remove files from Client
   onBeforeUpload: function (file) {
     // Allow upload files under 10MB, and only in png/jpg/jpeg formats
-    if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg|heic/i.test(file.extension)) {
+    if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg|webp|avif|heic/i.test(file.extension)) {
       return true;
     } else {
       return 'Please upload image, with size equal or less than 10MB';

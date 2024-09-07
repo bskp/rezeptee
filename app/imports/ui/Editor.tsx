@@ -84,7 +84,7 @@ const Editor_ = () => {
   return <div onContextMenu={handleContextMenu}>
     <TrackingDocumentTitle title={rezept.name + " (bearbeite)"}/>
     <aside id="tools">
-      <ImageList namespace={rezept._lineage}/>
+      <ImageList namespace={rezept._lineage} text={text} setText={setText}/>
       <a onClick={save} className="button ok"></a>
       <a onClick={() => navigate(`/${rezept.slug}`)} className="button cancel"></a>
     </aside>
