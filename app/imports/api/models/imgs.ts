@@ -1,5 +1,5 @@
 import {FileRef, FilesCollection} from "meteor/ostrio:files";
-const gm = require('gm').subClass({ imageMagick: '7+' });
+const im = require('gm').subClass({ imageMagick: true });
 import {Meteor} from "meteor/meteor";
 import fs from "fs";
 
@@ -15,7 +15,7 @@ const bound = Meteor.bindEnvironment((callback) => {
 const createSizeVersion = function (img: FileRef<any>, version_label: string, transform: (i: gm.State) => gm.State) {
   const version_path = `${fs_storage}/${version_label}/${img._id}.avif`;
 
-  transform(gm(img.path)).write(version_path, (err) => {
+  transform(im(img.path)).write(version_path, (err) => {
     fs.stat(version_path, (err, stats) => {
       bound(() => {
         if (err) console.log(err)
@@ -52,7 +52,7 @@ export const Imgs = new FilesCollection({
   },
 
   onAfterUpload: function (file) {
-    const image = gm(file.path);
+    const image = im(file.path);
     image.size((error, features) => {
       bound(() => {
         if (error) {
