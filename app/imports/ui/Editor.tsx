@@ -6,6 +6,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
 import {Rezept} from "/imports/api/models/rezept";
+import {getSubdomain} from "/imports/ui/ContentWrapper";
 
 const Editor_ = () => {
   const rezept = useContext(RezeptContext).rezept;
@@ -102,24 +103,29 @@ export const EditorCreate = () =>
     <Editor_/>
   </RezeptContext.Provider>
 
-export const getTemplateRecipe = () => new Rezept({
-  markdown: "#outdoor #vegi\n" +
-    "\n" +
-    "Ein Beispielrezept! Der Weg ist das Ziel ~\n" +
-    "\n" +
-    "Sandkuchen à la Bruno\n" +
-    "=====================\n" +
-    "\n" +
-    "Für 2 Personen, ca. 20 min.\n" +
-    "\n" +
-    "    2 Blätter Löwenzahn\n" +
-    "    1 kg Sand, grobkörnig\n" +
-    "    1 l Wasser, brackig\n" +
-    "    10 Margeritenköpfe \n" +
-    "\n" +
-    "\n" +
-    "1. In einem Kessel Wasser abmessen, Sand sorgfältig einrieseln lassen und während 15 min kräftig umrühren.\n" +
-    "2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.\n" +
-    "\n" +
-    "Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr\n"
-} as unknown as Rezept);
+export const getTemplateRecipe = () => {
+  const subdomain = getSubdomain();
+  const collectionMarker = subdomain ? `@${subdomain}\n\n` : ''
+  return new Rezept({
+    markdown: collectionMarker +
+    "#outdoor #vegi\n" +
+      "\n" +
+      "> Ein Beispielrezept! Der Weg ist das Ziel\n" +
+      "\n" +
+      "Sandkuchen à la Bruno\n" +
+      "=====================\n" +
+      "\n" +
+      "Für 2 Personen, ca. 20 min.\n" +
+      "\n" +
+      "    2 Blätter Löwenzahn\n" +
+      "    1 kg Sand, grobkörnig\n" +
+      "    1 l Wasser, brackig\n" +
+      "    10 Margeritenköpfe \n" +
+      "\n" +
+      "\n" +
+      "1. In einem Kessel Wasser abmessen, Sand sorgfältig einrieseln lassen und während 15 min kräftig umrühren.\n" +
+      "2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.\n" +
+      "\n" +
+      "> Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr\n"
+  } as unknown as Rezept);
+};

@@ -4,7 +4,7 @@ import {Rezept, Rezepte} from "/imports/api/models/rezept";
 import {DataLoadingContext} from "/imports/ui/ContentWrapper";
 
 export const RezeptContext =
-  createContext<{ rezept: Rezept, setRezept?: Dispatch<SetStateAction<Rezept>> }>({rezept: {} as Rezept});
+  createContext<{ rezept: Rezept, setRezept?: Dispatch<Rezept> }>({rezept: {} as Rezept});
 
 export function RezeptResolver({children}: { children: ReactNode }) {
   const isLoading = useContext(DataLoadingContext);

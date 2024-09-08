@@ -32,11 +32,11 @@ export const ImageList = (props: {
       return <li key={img._id} className={dragInProgress == img._id ? "gone" : undefined}>
         <img draggable="true"
              src={Imgs.link(img, 'thumbnail')}
-             alt={img.name}
+             alt={img._id}
              onError={$event => $event.currentTarget.classList.add('x')}
              onLoad={$event => $event.currentTarget.classList.remove('x')}
              onDragStart={event => {
-               const tag = `\n\n![](${img._id})\n\n`;
+               const tag = `\n\n![${img.name}](${img._id})\n\n`;
                event.dataTransfer.setData('text/plain', tag);
                event.dataTransfer.effectAllowed = 'copy';
                event.dataTransfer.setData('text/x-img-id', img._id);
@@ -45,7 +45,7 @@ export const ImageList = (props: {
              onDragEnd={event => {
                setDragInProgress("");
              }}
-        />
+        /><span>{img.name.split('.')[0]}</span>
       </li>;
     });
   }

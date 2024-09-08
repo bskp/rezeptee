@@ -1,35 +1,36 @@
 import {FileRef, FilesCollection} from "meteor/ostrio:files";
-const im = require('gm').subClass({ imageMagick: true });
 import {Meteor} from "meteor/meteor";
 import fs from "fs";
+import gm from "gm";
 
-let fs_storage = '/images';  // within docker container
+const im = gm.subClass({ imageMagick: true });
+
+let fsStorage = '/images';  // within docker container
 if (Meteor.isDevelopment) {
-  fs_storage = `${process.env.PWD}/images`;
+  fsStorage = `${process.env.PWD}/images`;
 }
 
 const bound = Meteor.bindEnvironment((callback) => {
   return callback();
 });
 
-const createSizeVersion = function (img: FileRef<any>, version_label: string, transform: (i: gm.State) => gm.State) {
-  const version_path = `${fs_storage}/${version_label}/${img._id}.avif`;
+const createSizeVersion = (img: FileRef<any>, versionLabel: string, transform: (i: gm.State) => gm.State) => {
+  const versionPath = `${fsStorage}/${versionLabel}/${img._id}.avif`;
 
-  transform(im(img.path)).write(version_path, (err) => {
-    fs.stat(version_path, (err, stats) => {
+  transform(im(img.path)).write(versionPath, (err) => {
+    fs.stat(versionPath, (err, stats) => {
       bound(() => {
         if (err) console.log(err)
-        let upd = {
-          $set: {}
-        };
-        upd['$set']['versions.' + version_label] = {
-          path: version_path,
-          size: stats.size,
-          type: 'image/avif',
-          name: img.name,
-          extension: '.avif',
-        };
-        return Imgs.update(img._id, upd);
+        return Imgs.update(img._id, {
+          $set: {
+            [`versions.${versionLabel}`]: {
+              path: versionPath,
+              size: stats.size,
+              type: 'image/avif',
+              name: img.name,
+            }
+          }
+        });
       });
     });
   });
@@ -37,21 +38,22 @@ const createSizeVersion = function (img: FileRef<any>, version_label: string, tr
 
 export const Imgs = new FilesCollection({
   debug: false,
-  storagePath: fs_storage,
+  storagePath: fsStorage,
   permissions: 0o774,
   parentDirPermissions: 0o774,
   collectionName: 'imgs',
   allowClientCode: true, // Allow remove files from Client
-  onBeforeUpload: function (file) {
-    // Allow upload files under 10MB, and only in png/jpg/jpeg formats
-    if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg|webp|avif|heic/i.test(file.extension)) {
-      return true;
-    } else {
-      return 'Please upload image, with size equal or less than 10MB';
+  onBeforeUpload: file => {
+    if (file.size > 1024 * 1024 * 10) {
+      return 'Bild muss kleiner als 10MB sein';
     }
+    if (!(/png|jpg|jpeg|webp|avif|heic/i.test(file.extension))) {
+      return 'Folgende Bildformate werden unterstützt: .png, .jpg, .webp, .avif, .heic';
+    }
+    return true;
   },
 
-  onAfterUpload: function (file) {
+  onAfterUpload: file => {
     const image = im(file.path);
     image.size((error, features) => {
       bound(() => {
@@ -70,7 +72,7 @@ export const Imgs = new FilesCollection({
           }
         });
         createSizeVersion(file, 'thumbnail', i => i.quality(90).resize('300>').gravity('Center'));
-        createSizeVersion(file, 'full', i => i.quality(80).resize('1600>'));
+        createSizeVersion(file, 'full', i => i.quality(60).resize('1600>'));
       })
     }); // size + bound
   }

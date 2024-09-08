@@ -20,7 +20,7 @@ export const getSubdomain = () => {
   return null;
 }
 
-export function ContentWrapper(props: ContentWrapperProps) {
+export const ContentWrapper = (props: ContentWrapperProps) => {
   const isLoading = useSubscribe('rezepte', getSubdomain());
 
   const ref = useRef<HTMLDivElement>(null)
@@ -80,7 +80,18 @@ export function ContentWrapper(props: ContentWrapperProps) {
   };
 
   const [rezept, setRezept] = useState<Rezept>({} as Rezept);
-  return <RezeptContext.Provider value={{rezept, setRezept}}>
+  const setRezeptWithEffect: React.Dispatch<Rezept> = (current ) => {
+    setRezept(previous => {
+      if (previous.slug !== current.slug) {
+        if (ref.current != null) {
+          ref.current.scrollTop = 0;
+        }
+      }
+      return current;
+    });
+  };
+
+  return <RezeptContext.Provider value={{rezept, setRezept: setRezeptWithEffect}}>
     <DataLoadingContext.Provider value={isLoading()}>
 
       <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
@@ -96,12 +107,4 @@ export function ContentWrapper(props: ContentWrapperProps) {
       </div>
     </DataLoadingContext.Provider>
   </RezeptContext.Provider>
-}
-
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
+};
