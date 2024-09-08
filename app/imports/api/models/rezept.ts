@@ -24,22 +24,24 @@ export class Rezept {
   _id: string;
   active: boolean;
   previous_version_id: string;
+  createdAt?: Date;
 
   constructor(doc: Rezept) {
     // Set by server upon saving
     this.markdown = doc.markdown;
     this._lineage = doc._lineage ? doc._lineage : this._lineage;
-    this.active = doc.active
-    this.previous_version_id = doc.previous_version_id
+    this.active = doc.active;
+    this.previous_version_id = doc.previous_version_id;
+    this.createdAt = doc.createdAt;
 
     if (doc._parser_version == CURRENT_PARSER_VERSION) {
-      this._parser_version = doc._parser_version
-      this.name = doc.name
-      this.slug = doc.slug
-      this.mdast = doc.mdast
-      this.tagNames = doc.tagNames
-      this.ingredientNames = doc.ingredientNames
-      this.collections = doc.collections
+      this._parser_version = doc._parser_version;
+      this.name = doc.name;
+      this.slug = doc.slug;
+      this.mdast = doc.mdast;
+      this.tagNames = doc.tagNames;
+      this.ingredientNames = doc.ingredientNames;
+      this.collections = doc.collections;
     } else {
       this._parse();
     }

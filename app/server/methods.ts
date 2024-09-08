@@ -3,11 +3,11 @@ import {WebApp} from "meteor/webapp";
 import {Rezept, Rezepte} from "/imports/api/models/rezept";
 import {Imgs} from "/imports/api/models/imgs";
 
-Meteor.publish('rezepte', (collection: string | null) =>
-  (collection !== null && collection !== undefined) ?
+Meteor.publish('rezepte', (collectionName: string | null) =>
+  (collectionName !== null && collectionName !== undefined) ?
     Rezepte.find({
       active: true,
-      collections: {$in: [collection, 'global']}
+      collections: {$in: [collectionName, 'global']}
     })
     :
     Rezepte.find({
@@ -57,6 +57,7 @@ Meteor.methods({
     // That is the convention to delete a recipe.
     if (rezept.markdown != "") {
       rezept.active = true;
+      rezept.createdAt = new Date();
       // @ts-ignore
       delete rezept._id;  // Triggers creation of a new ID
       Rezepte.insert(rezept);
