@@ -1,9 +1,9 @@
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {renderMdast} from '@republik/mdast-react-render';
 import schema from "/imports/ui/recipe-schema";
 import React, {createContext, Dispatch, SetStateAction, TouchEventHandler, useContext} from "react";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
+import {renderMdast} from "/imports/api/render_mdast/render";
 
 const FACTOR_PARAM_NAME = 'faktor';
 

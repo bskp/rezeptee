@@ -14,13 +14,13 @@ export const Changes = () => {
     return <li><Link to={'/' + rezept.slug}>{rezept.name}</Link>, {date}</li>;
     }
   );
-  const count = Rezepte.find().count();
+  const count = Rezepte.find().count() - 1;
 
   return isLoading ? 'lade' : <>
     <TrackingDocumentTitle title="Aktuelles"/>
     <div className="page">
       <h1>Aktuelles!</h1>
-      Toll, es gibt hier {count} Rezepte zu entdecken.
+      Toll, es gibt hier {count} Rezepte zu entdecken!
 
       <h2>Kürzliche Geändert</h2>
       <ul>

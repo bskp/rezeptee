@@ -1,11 +1,8 @@
 import {parse} from "./document";
 import assert from "assert";
-// @ts-ignore
-import { renderMdast } from 'mdast-react-render';
-// @ts-ignore
-import { matchType, matchHeading, matchParagraph } from 'mdast-react-render/lib/utils';
 import React from "react";
 import {removePosition} from "unist-util-remove-position";
+import {matchHeading, matchParagraph, matchType, renderMdast} from "/imports/api/render_mdast";
 
 const mdast = {
   'type': 'root',

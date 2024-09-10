@@ -1,4 +1,4 @@
-import {matchHeading, matchParagraph, matchType} from '@republik/mdast-react-render';
+import {matchHeading, matchParagraph, matchType} from "/imports/api/render_mdast/utils";
 import React, {useRef} from "react";
 import {Image} from "./Images";
 import {Link} from "react-router-dom";
