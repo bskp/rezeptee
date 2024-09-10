@@ -19,10 +19,10 @@ export const Changes = () => {
   return isLoading ? 'lade' : <>
     <TrackingDocumentTitle title="Aktuelles"/>
     <div className="page">
-      <h1>Aktuelles!</h1>
+      <h1>Aktuelles</h1>
       Toll, es gibt hier {count} Rezepte zu entdecken!
 
-      <h2>Kürzliche Geändert</h2>
+      <h2>Kürzlich geändert</h2>
       <ul>
         {rezepte}
       </ul>
