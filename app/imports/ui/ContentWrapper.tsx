@@ -7,8 +7,7 @@ import {RezeptContext} from "./RezeptResolver";
 import {Rezept} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
-  rezeptProvider?: Function
-  slug?: string
+  allowSwipe: boolean;
 };
 
 export const DataLoadingContext = createContext<boolean>(false);
@@ -35,6 +34,7 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
   let [offsetTransform, setOffsetTransform] = useState("");
 
   const touchStartHandler: TouchEventHandler = event => {
+    if (!props.allowSwipe) return;
     if (!ref.current) return
     const t = event.touches[0]
     setStart({x: t.pageX, y: t.pageY})
@@ -43,6 +43,7 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
   };
 
   const touchMoveHandler: TouchEventHandler = event => {
+    if (!props.allowSwipe) return;
     let dX = event.touches[0].pageX - start.x
     let dY = event.touches[0].pageY - start.y
 
@@ -61,14 +62,16 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
       if (dX < 0) dX = 0;
     }
 
-    // @ts-ignore
-    ref.current.style.transform = offsetTransform + " translateX(" + dX + "px)"
+    if (ref.current) {
+      ref.current.style.transform = offsetTransform + " translateX(" + dX + "px)"
+    }
     setSwipe({x: dX, y: dY})
   };
 
-  let baseTransform = sidebarCollapse ? "translateX(0)" : ""
+  const baseTransform = sidebarCollapse ? "translateX(0)" : ""
 
   const touchEndHandler: TouchEventHandler = () => {
+    if (!props.allowSwipe) return;
     if (!ref.current) return
     const minDistance = 10;
     if (Math.abs(swipe.x) > minDistance) {

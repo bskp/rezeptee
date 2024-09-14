@@ -16,7 +16,7 @@ export const Changes = () => {
   );
   const count = Rezepte.find().count() - 1;
 
-  return isLoading ? 'lade' : <>
+  return isLoading ? <div className="page"><h1>Aktuelles</h1><p>Lade...</p></div> : <>
     <TrackingDocumentTitle title="Aktuelles"/>
     <div className="page">
       <h1>Aktuelles</h1>

@@ -12,13 +12,17 @@ export const App = () => {
   })
 
   const router = createBrowserRouter(createRoutesFromElements(
-    <Route element={<ContentWrapper/>}>
-      <Route path='/' element={<Viewer/>}/>
-      <Route path=':slug' element={<Viewer/>}/>
-      <Route path=':slug/edit' element={<Editor/>}/>
-      <Route path='create' element={<EditorCreate/>}/>
-      <Route path='changes' element={<Changes/>}/>
-    </Route>
+    <>
+      <Route element={<ContentWrapper allowSwipe={true}/>}>
+        <Route path='/' element={<Viewer/>}/>
+        <Route path=':slug' element={<Viewer/>}/>
+        <Route path='create' element={<EditorCreate/>}/>
+        <Route path='changes' element={<Changes/>}/>
+      </Route>
+      <Route element={<ContentWrapper allowSwipe={false}/>}>
+        <Route path=':slug/edit' element={<Editor/>}/>
+      </Route>
+    </>
   ));
 
   return <RouterProvider router={router}/>;

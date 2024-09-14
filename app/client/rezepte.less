@@ -353,11 +353,16 @@ aside#tools {
 
   position: sticky;
   margin-left: calc(-1*@leftCol + 0.7em);
-  height: 0;
+  height: 100vh;
+  top: 0;
+  float: left;
+  display: flex;
+  flex-direction: column;
 
   .button {
     display: block;
     height: 3em;
+    flex-shrink: 0;
     margin: 0 0.5em 1em;
 
     cursor: pointer;
@@ -376,8 +381,9 @@ aside#tools {
     }
   }
 
-  ul {
+  ul#imagelist {
     margin: 0;
+    overflow-y: scroll;
   }
 
   li, label {
@@ -392,7 +398,7 @@ aside#tools {
 
     span {
       display: block;
-      font-size: 14px;
+      font-size: 9px;
     }
 
     &.gone {
@@ -429,6 +435,7 @@ aside#tools {
     border: 3px dashed @grey;
     text-align: center;
     height: @dropperHeight;
+    flex-shrink: 0;
     box-sizing: border-box;
     background-color: transparent;
     cursor: pointer;
@@ -699,11 +706,15 @@ a {
     aside#tools {
       width: 4em;
       float: right;
-      height: unset;
+      height: 50vh;
       background-color: rgba(255, 255, 255, 0.7);
 
       #dropzone {
         height: 4em;
+      }
+
+      ul#imagelist span{
+        font-size: 8px;
       }
     }
   }

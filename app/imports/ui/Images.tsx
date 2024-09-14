@@ -32,7 +32,7 @@ export const ImageList = (props: {
       return <li key={img._id} className={dragInProgress == img._id ? "gone" : undefined}>
         <img draggable="true"
              src={Imgs.link(img, 'thumbnail')}
-             alt={img._id}
+             alt={img.name}
              onError={$event => $event.currentTarget.classList.add('x')}
              onLoad={$event => $event.currentTarget.classList.remove('x')}
              onDragStart={event => {
@@ -45,7 +45,7 @@ export const ImageList = (props: {
              onDragEnd={event => {
                setDragInProgress("");
              }}
-        /><span>{img.name.split('.')[0]}</span>
+        /><span>{img._id}</span>
       </li>;
     });
   }
@@ -62,14 +62,20 @@ export const ImageList = (props: {
     return true;
   }
 
-  return <ul id="imagelist">
+  return <>
     <Uploader dragInProgress={dragInProgress.length > 0} namespace={props.namespace}
               confirmImageDeletion={confirmImageDeletion}/>
-    {images}
-  </ul>
+    <ul id="imagelist">
+      {images}
+    </ul>
+  </>
 };
 
-function Uploader(props: { dragInProgress: boolean, namespace: string, confirmImageDeletion: (id: string) => boolean }) {
+function Uploader(props: {
+  dragInProgress: boolean,
+  namespace: string,
+  confirmImageDeletion: (id: string) => boolean
+}) {
   let [dragOver, setDragOver] = useState(false);
   let [progress, setProgress] = useState(-1);
   const insert = (files: FileList) => {

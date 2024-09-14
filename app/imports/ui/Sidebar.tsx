@@ -16,6 +16,7 @@ export const Sidebar = (props: SidebarProps) => {
   const [filter, setFilter] = useState('');
   const {trackSiteSearch} = useMatomo();
   const activeTags = useContext(RezeptContext).rezept?.tagNames ?? [];
+  const sideBarToggle = () => props.toggler();
 
   function getFilterTogglingCallback(term: string) {
     return (addTerms: boolean) => setFilter(filter => {
@@ -68,9 +69,9 @@ export const Sidebar = (props: SidebarProps) => {
 
   let input = useRef<HTMLInputElement>(null)
   const introCreateNew = <>
-    <li key="intro"><NavLink to="/">Einführung</NavLink></li>
-    <li key="changes"><NavLink to="/changes">Änderungen</NavLink></li>
-    <li key="create"><NavLink to="/create">Neues Rezept…</NavLink></li>
+    <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>
+    <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Änderungen</NavLink></li>
+    <li key="create"><NavLink to="/create" onClick={sideBarToggle}>Neues Rezept…</NavLink></li>
   </>
 
   return <aside id="sidebar">
@@ -95,10 +96,11 @@ export const Sidebar = (props: SidebarProps) => {
       <ul id="rezepte">
         {filter == '' ? introCreateNew : undefined}
         <hr/>
-        {filtered.map(rezept =>
-          <li key={rezept._lineage}>
-            <NavLink to={'/' + rezept.slug} onClick={() => props.toggler()}>{rezept.name}</NavLink>
-          </li>
+        {filtered.map(rezept => {
+          return <li key={rezept._lineage}>
+              <NavLink to={'/' + rezept.slug} onClick={sideBarToggle}>{rezept.name}</NavLink>
+            </li>;
+          }
         )}
       </ul>
     </div>

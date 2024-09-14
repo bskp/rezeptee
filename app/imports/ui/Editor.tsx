@@ -64,7 +64,9 @@ const Editor_ = () => {
   }
 
   const handleContextMenu: React.MouseEventHandler = event => {
-    save();
+    if (event.detail !== 1) {
+      save();
+    }
     event.preventDefault();
   }
 
