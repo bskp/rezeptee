@@ -31,21 +31,6 @@ export const Changes = () => {
     <div className="page">
       <h1>Übersicht</h1>
 
-      <h2>Sammlungen</h2>
-      <p>
-        Derzeit werden {spaces.length} Sammlungen genutzt. Erstelle deine eigene, indem du den gewünschten Namen in die
-        Adressleiste eintippst (<em>wunschname.{loc}</em>).
-        </p><p>
-        Falls noch ungenutzt, gehört er dir!
-      </p>
-      <ul>
-        {spaces.map(space =>
-          <li key={space._id}>
-            <a href={`https://${sub(space._id)}`}>{sub(space._id)}</a> ({space.count} Rezepte)
-          </li>
-        )}
-      </ul>
-
       <h2>Kürzlich geändert in dieser Sammlung</h2>
       <ul>
         {rezepte}
