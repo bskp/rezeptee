@@ -70,3 +70,4 @@ export const Rezepte = new Mongo.Collection<Rezept>("rezepte", {
   }
 });
 
+export const Spaces = new Mongo.Collection<{_id: string, count: number}>("spaces");

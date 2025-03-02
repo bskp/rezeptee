@@ -1,6 +1,6 @@
 // @ts-ignore
 import {useSubscribe} from "meteor/react-meteor-data";
-import React, {createContext, TouchEventHandler, useEffect, useRef, useState} from "react";
+import React, {createContext, TouchEventHandler, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
 import {Outlet} from "react-router-dom";
 import {RezeptContext} from "./RezeptResolver";
@@ -20,7 +20,11 @@ export const getSubdomain = () => {
 }
 
 export const ContentWrapper = (props: ContentWrapperProps) => {
-  const isLoading = useSubscribe('rezepte', getSubdomain());
+  const isLoading = () => {
+    const rezepteLoading = useSubscribe('rezepte', getSubdomain());
+    const statsLoading = useSubscribe('spacesStats');
+    return rezepteLoading() || statsLoading();
+  }
 
   const ref = useRef<HTMLDivElement>(null)
   let [sidebarCollapse, setSidebarCollapse] = useState(true);

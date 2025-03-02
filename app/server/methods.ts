@@ -2,6 +2,7 @@ import {Meteor} from "meteor/meteor";
 import {WebApp} from "meteor/webapp";
 import {Rezept, Rezepte} from "/imports/api/models/rezept";
 import {Imgs} from "/imports/api/models/imgs";
+import { ReactiveAggregate } from 'meteor/jcbernack:reactive-aggregate';
 
 Meteor.publish('rezepte', (collectionName: string | null) =>
   (collectionName !== null && collectionName !== undefined) ?
@@ -20,6 +21,31 @@ Meteor.publish('rezepte', (collectionName: string | null) =>
     }));
 
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
+
+Meteor.publish("spacesStats", function () {
+  ReactiveAggregate(this, Rezepte, [
+    {
+      $addFields: {
+        collections: {
+          $cond: {
+            if: { $eq: ["$collections", []] },
+            then: ["root"],
+            else: "$collections"
+          }
+        }
+      }
+    },
+    {
+      $unwind: "$collections"
+    },
+    {
+      $group: {
+        _id: "$collections",
+        count: { $sum: 1 }
+      }
+    }
+  ], { clientCollection: "spaces" });
+});
 
 Meteor.startup(function () {
   WebApp.addHtmlAttributeHook(function () {

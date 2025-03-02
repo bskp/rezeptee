@@ -143,6 +143,8 @@ aside#sidebar {
       font-size: 0.9em;
 
       cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
       user-select: none;
 
       padding-left: 5em;
@@ -441,7 +443,7 @@ aside#tools {
     cursor: pointer;
 
     input {
-      width: 0;
+      opacity: 0;
     }
 
     &:before {
@@ -708,6 +710,9 @@ a {
       float: right;
       height: 50vh;
       background-color: rgba(255, 255, 255, 0.7);
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
 
       #dropzone {
         height: 4em;
@@ -774,6 +779,7 @@ a {
 
   #content {
     right: 0;
+    padding-top: 0;
     box-shadow: none;
   }
 }

@@ -1,28 +1,52 @@
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import React, {useContext} from "react";
-import {Rezepte} from "/imports/api/models/rezept";
+import {Rezepte, Spaces} from "/imports/api/models/rezept";
 import {DataLoadingContext} from "/imports/ui/ContentWrapper";
 import {DateTime} from "luxon";
 import {Link} from "react-router-dom";
 
-
 export const Changes = () => {
   let isLoading = useContext(DataLoadingContext);
 
-  const rezepte = Rezepte.find({createdAt: {$exists: true}}, { sort: { createdAt: -1 }, limit: 20 }).fetch().map(rezept => {
-    const date = rezept.createdAt ? DateTime.fromJSDate(rezept.createdAt).toRelative() : ''
-    return <li><Link to={'/' + rezept.slug}>{rezept.name}</Link>, {date}</li>;
+  const rezepte = Rezepte
+    .find({createdAt: {$exists: true}}, {sort: {createdAt: -1}, limit: 20})
+    .fetch()
+    .map(rezept => {
+      const date = rezept.createdAt ? DateTime.fromJSDate(rezept.createdAt).toRelative() : ''
+      return <li key={rezept._id}><Link to={'/' + rezept.slug}>{rezept.name}</Link>, {date}</li>;
     }
   );
-  const count = Rezepte.find().count() - 1;
 
-  return isLoading ? <div className="page"><h1>Aktuelles</h1><p>Lade...</p></div> : <>
+  const spaces = isLoading ? [] : Spaces
+    .find()
+    .fetch()
+    .filter(space => space._id !== 'global')
+    .sort((a, b) => b.count - a.count);
+
+  const loc = window.location.host;
+  const sub = (id: string) => (id == 'root' ? '' : id + '.') + loc;
+
+  return isLoading ? <div className="page"><h1>Übersicht</h1><p>Lade...</p></div> : <>
     <TrackingDocumentTitle title="Aktuelles"/>
     <div className="page">
-      <h1>Aktuelles</h1>
-      Toll, es gibt hier {count} Rezepte zu entdecken!
+      <h1>Übersicht</h1>
 
-      <h2>Kürzlich geändert</h2>
+      <h2>Sammlungen</h2>
+      <p>
+        Derzeit werden {spaces.length} Sammlungen genutzt. Erstelle deine eigene, indem du den gewünschten Namen in die
+        Adressleiste eintippst (<em>wunschname.{loc}</em>).
+        </p><p>
+        Falls noch ungenutzt, gehört er dir!
+      </p>
+      <ul>
+        {spaces.map(space =>
+          <li key={space._id}>
+            <a href={`https://${sub(space._id)}`}>{sub(space._id)}</a> ({space.count} Rezepte)
+          </li>
+        )}
+      </ul>
+
+      <h2>Kürzlich geändert in dieser Sammlung</h2>
       <ul>
         {rezepte}
       </ul>

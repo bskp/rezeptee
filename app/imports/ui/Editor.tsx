@@ -109,25 +109,24 @@ export const getTemplateRecipe = () => {
   const subdomain = getSubdomain();
   const collectionMarker = subdomain ? `@${subdomain}\n\n` : ''
   return new Rezept({
-    markdown: collectionMarker +
-    "#outdoor #vegi\n" +
-      "\n" +
-      "> Ein Beispielrezept! Der Weg ist das Ziel\n" +
-      "\n" +
-      "Sandkuchen à la Bruno\n" +
-      "=====================\n" +
-      "\n" +
-      "Für 2 Personen, ca. 20 min.\n" +
-      "\n" +
-      "    2 Blätter Löwenzahn\n" +
-      "    1 kg Sand, grobkörnig\n" +
-      "    1 l Wasser, brackig\n" +
-      "    10 Margeritenköpfe \n" +
-      "\n" +
-      "\n" +
-      "1. In einem Kessel Wasser abmessen, Sand sorgfältig einrieseln lassen und während 15 min kräftig umrühren.\n" +
-      "2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.\n" +
-      "\n" +
-      "> Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr\n"
-  } as unknown as Rezept);
+    markdown: `${collectionMarker}#outdoor #vegi
+
+> Ein Beispielrezept! Der Weg ist das Ziel
+
+Sandkuchen à la Bruno
+=====================
+
+Für 2 Personen, ca. 20 min.
+
+    2 Blätter Löwenzahn
+    1 kg Sand, grobkörnig
+    1 l Wasser, brackig
+    10 Margeritenköpfe 
+
+
+1. In einem Kessel Wasser abmessen, Sand sorgfältig einrieseln lassen und während 15 min kräftig umrühren.
+2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.
+
+> Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr
+`} as unknown as Rezept);
 };

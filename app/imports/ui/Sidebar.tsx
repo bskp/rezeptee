@@ -70,7 +70,7 @@ export const Sidebar = (props: SidebarProps) => {
   let input = useRef<HTMLInputElement>(null)
   const introCreateNew = <>
     <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>
-    <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Änderungen</NavLink></li>
+    <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Übersicht</NavLink></li>
     <li key="create"><NavLink to="/create" onClick={sideBarToggle}>Neues Rezept…</NavLink></li>
   </>
 
