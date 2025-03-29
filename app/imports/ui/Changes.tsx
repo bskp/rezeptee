@@ -23,8 +23,7 @@ export const Changes = () => {
     .filter(space => space._id !== 'global')
     .sort((a, b) => b.count - a.count);
 
-  const loc = window.location.host.split('.').pop();
-  const sub = (id: string) => (id == 'root' ? '' : id + '.') + loc;
+  const sub = (id: string) => (id == 'root' ? '' : id + '.') + 'rezept.ee';
 
   return isLoading ? <div className="page"><h1>Übersicht</h1><p>Lade...</p></div> : <>
     <TrackingDocumentTitle title="Aktuelles"/>
@@ -37,13 +36,13 @@ export const Changes = () => {
       <ul>
         {spaces.map(space =>
           <li key={space._id}>
-            <a href={`http://${sub(space._id)}`}>{sub(space._id)}</a> ({space.count} Rezepte)
+            <a href={`https://${sub(space._id)}`}>{sub(space._id)}</a> ({space.count} Rezepte)
           </li>
         )}
       </ul>
       <p>
         Erstelle deine eigene Sammlung, indem du den gewünschten Namen in die
-        Adressleiste eintippst (<em>wunschname.{loc}</em>).
+        Adressleiste eintippst (<em>wunschname.rezept.ee</em>).
       </p>
       <p>
         Falls noch ungenutzt, kannst du dort deine eigene Sammlung starten!
