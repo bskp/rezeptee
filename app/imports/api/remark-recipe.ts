@@ -1,10 +1,11 @@
 import {map} from "unist-util-map";
 import {is} from "unist-util-is";
-import {collectionNode, ingredientListNode, tagNode} from "./mdast-recipe-builders";
+import {collectionNode, ingredientListNode, quantityNode, tagNode, textNode} from "./mdast-recipe-builders";
 import {listItem} from "mdast-builder";
 import {splitIngredients} from "./mdast-recipe";
 import type {Plugin, Transformer} from 'unified'
 import {Code, Paragraph, PhrasingContent, Text} from 'mdast'
+import {expandTypographicalFractions} from "/imports/api/quantityHelpers";
 
 
 const remarkRecipe: Plugin = function () {
@@ -23,27 +24,27 @@ const remarkRecipe: Plugin = function () {
         )
       } else if (is(node, "paragraph")) {
         const par = node as Paragraph
-        let children = par.children.map(child => {
+        let children = par.children.flatMap(child => {
           if (!is(child, 'text')) return child
-          let text = child as Text
+          const text = child as Text
 
           if (text.value.startsWith('#')) {
             // Tag
-            let tags: PhrasingContent[] = []
-            for (let match of text.value.matchAll(/#?(\S+)($|\s)/g)) {
-              tags.push(tagNode(match[1]) as PhrasingContent)
-            }
-            return tags
+            return [[...text.value.matchAll(/#(\S+)/g)].map(match => tagNode(match[1]) as PhrasingContent)]
           }
           if (text.value.startsWith('@')) {
             // Collection assignment
-            let collections: PhrasingContent[] = []
-            for (let match of text.value.matchAll(/@?(\S+)($|\s)/g)) {
-              collections.push(collectionNode(match[1]) as PhrasingContent)
-            }
-            return collections
+            return [[...text.value.matchAll(/@(\S+)/g)].map(match => collectionNode(match[1]) as PhrasingContent)]
           }
-          return child
+          const regex = /([^$]+)(?:(\${1,3})(\d+(?: \d)?(?:[\/.,]\d+)?))?/g;
+          return [...text.value.matchAll(regex)].map(([match, plaintext, dimension, number]) => {
+            const contents = [textNode(plaintext) as PhrasingContent]
+            if (number !== undefined) {
+              contents.push(quantityNode(expandTypographicalFractions(number), dimension.length) as PhrasingContent);
+            }
+            return contents;
+            }
+          )
         });
 
         par.children = expandNestedArrays(children)

@@ -1,73 +1,51 @@
 import {Random} from "meteor/random";
 import {Node} from "unist";
-import {getCollections, getIngredients, getTags, getTitle, parse} from "/imports/api/document";
+import {getCollections, getIngredients, getTags, getTitle, markdownToAst} from "/imports/api/document";
 import slug from 'slug';
 import {Mongo} from "meteor/mongo";
 
-const CURRENT_PARSER_VERSION = 0;
+export const CURRENT_PARSER_VERSION = 1;
 
-export class Rezept {
-  // Set through instantiation / copy constructor
+export type RezeptDraft = {
   markdown: string;
-  _lineage: string = Random.id();
+  _lineage: string;
 
-  // Set during parsing
   _parser_version: number;
   name: string;
   slug: string;
-  mdast: Node;
   tagNames: string[];
   ingredientNames: string[];
   collections?: string[];
+}
 
-  // Set upon saving
+export type RezeptStored = RezeptDraft & {
   _id: string;
   active: boolean;
   previous_version_id: string;
   createdAt?: Date;
-
-  constructor(doc: Rezept) {
-    // Set by server upon saving
-    this.markdown = doc.markdown;
-    this._lineage = doc._lineage ? doc._lineage : this._lineage;
-    this.active = doc.active;
-    this.previous_version_id = doc.previous_version_id;
-    this.createdAt = doc.createdAt;
-
-    if (doc._parser_version == CURRENT_PARSER_VERSION) {
-      this._parser_version = doc._parser_version;
-      this.name = doc.name;
-      this.slug = doc.slug;
-      this.mdast = doc.mdast;
-      this.tagNames = doc.tagNames;
-      this.ingredientNames = doc.ingredientNames;
-      this.collections = doc.collections;
-    } else {
-      this._parse();
-    }
-
-    // @ts-ignore
-    this._id = doc._id ? doc._id : undefined;
-  }
-
-  _parse() {
-    this._parser_version = CURRENT_PARSER_VERSION;
-
-    let mdast = parse(this.markdown);
-
-    this.name = getTitle(mdast);
-    this.slug = slug(this.name);
-    this.mdast = mdast;
-    this.tagNames = getTags(mdast)
-    this.ingredientNames = getIngredients(mdast);
-    this.collections = getCollections(mdast);
-  }
 }
 
-export const Rezepte = new Mongo.Collection<Rezept>("rezepte", {
-  transform(doc: Rezept) {
-    return new Rezept(doc);
-  }
-});
+export type RezeptParsed = RezeptStored & { mdast: Node }
 
-export const Spaces = new Mongo.Collection<{_id: string, count: number}>("spaces");
+export const parse = (rezept: RezeptStored): RezeptParsed => {
+  const mdast = markdownToAst(rezept.markdown);
+  const name = getTitle(mdast);
+  return ({
+    _id: rezept._id,
+    active: rezept.active,
+    previous_version_id: rezept.previous_version_id,
+    createdAt: rezept.createdAt,
+    markdown: rezept.markdown,
+    _lineage: rezept._lineage ?? Random.id(),
+    _parser_version: CURRENT_PARSER_VERSION,
+    name,
+    slug: slug(name),
+    mdast: mdast,
+    tagNames: getTags(mdast),
+    ingredientNames: getIngredients(mdast),
+    collections: getCollections(mdast)
+  });
+};
+
+export const Rezepte = new Mongo.Collection<RezeptStored>("rezepte");
+export const Spaces = new Mongo.Collection<{ _id: string, count: number }>("spaces");

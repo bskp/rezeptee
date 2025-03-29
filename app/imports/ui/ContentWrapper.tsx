@@ -4,7 +4,7 @@ import React, {createContext, TouchEventHandler, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
 import {Outlet} from "react-router-dom";
 import {RezeptContext} from "./RezeptResolver";
-import {Rezept} from "/imports/api/models/rezept";
+import {RezeptParsed} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
   allowSwipe: boolean;
@@ -86,8 +86,8 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
     ref.current.style.transform = baseTransform;
   };
 
-  const [rezept, setRezept] = useState<Rezept>({} as Rezept);
-  const setRezeptWithEffect: React.Dispatch<Rezept> = (current ) => {
+  const [rezept, setRezept] = useState<RezeptParsed>({} as RezeptParsed);
+  const setRezeptWithEffect: React.Dispatch<RezeptParsed> = (current ) => {
     setRezept(previous => {
       if (previous.slug !== current.slug) {
         if (ref.current != null) {
@@ -98,7 +98,7 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
     });
   };
 
-  return <RezeptContext.Provider value={{rezept, setRezept: setRezeptWithEffect}}>
+  return <RezeptContext.Provider value={{rezept, handleRezeptUpdate: setRezeptWithEffect}}>
     <DataLoadingContext.Provider value={isLoading()}>
 
       <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}

@@ -2,29 +2,23 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 import {FactorContext} from "/imports/ui/Viewer";
 import {createFractionalNumber, parseFractionalNumber} from "/imports/api/quantityHelpers";
 
-export function ItemQuantity(props: { value: string }) {
-  const [editing, setEditing] = useState(false)
-  if (editing) {
-    return <QuantityEditor value={props.value} setEditing={setEditing}/>
-  } else {
-    return <QuantityViewer value={props.value} setEditing={setEditing}/>
-  }
-}
-
 type QuantityProps = {
-  value: string,
+  value: {value: string, dimension: number},
   setEditing: Function
 }
 
-function QuantityViewer(props: QuantityProps) {
+const QuantityViewer = (props: QuantityProps) => {
   const {factor} = useContext(FactorContext)
-  const quantity = parseFractionalNumber(props.value) * factor
-  return <span className="quantity" onClick={() => props.setEditing(true)}>{createFractionalNumber(quantity)}</span>;
-}
+  const quantity = parseFractionalNumber(props.value.value) * Math.pow(factor, 1/props.value.dimension)
 
-function QuantityEditor(props: QuantityProps) {
+  return <span className="quantity" onClick={() => props.setEditing(true)}>{
+    createFractionalNumber(quantity)
+  }</span>;
+};
+
+const QuantityEditor = (props: QuantityProps) => {
   const {factor, setFactor} = useContext(FactorContext)
-  const baseQuantity = parseFractionalNumber(props.value)
+  const baseQuantity = parseFractionalNumber(props.value.value)
   const quantity = baseQuantity * factor
 
   const [inputQuantity, setInputQuantity] = useState(quantity.toString())
@@ -81,4 +75,14 @@ function QuantityEditor(props: QuantityProps) {
                 onKeyDown={handleKeyDown}
                 onBlur={() => props.setEditing(false)}
                 onChange={handleChange}/>
-}
+};
+
+export const ItemQuantity = (props: { value: {value: string, dimension: number}}) => {
+  const [editing, setEditing] = useState(false)
+  if (editing && props.value.dimension === 1 ) {
+    return <QuantityEditor value={props.value} setEditing={setEditing}/>
+  } else {
+    return <QuantityViewer value={props.value} setEditing={setEditing}/>
+  }
+};
+

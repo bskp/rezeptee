@@ -5,7 +5,7 @@ import {ImageList} from "/imports/ui/Images";
 import TextareaAutosize from "react-textarea-autosize";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
-import {Rezept} from "/imports/api/models/rezept";
+import {parse, RezeptParsed} from "/imports/api/models/rezept";
 import {getSubdomain} from "/imports/ui/ContentWrapper";
 
 const Editor_ = () => {
@@ -108,7 +108,7 @@ export const EditorCreate = () =>
 export const getTemplateRecipe = () => {
   const subdomain = getSubdomain();
   const collectionMarker = subdomain ? `@${subdomain}\n\n` : ''
-  return new Rezept({
+  const rezept: RezeptParsed = parse({
     markdown: `${collectionMarker}#outdoor #vegi
 
 > Ein Beispielrezept! Der Weg ist das Ziel
@@ -128,5 +128,6 @@ Für 2 Personen, ca. 20 min.
 2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.
 
 > Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr
-`} as unknown as Rezept);
+`});
+  return rezept;
 };

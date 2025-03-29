@@ -22,14 +22,15 @@ const nodeWithChildren = (type: string, kids?: Children): Parent => ({
   children: normalizeChildren(kids)
 });
 
-const valueNode = (type: string, value: string): Literal => ({
+const valueNode = <V>(type: string, value: V): Literal => ({
   type: type,
   value: value
 });
 
 export const ingredientListNode = (children: Children) => nodeWithChildren("ingredientList", children);
-export const quantityNode = (value: string) => valueNode("quantity", value);
+export const quantityNode = (value: string, dimension: number) => valueNode("quantity", {value: value, dimension: dimension});
 export const unitNode = (value: string) => valueNode("unit", value);
 export const ingredientNode = (value: string) => valueNode("ingredient", value);
 export const tagNode = (value: string) => valueNode("tag", value);
 export const collectionNode = (value: string) => valueNode("collection", value);
+export const textNode = (value: string) => valueNode("text", value);

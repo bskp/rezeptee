@@ -12,10 +12,10 @@ export const Changes = () => {
     .find({createdAt: {$exists: true}}, {sort: {createdAt: -1}, limit: 20})
     .fetch()
     .map(rezept => {
-      const date = rezept.createdAt ? DateTime.fromJSDate(rezept.createdAt).toRelative() : ''
-      return <li key={rezept._id}><Link to={'/' + rezept.slug}>{rezept.name}</Link>, {date}</li>;
-    }
-  );
+        const date = rezept.createdAt ? DateTime.fromJSDate(rezept.createdAt).toRelative() : ''
+        return <li key={rezept._id}><Link to={'/' + rezept.slug}>{rezept.name}</Link>, {date}</li>;
+      }
+    );
 
   const spaces = isLoading ? [] : Spaces
     .find()
@@ -23,13 +23,31 @@ export const Changes = () => {
     .filter(space => space._id !== 'global')
     .sort((a, b) => b.count - a.count);
 
-  const loc = window.location.host;
+  const loc = window.location.host.split('.').pop();
   const sub = (id: string) => (id == 'root' ? '' : id + '.') + loc;
 
   return isLoading ? <div className="page"><h1>Übersicht</h1><p>Lade...</p></div> : <>
     <TrackingDocumentTitle title="Aktuelles"/>
     <div className="page">
       <h1>Übersicht</h1>
+
+      <h2>Sammlungen</h2>
+      <p>
+        Es gibt bis jetzt {spaces.length} Rezeptsammlungen:</p>
+      <ul>
+        {spaces.map(space =>
+          <li key={space._id}>
+            <a href={`http://${sub(space._id)}`}>{sub(space._id)}</a> ({space.count} Rezepte)
+          </li>
+        )}
+      </ul>
+      <p>
+        Erstelle deine eigene Sammlung, indem du den gewünschten Namen in die
+        Adressleiste eintippst (<em>wunschname.{loc}</em>).
+      </p>
+      <p>
+        Falls noch ungenutzt, kannst du dort deine eigene Sammlung starten!
+      </p>
 
       <h2>Kürzlich geändert in dieser Sammlung</h2>
       <ul>

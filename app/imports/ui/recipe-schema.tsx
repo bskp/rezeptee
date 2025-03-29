@@ -45,6 +45,11 @@ const paragraphRule = {
       component: () => ""
     },
     {
+      matchMdast: matchType("quantity"),
+      props: node => ({value: node.value}),
+      component: ItemQuantity,
+    },
+    {
       matchMdast: matchType('link'),
       props: node => ({
         url: node.url,

@@ -1,4 +1,4 @@
-import {parse} from "./document";
+import {markdownToAst} from "./document";
 import assert from "assert";
 import React from "react";
 import {removePosition} from "unist-util-remove-position";
@@ -65,7 +65,7 @@ describe('Markdown to react parsing', () => {
 
     let md = "A h1 title\n=======\n";
 
-    let actual = parse(md);
+    let actual = markdownToAst(md);
     actual = removePosition(actual, true);
     assert.deepEqual(actual, mdast_result);
   });
@@ -87,7 +87,7 @@ Testtitel
     100g Teigis
 
 `;
-      let tree = parse(md);
+      let tree = markdownToAst(md);
       console.dir(tree);
     });
   });

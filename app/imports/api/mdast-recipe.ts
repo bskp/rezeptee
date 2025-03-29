@@ -23,7 +23,7 @@ export function splitIngredients(row: string) {
       );
     }
     children.push(
-      quantityNode(insertTypographicalFractions(quantity)) // "4"
+      quantityNode(insertTypographicalFractions(quantity), 1) // "4"
     );
     if (unit) {
       children.push(

@@ -41,10 +41,6 @@ const Viewer_ = ()=> {
     navigateToEdit()
   }
 
-  if (!rezept.hasOwnProperty('mdast')) {
-    rezept._parse()
-  }
-
   const vdom = renderMdast(rezept.mdast, schema)
   const shareData = {title: rezept.name, url: window.location.href};
 

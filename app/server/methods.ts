@@ -1,8 +1,7 @@
 import {Meteor} from "meteor/meteor";
-import {WebApp} from "meteor/webapp";
-import {Rezept, Rezepte} from "/imports/api/models/rezept";
+import {CURRENT_PARSER_VERSION, parse, Rezepte, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 import {Imgs} from "/imports/api/models/imgs";
-import { ReactiveAggregate } from 'meteor/jcbernack:reactive-aggregate';
+import {ReactiveAggregate} from 'meteor/jcbernack:reactive-aggregate';
 
 Meteor.publish('rezepte', (collectionName: string | null) =>
   (collectionName !== null && collectionName !== undefined) ?
@@ -18,17 +17,21 @@ Meteor.publish('rezepte', (collectionName: string | null) =>
         {collections: {$size: 0}},
         {collections: 'global'}
       ]
-    }));
+    })
+);
 
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
 
 Meteor.publish("spacesStats", function () {
   ReactiveAggregate(this, Rezepte, [
     {
+      $match: {active: true}
+    },
+    {
       $addFields: {
         collections: {
           $cond: {
-            if: { $eq: ["$collections", []] },
+            if: {$eq: ["$collections", []]},
             then: ["root"],
             else: "$collections"
           }
@@ -41,25 +44,16 @@ Meteor.publish("spacesStats", function () {
     {
       $group: {
         _id: "$collections",
-        count: { $sum: 1 }
+        count: {$sum: 1}
       }
     }
-  ], { clientCollection: "spaces" });
-});
-
-Meteor.startup(function () {
-  WebApp.addHtmlAttributeHook(function () {
-    return {
-      "lang": "de"
-    }
-  })
+  ], {clientCollection: "spaces"});
 });
 
 Meteor.methods({
 
-  saveRezept(remoteObject: Rezept) {
-    let rezept = new Rezept(remoteObject); // Re-attach class methods
-    rezept._parse();
+  saveRezept(remoteObject: RezeptParsed) {
+    const {mdast, ...rezept} = parse(remoteObject);
 
     // Compare with stored Rezept versions
     // TODO: respect creation date
@@ -79,16 +73,26 @@ Meteor.methods({
       Rezepte.update(stored._id, stored);
     }
 
-    // Add a new, active version - unless the recipe`s text is empty.
-    // That is the convention to delete a recipe.
-    if (rezept.markdown != "") {
-      rezept.active = true;
-      rezept.createdAt = new Date();
-      // @ts-ignore
-      delete rezept._id;  // Triggers creation of a new ID
-      Rezepte.insert(rezept);
+    if (rezept.markdown === "") {
+      // That is the convention to delete a recipe. Skip creation of new & active version
+      return undefined;
     }
+
+    rezept.active = true;
+    rezept.createdAt = new Date();
+      // @ts-ignore
+    delete rezept._id;  // Triggers creation of a new ID
+    Rezepte.insert(rezept);
 
     return rezept.slug
   }
 });
+
+Meteor.startup(function () {
+  Rezepte.find({_parser_version: {$ne: CURRENT_PARSER_VERSION}, active: true}).forEach((r) => {
+    const {mdast, ...rezept} = parse(r);
+    Rezepte.update(rezept._id, rezept);
+    console.log(`Re-parsed ${rezept.slug}`);
+  });
+});
+

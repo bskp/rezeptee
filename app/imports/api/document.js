@@ -9,7 +9,7 @@ const parser = unified()
   .use(remarkParse)
   .use(remarkRecipe)
 
-export const parse = md => {
+export const markdownToAst = md => {
   const mdast = parser.runSync(parser.parse(md));
   return mdast;
 }

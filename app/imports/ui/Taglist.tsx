@@ -1,7 +1,7 @@
 import React, {useContext, useRef} from "react";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
-import {Rezepte} from "/imports/api/models/rezept";
+import {parse, Rezepte} from "/imports/api/models/rezept";
 import {DataLoadingContext} from "/imports/ui/ContentWrapper";
 
 interface TaglistProps {
@@ -19,11 +19,12 @@ export const Taglist = (props: TaglistProps) => {
     tags = Array.from(set).sort();
   }
 
-  let tagInfoRecipe = Rezepte.findOne({slug: 'tags'});
+  const tagInfoRecipe = Rezepte.findOne({slug: 'tags'});
 
   let tagInfo = {};
   if (tagInfoRecipe) {
-    visit(tagInfoRecipe.mdast, 'listItem', node => {
+    const parsed = parse(tagInfoRecipe);
+    visit(parsed.mdast, 'listItem', node => {
       const [tag, description=''] = toString(node).split(':', 2)
       tagInfo[tag] = description
     })

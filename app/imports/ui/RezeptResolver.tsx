@@ -1,12 +1,12 @@
 import React, {createContext, Dispatch, ReactNode, SetStateAction, useContext} from "react";
 import {useParams} from "react-router-dom";
-import {Rezept, Rezepte} from "/imports/api/models/rezept";
+import {parse, Rezepte, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 import {DataLoadingContext} from "/imports/ui/ContentWrapper";
 
 export const RezeptContext =
-  createContext<{ rezept: Rezept, setRezept?: Dispatch<Rezept> }>({rezept: {} as Rezept});
+  createContext<{ rezept: RezeptParsed, handleRezeptUpdate?: Dispatch<RezeptParsed> }>({rezept: {} as RezeptParsed});
 
-export function RezeptResolver({children}: { children: ReactNode }) {
+export const RezeptResolver = ({children}: { children: ReactNode }) => {
   const isLoading = useContext(DataLoadingContext);
   let params = useParams();
   const context = useContext(RezeptContext);
@@ -16,16 +16,23 @@ export function RezeptResolver({children}: { children: ReactNode }) {
   }
 
   let slug = params.slug;
-  if (slug === undefined) slug = 'rezeptee';
 
   const rezept = Rezepte.findOne({slug: slug});
+
+  if (slug === undefined && rezept === undefined) {
+    const loc = window.location.host.split('.')[0];
+    return <>
+      <h1>{loc}</h1>
+      <p>Hat noch keine Startseite. <a href="/create">Erstelle ein neues Rezept</a> und gib ihm den Titel <em>Rezept.ee</em>, um deine Sammlung kurz vorzustellen.</p>
+    </>
+  }
 
   if (rezept === undefined) {
     return <h1>{params.slug} wurde nicht gefunden.</h1>;
   }
 
-  if (rezept._id !== context.rezept?._id && context.setRezept) {
-    context.setRezept(rezept);
+  if (rezept._id !== context.rezept?._id && context.handleRezeptUpdate) {
+    context.handleRezeptUpdate(parse(rezept));
   }
 
   if (Object.keys(context.rezept).length === 0) {
@@ -33,4 +40,4 @@ export function RezeptResolver({children}: { children: ReactNode }) {
   }
 
   return <>{children}</>
-}
+};
