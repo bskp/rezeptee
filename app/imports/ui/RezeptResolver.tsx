@@ -17,7 +17,7 @@ export const RezeptResolver = ({children}: { children: ReactNode }) => {
 
   let slug = params.slug;
 
-  const rezept = Rezepte.findOne({slug: slug});
+  const rezept = Rezepte.findOne({slug: slug ?? 'rezeptee'});
 
   if (slug === undefined && rezept === undefined) {
     const loc = window.location.host.split('.')[0];
