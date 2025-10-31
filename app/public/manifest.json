@@ -1,8 +1,10 @@
 {
+  "id": "https://rezept.ee",
   "name": "Rezept.ee",
   "short_name": "Rezept.ee",
   "description": "Rezepte-Wiki",
   "display": "standalone",
+  "start_url": "/",
   "icons": [
     {
       "src": "/buch_adaptive-192.png",

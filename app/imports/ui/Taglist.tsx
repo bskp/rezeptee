@@ -43,7 +43,7 @@ export const Taglist = (props: TaglistProps) => {
           let active = props.activeTags?.includes(tag) ? 'active' : undefined;
           let bgColor = active ? 'hsl(' + hash(tag) + ',30%,50%)' : undefined
           return <li key={tag} className={active}>
-            <a onClick={(event) => props.togglerCallbackFactory(tag)(event.metaKey)}
+            <a onClick={(event) => props.togglerCallbackFactory(tag)(event.shiftKey)}
                className={active}
                title={tagInfo[tag]}
                style={{backgroundColor: bgColor}}
