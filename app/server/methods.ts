@@ -7,7 +7,7 @@ Meteor.publish('rezepte', (collectionName: string | null) =>
   (collectionName !== null && collectionName !== undefined) ?
     Rezepte.find({
       active: true,
-      collections: {$in: [collectionName, 'global']}
+      collections: collectionName
     })
     :
     Rezepte.find({
