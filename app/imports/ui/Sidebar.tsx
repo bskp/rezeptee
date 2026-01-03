@@ -4,18 +4,18 @@ import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptResolver";
 import {useFind} from "meteor/react-meteor-data";
-import {Rezept, Rezepte} from "/imports/api/models/rezept";
+import {Rezepte, RezeptStored} from "/imports/api/models/rezept";
 
 interface SidebarProps {
   toggler: Function,
 }
 
 export const Sidebar = (props: SidebarProps) => {
-  const rezepte: Rezept[] = useFind(() => Rezepte.find({}, {sort: {name: 1}}));
+  const rezepte: RezeptStored[] = useFind(() => Rezepte.find({active: true}, {sort: {name: 1}}));
 
   const [filter, setFilter] = useState('');
   const {trackSiteSearch} = useMatomo();
-  const activeTags = useContext(RezeptContext).rezept?.tagNames ?? [];
+  const activeTags = useContext(RezeptContext)?.tagNames ?? [];
   const sideBarToggle = () => props.toggler();
 
   function getFilterTogglingCallback(term: string) {
@@ -50,11 +50,12 @@ export const Sidebar = (props: SidebarProps) => {
   for (let term of filter.split(" ")) {
     term = term.toLowerCase()
     filtered = filtered.filter(rez => {
-      if (rez.name.toLowerCase().includes(term)) return true
-      if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true
+      if (rez.name.toLowerCase().includes(term)) return true;
+      if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true;
       for (let ingr of rez.ingredientNames) {
-        if (ingr.includes(term)) return true
+        if (ingr.includes(term)) return true;
       }
+      if (rez.markdown.includes(term)) return true
       return false
     })
   }
@@ -97,7 +98,7 @@ export const Sidebar = (props: SidebarProps) => {
         {filter == '' ? introCreateNew : undefined}
         <hr/>
         {filtered.map(rezept => {
-          return <li key={rezept._lineage}>
+            return <li key={rezept._id}>
               <NavLink to={'/' + rezept.slug} onClick={sideBarToggle}>{rezept.name}</NavLink>
             </li>;
           }

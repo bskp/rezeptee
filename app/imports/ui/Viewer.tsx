@@ -1,8 +1,8 @@
 import {useNavigate, useSearchParams} from "react-router-dom";
 import schema from "/imports/ui/recipe-schema";
-import React, {createContext, Dispatch, SetStateAction, TouchEventHandler, useContext} from "react";
+import React, {Dispatch, SetStateAction, TouchEventHandler, useContext} from "react";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
-import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
+import {RezeptContext} from "/imports/ui/RezeptResolver";
 import {renderMdast} from "/imports/api/render_mdast/render";
 
 const FACTOR_PARAM_NAME = 'faktor';
@@ -10,9 +10,9 @@ const FACTOR_PARAM_NAME = 'faktor';
 export const FactorContext =
   React.createContext<{factor: number, setFactor: Dispatch<SetStateAction<number>>}>({factor: 1, setFactor: factor => {} })
 
-const Viewer_ = ()=> {
+export const Viewer = ()=> {
   let navigate = useNavigate();
-  const rezept = useContext(RezeptContext).rezept;
+  const rezept = useContext(RezeptContext);
 
   // Provide "factor" from URL Search Param as context variable
   let [queryParams, setQueryParams] = useSearchParams()
@@ -24,6 +24,10 @@ const Viewer_ = ()=> {
   }
   const factor = Number.parseFloat(queryParams.get(FACTOR_PARAM_NAME) ?? "1")
   const factorValue = {factor, setFactor}
+
+  if (rezept === undefined) {
+    return <h1>Rezept nicht gefunden.</h1>;
+  }
 
   const navigateToEdit = () => {
     navigate(`/${rezept?.slug}/edit`)
@@ -58,5 +62,3 @@ const Viewer_ = ()=> {
     </FactorContext.Provider>
   </>);
 }
-
-export const Viewer = () => <RezeptResolver><Viewer_/></RezeptResolver>

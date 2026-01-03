@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {useSubscribe, useTracker} from "meteor/react-meteor-data";
 import classNames from "classnames";
 import {Imgs} from "/imports/api/models/imgs";
+import {FileRef} from "meteor/ostrio:files";
 
 export function Image({id, alt}) {
   // @ts-ignore
@@ -31,7 +32,7 @@ export const ImageList = (props: {
     images = imagesCursor.map(img => {
       return <li key={img._id} className={dragInProgress == img._id ? "gone" : undefined}>
         <img draggable="true"
-             src={Imgs.link(img, 'thumbnail')}
+             src={Imgs.link(img as FileRef<{ [p: string]: any }>, 'thumbnail')}
              alt={img.name}
              onError={$event => $event.currentTarget.classList.add('x')}
              onLoad={$event => $event.currentTarget.classList.remove('x')}

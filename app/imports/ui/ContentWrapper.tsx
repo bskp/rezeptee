@@ -1,16 +1,14 @@
 // @ts-ignore
 import {useSubscribe} from "meteor/react-meteor-data";
-import React, {createContext, TouchEventHandler, useRef, useState} from "react";
+import React, {TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
-import {Outlet} from "react-router-dom";
+import {Outlet, useParams} from "react-router-dom";
 import {RezeptContext} from "./RezeptResolver";
-import {RezeptParsed} from "/imports/api/models/rezept";
+import {parse, Rezepte, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
   allowSwipe: boolean;
 };
-
-export const DataLoadingContext = createContext<boolean>(false);
 
 export const getSubdomain = () => {
   const chunks = window.location.hostname.split('.');
@@ -20,11 +18,9 @@ export const getSubdomain = () => {
 }
 
 export const ContentWrapper = (props: ContentWrapperProps) => {
-  const isLoading = () => {
-    const rezepteLoading = useSubscribe('rezepte', getSubdomain());
-    const statsLoading = useSubscribe('spacesStats');
-    return rezepteLoading() || statsLoading();
-  }
+  const rezepteLoading = useSubscribe('rezepte', getSubdomain());
+  useSubscribe('spacesStats');
+  useSubscribe('rezepteVersions', getSubdomain());
 
   const ref = useRef<HTMLDivElement>(null)
   let [sidebarCollapse, setSidebarCollapse] = useState(true);
@@ -86,10 +82,10 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
     ref.current.style.transform = baseTransform;
   };
 
-  const [rezept, setRezept] = useState<RezeptParsed>({} as RezeptParsed);
-  const setRezeptWithEffect: React.Dispatch<RezeptParsed> = (current ) => {
+  const [rezept, setRezept] = useState<RezeptParsed | undefined>(undefined);
+  const setRezeptWithEffect: React.Dispatch<RezeptParsed> = (current) => {
     setRezept(previous => {
-      if (previous.slug !== current.slug) {
+      if (previous?.slug !== current.slug) {
         if (ref.current != null) {
           ref.current.scrollTop = 0;
         }
@@ -98,20 +94,33 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
     });
   };
 
-  return <RezeptContext.Provider value={{rezept, handleRezeptUpdate: setRezeptWithEffect}}>
-    <DataLoadingContext.Provider value={isLoading()}>
+  const params = useParams();
+  useEffect(() => {
 
-      <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
-           onTouchStart={touchStartHandler}
-           onTouchMove={touchMoveHandler}
-           onTouchEnd={touchEndHandler}>
+    if (rezepteLoading()) {
+      setRezept(parse({markdown: `${params.slug}\n======\n\n`} as RezeptStored));
+      return;
+    }
+    const rezeptStored = Rezepte.findOne({slug: params.slug ?? 'rezeptee', active: true});
+    if (rezeptStored === undefined) {
+      setRezept(undefined);
+      return;
+    }
+    const rezept = parse(rezeptStored)
+    setRezeptWithEffect(rezept);
+  }, [params.slug, rezepteLoading()]);
 
-        <section id="content" ref={ref} style={{transform: baseTransform}}>
-          <Outlet/>
-        </section>
-        <Sidebar toggler={() => setSidebarCollapse(true)}/>
-        <div onClick={handleSidebarToggle} id="mode_flip"></div>
-      </div>
-    </DataLoadingContext.Provider>
+  return <RezeptContext.Provider value={rezept}>
+    <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
+         onTouchStart={touchStartHandler}
+         onTouchMove={touchMoveHandler}
+         onTouchEnd={touchEndHandler}>
+
+      <section id="content" ref={ref} style={{transform: baseTransform}}>
+        <Outlet/>
+      </section>
+      <Sidebar toggler={() => setSidebarCollapse(true)}/>
+      <div onClick={handleSidebarToggle} id="mode_flip"></div>
+    </div>
   </RezeptContext.Provider>
 };

@@ -1,15 +1,15 @@
 import React, {useContext, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {Meteor} from "meteor/meteor";
 import {ImageList} from "/imports/ui/Images";
 import TextareaAutosize from "react-textarea-autosize";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
-import {parse, RezeptParsed} from "/imports/api/models/rezept";
+import {parse, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 import {getSubdomain} from "/imports/ui/ContentWrapper";
 
-const Editor_ = () => {
-  const rezept = useContext(RezeptContext).rezept;
+export const Editor = () => {
+  const rezept = useContext(RezeptContext) ?? getTemplateRecipe();
 
   let [text, setText] = useState(rezept.markdown);
   let [dirty, setDirty] = useState(false)
@@ -89,7 +89,8 @@ const Editor_ = () => {
     <aside id="tools">
       <ImageList namespace={rezept._lineage} text={text} setText={setText}/>
       <a onClick={save} className="button ok"></a>
-      <a onClick={() => navigate(`/${rezept.slug}`)} className="button cancel"></a>
+      <NavLink to={'/' + rezept.slug} className="button cancel"></NavLink>
+      <NavLink to={'/' + rezept.slug + '/history'} className="button history"></NavLink>
     </aside>
     <TextareaAutosize id="editor"
                       onChange={handleChange}
@@ -99,11 +100,6 @@ const Editor_ = () => {
                       minRows={30}/>
   </div>
 }
-export const Editor = () => <RezeptResolver><Editor_/></RezeptResolver>
-export const EditorCreate = () =>
-  <RezeptContext.Provider value={{rezept: getTemplateRecipe()}}>
-    <Editor_/>
-  </RezeptContext.Provider>
 
 export const getTemplateRecipe = () => {
   const subdomain = getSubdomain();
@@ -128,6 +124,6 @@ Für 2 Personen, ca. 20 min.
 2. Kessel herumzeigen. Margeriten beifügen und mit Löwenzahn abschmecken.
 
 > Ich nehme jeweils Sand, der von Katzen als Klo benutzt wurde. Gibt einfach das vollere Aroma ~mr
-`});
+`} as RezeptStored);
   return rezept;
 };

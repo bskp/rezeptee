@@ -1,8 +1,8 @@
-import React, {useContext, useRef} from "react";
+import React, {useRef} from "react";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
 import {parse, Rezepte} from "/imports/api/models/rezept";
-import {DataLoadingContext} from "/imports/ui/ContentWrapper";
+import {useFind} from "meteor/react-meteor-data";
 
 interface TaglistProps {
   activeTags?: string[],
@@ -10,19 +10,16 @@ interface TaglistProps {
 }
 
 export const Taglist = (props: TaglistProps) => {
-  let tags: string[] = [];
-  let isLoading = useContext(DataLoadingContext);
-
-  if (!isLoading) {
-    let set = new Set(Rezepte.find({}).map(r => r.tagNames).flat());
-    set.delete('meta');
-    tags = Array.from(set).sort();
-  }
+  const tags = useFind(() => Rezepte.find({active: true}, {fields: {tagNames: 1}}))
+    .flatMap(r => r.tagNames)
+    .filter(tag => tag !== 'meta')
+    .filter((tag, i, self) => i === self.indexOf(tag))
+    .sort((a, b) => a.localeCompare(b));
 
   const tagInfoRecipe = Rezepte.findOne({slug: 'tags'});
 
   let tagInfo = {};
-  if (tagInfoRecipe) {
+  if (tagInfoRecipe !== undefined) {
     const parsed = parse(tagInfoRecipe);
     visit(parsed.mdast, 'listItem', node => {
       const [tag, description=''] = toString(node).split(':', 2)

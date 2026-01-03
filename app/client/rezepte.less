@@ -368,15 +368,22 @@ aside#tools {
     margin: 0 0.5em 1em;
 
     cursor: pointer;
-    background-size: contain;
     opacity: 0.3;
 
     &.ok {
       background: url('/ok.svg') no-repeat center;
     }
+
     &.cancel {
       background: url('/cancel.svg') no-repeat center;
     }
+
+    &.history {
+      background: url('/history.svg') no-repeat center;
+      background-size: contain;
+    }
+
+    background-size: contain;
 
     &:hover {
       opacity: 0.4;
@@ -388,7 +395,7 @@ aside#tools {
     overflow-y: scroll;
   }
 
-  li, label {
+  ul#imagelist li, label {
     display: block;
     width: 100%;
     margin-bottom: 0.5em;
@@ -421,6 +428,14 @@ aside#tools {
         padding: 0.5em 0.9em;
         box-sizing: border-box;
       }
+    }
+  }
+
+  ol#history {
+    font-size: 0.8rem;
+
+    li.peeking {
+        background-color: @grey;
     }
   }
 

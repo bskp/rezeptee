@@ -1,6 +1,7 @@
 import {Meteor} from "meteor/meteor";
-import {CURRENT_PARSER_VERSION, parse, Rezepte, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
+import {CURRENT_PARSER_VERSION, parse, Rezepte, RezeptParsed} from "/imports/api/models/rezept";
 import {Imgs} from "/imports/api/models/imgs";
+// @ts-ignore
 import {ReactiveAggregate} from 'meteor/jcbernack:reactive-aggregate';
 
 Meteor.publish('rezepte', (collectionName: string | null) =>
@@ -12,6 +13,21 @@ Meteor.publish('rezepte', (collectionName: string | null) =>
     :
     Rezepte.find({
       active: true,
+      $or: [
+        {collections: {$exists: false}},
+        {collections: {$size: 0}},
+        {collections: 'global'}
+      ]
+    })
+);
+
+Meteor.publish('rezepteVersions', (collectionName: string | null) =>
+  (collectionName !== null && collectionName !== undefined) ?
+    Rezepte.find({
+      collections: collectionName
+    })
+    :
+    Rezepte.find({
       $or: [
         {collections: {$exists: false}},
         {collections: {$size: 0}},
@@ -59,13 +75,6 @@ Meteor.methods({
     // TODO: respect creation date
     let stored = Rezepte.findOne({_lineage: rezept._lineage, active: true});
 
-    if (stored && stored.markdown == rezept.markdown) {
-      // Handle parser evolution
-      if (stored._parser_version != rezept._parser_version) {
-        Rezepte.update(stored._id, rezept);
-      }
-    }
-
     // Archive previous version
     if (stored !== undefined) {
       stored.active = false;
@@ -80,7 +89,7 @@ Meteor.methods({
 
     rezept.active = true;
     rezept.createdAt = new Date();
-      // @ts-ignore
+    // @ts-ignore
     delete rezept._id;  // Triggers creation of a new ID
     Rezepte.insert(rezept);
 
