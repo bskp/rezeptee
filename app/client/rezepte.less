@@ -34,9 +34,11 @@ ul {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background-color: rgba(155, 155, 155, 0.5);
   border-radius: 20px;
@@ -166,7 +168,9 @@ aside#sidebar {
         margin-left: -0.8em;
       }
     }
-  } // taglist
+  }
+
+  // taglist
 
   ul#rezepte {
     overflow-y: scroll;
@@ -199,7 +203,9 @@ aside#sidebar {
       }
     }
   }
-} // aside
+}
+
+// aside
 
 #content {
   min-height: 100vh;
@@ -221,16 +227,24 @@ aside#sidebar {
 
   overflow-x: hidden;
 
+  &:has(#editor) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
   #editor {
-    font-family: camingocode, monospace;
-    font-size: 16px;
-    padding-bottom: 5em;
-    padding-top: 1em;
-    margin-top: -1em;
-    white-space: pre-wrap;
-    .noFocusBorder;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+
     width: calc(100% + @leftCol / 2);
     margin-left: calc(-1 * @leftCol / 2);
+
+    font-family: camingocode, monospace;
+    font-size: 16px;
+
+    white-space: pre-wrap;
+    .noFocusBorder;
   }
 
 }
@@ -354,7 +368,7 @@ aside#tools {
   width: calc(@leftCol / 2 - 1em);
 
   position: sticky;
-  margin-left: calc(-1*@leftCol + 0.7em);
+  margin-left: calc(-1 * @leftCol + 0.7em);
   height: 100vh;
   top: 0;
   float: left;
@@ -365,7 +379,7 @@ aside#tools {
     display: block;
     height: 3em;
     flex-shrink: 0;
-    margin: 0 0.5em 1em;
+    margin: 0.25em;
 
     cursor: pointer;
     opacity: 0.3;
@@ -434,8 +448,36 @@ aside#tools {
   ol#history {
     font-size: 0.8rem;
 
-    li.peeking {
+    font-family: camingocode, monospace;
+    text-align: center;
+    word-break: keep-all;
+
+    list-style: none;
+
+    overflow: scroll;
+
+    li {
+      div {
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        padding: 0.4em 0;
+        border-radius: 0.8em;
         background-color: @grey;
+      }
+
+      span {
+        display: block;
+        font-size: 9px;
+      }
+    }
+
+    li[value="-1"] {
+      list-style: "?  "
+    }
+
+    li.peeking div {
+      background-color: #bbb;
     }
   }
 
@@ -456,16 +498,19 @@ aside#tools {
     box-sizing: border-box;
     background-color: transparent;
     cursor: pointer;
+    margin-top: 0.5em;
 
     input {
       opacity: 0;
     }
+
 
     &:before {
       content: '';
       position: absolute;
       width: 100%;
       height: inherit;
+      margin-top: 0.5em;
       top: 0;
       left: 0;
       z-index: -1;
@@ -654,7 +699,7 @@ a {
 
 @media (max-width: 1400px) {
   aside#sidebar {
-    width: calc(@list_desktop*0.8);
+    width: calc(@list_desktop * 0.8);
   }
 }
 
@@ -733,8 +778,12 @@ a {
         height: 4em;
       }
 
-      ul#imagelist span{
+      ul#imagelist span {
         font-size: 8px;
+      }
+
+      .button.history {
+        display: none;
       }
     }
   }

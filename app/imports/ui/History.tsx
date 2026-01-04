@@ -18,13 +18,13 @@ function followPreviousVersionReferences(versions: RezeptStored[], currentId: st
     seenIds.add(currentId);
     currentId = currentVersion.previous_version_id;
   }
-  return [...lineage, ...versions.filter(version => !seenIds.has(version._id))];
+  return [...lineage, ...versions.filter(version => !seenIds.has(version._id)).reverse()];
 }
 
 export const History = () => {
   const rezept = useContext(RezeptContext);
   const navigate = useNavigate();
-  const [peeking, setPeeking] = useState(rezept?._id);
+  const [peeking, setPeeking] = useState<RezeptWithAge>(rezept as RezeptWithAge);
 
   const versions = useFind(
     () => Rezepte.find({_lineage: rezept?._lineage}, {sort: {createdAt: -1}}),
@@ -37,22 +37,26 @@ export const History = () => {
 
   const lineage = followPreviousVersionReferences(versions, rezept._id);
 
+  const getLabel = (version: RezeptWithAge) => {
+    if (version.age == 0) return 'Aktuell';
+    if (version.age === undefined) return 'Version ???';
+    return `Version ${versions.length - version.age}`;
+  }
+
   return <>
     <TrackingDocumentTitle title="Aktuelles"/>
     <div className="page">
       <aside id="tools">
         <ol id="history">
           {lineage.map(version => (
-            <li value={version.age ?? -1} key={version._id}
+            <li key={version._id}
+                className={version._id === peeking?._id ? 'peeking' : undefined}
                 onMouseEnter={(e) => {
-                  setPeeking(version.markdown);
-                  e.currentTarget.classList.add('peeking')
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.classList.remove('peeking')
+                  setPeeking(version);
                 }}
             >
-              {version.createdAt?.toLocaleString() ?? 'Unbekanntes Datum'}
+              <div>{getLabel(version)}</div>
+              <span>{version.createdAt?.toLocaleString() ?? ''}</span>
             </li>
           ))}
         </ol>
@@ -60,7 +64,7 @@ export const History = () => {
       </aside>
       <TextareaAutosize id="editor"
                         readOnly={true}
-                        value={peeking}
+                        value={peeking.markdown}
                         minRows={30}/>
     </div>
   </>;
