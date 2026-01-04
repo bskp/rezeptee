@@ -90,18 +90,18 @@ Meteor.publish('spaces', function () {
 
 Meteor.methods({
 
-  saveRezept(remoteObject: RezeptParsed) {
+  async saveRezept(remoteObject: RezeptParsed) {
     const {mdast, ...rezept} = parse(remoteObject);
 
     // Compare with stored Rezept versions
     // TODO: respect creation date
-    let stored = Rezepte.findOne({_lineage: rezept._lineage, active: true});
+    let stored = await Rezepte.findOneAsync({_lineage: rezept._lineage, active: true});
 
     // Archive previous version
     if (stored !== undefined) {
       stored.active = false;
       rezept.previous_version_id = stored._id;
-      Rezepte.update(stored._id, stored);
+      await Rezepte.updateAsync(stored._id, stored);
     }
 
     if (rezept.markdown === "") {
@@ -113,16 +113,16 @@ Meteor.methods({
     rezept.createdAt = new Date();
     // @ts-ignore
     delete rezept._id;  // Triggers creation of a new ID
-    Rezepte.insert(rezept);
+    await Rezepte.insertAsync(rezept);
 
     return rezept.slug
   }
 });
 
-Meteor.startup(function () {
-  Rezepte.find({_parser_version: {$ne: CURRENT_PARSER_VERSION}, active: true}).forEach((r) => {
+Meteor.startup(async function () {
+  Rezepte.find({_parser_version: {$ne: CURRENT_PARSER_VERSION}, active: true}).forEach(async (r) => {
     const {mdast, ...rezept} = parse(r);
-    Rezepte.update(rezept._id, rezept);
+    await Rezepte.updateAsync(rezept._id, rezept);
     console.log(`Re-parsed ${rezept.slug}`);
   });
 });

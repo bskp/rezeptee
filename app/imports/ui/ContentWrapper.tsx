@@ -1,5 +1,5 @@
 // @ts-ignore
-import {useSubscribe} from "meteor/react-meteor-data";
+import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import React, {TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
 import {Outlet, useParams} from "react-router-dom";
@@ -95,20 +95,21 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
   };
 
   const params = useParams();
-  useEffect(() => {
+  const slug = params.slug ?? 'rezeptee';
+  const rezeptStored = useFind(() => Rezepte.find({slug: slug, active: true}), [slug])[0];
 
+  useEffect(() => {
     if (rezepteLoading()) {
       setRezept(parse({markdown: `${params.slug ?? 'rezept.ee'}\n======\n\n`} as RezeptStored));
       return;
     }
-    const rezeptStored = Rezepte.findOne({slug: params.slug ?? 'rezeptee', active: true});
     if (rezeptStored === undefined) {
       setRezept(undefined);
       return;
     }
     const rezept = parse(rezeptStored)
     setRezeptWithEffect(rezept);
-  }, [params.slug, rezepteLoading()]);
+  }, [rezeptStored, rezepteLoading()]);
 
   return <RezeptContext.Provider value={rezept}>
     <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}

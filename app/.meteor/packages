@@ -11,11 +11,11 @@ reactive-var@1.0.13                  # Reactive variable for tracker
 standard-minifier-css@1.9.3         # CSS minifier run for production mode
 standard-minifier-js@3.1.1          # JS minifier run for production mode
 ecmascript@0.16.13                    # Enable ECMAScript2015+ syntax in app code
+typescript
 shell-server@0.6.2                  # Server-side component of the `meteor shell` command
 hot-module-replacement@0.5.4        # Update client in development without reloading the page
-react-meteor-data
 
+static-html
+react-meteor-data
 ostrio:files
 less
-typescript@5.6.6
-static-html

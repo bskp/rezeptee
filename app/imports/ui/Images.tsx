@@ -7,10 +7,10 @@ import {FileRef} from "meteor/ostrio:files";
 export function Image({id, alt}) {
   // @ts-ignore
   const src = `${Imgs.downloadRoute}/imgs/${id}/full/${id}`;
-  return <div className="img">
+  return <figure className="img">
     <img src={src} alt={alt}/>
-    <div className="legend">{alt}</div>
-  </div>
+    <figcaption>{alt}</figcaption>
+  </figure>
 }
 
 export const ImageList = (props: {
