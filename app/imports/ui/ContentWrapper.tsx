@@ -19,7 +19,7 @@ export const getSubdomain = () => {
 
 export const ContentWrapper = (props: ContentWrapperProps) => {
   const rezepteLoading = useSubscribe('rezepte', getSubdomain());
-  useSubscribe('spacesStats');
+  useSubscribe('spaces');
   useSubscribe('rezepteVersions', getSubdomain());
 
   const ref = useRef<HTMLDivElement>(null)
@@ -98,7 +98,7 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
   useEffect(() => {
 
     if (rezepteLoading()) {
-      setRezept(parse({markdown: `${params.slug}\n======\n\n`} as RezeptStored));
+      setRezept(parse({markdown: `${params.slug ?? 'rezept.ee'}\n======\n\n`} as RezeptStored));
       return;
     }
     const rezeptStored = Rezepte.findOne({slug: params.slug ?? 'rezeptee', active: true});

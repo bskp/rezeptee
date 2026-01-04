@@ -4,23 +4,18 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-base@1.5.1             # Packages every Meteor app needs to have
-mobile-experience@1.1.0       # Packages for a great mobile UX
-mongo@1.13.0                   # The database Meteor supports right now
-reactive-var@1.0.11            # Reactive variable for tracker
+meteor-base@1.5.2                   # Packages every Meteor app needs to have
+mongo@2.1.4                         # The database Meteor supports right now
+reactive-var@1.0.13                  # Reactive variable for tracker
 
-standard-minifier-css@1.7.4   # CSS minifier run for production mode
-standard-minifier-js@2.7.2    # JS minifier run for production mode
-es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers
-ecmascript@0.16.0              # Enable ECMAScript2015+ syntax in app code
-shell-server@0.5.0            # Server-side component of the `meteor shell` command
-hot-module-replacement@0.4.0  # Update client in development without reloading the page
+standard-minifier-css@1.9.3         # CSS minifier run for production mode
+standard-minifier-js@3.1.1          # JS minifier run for production mode
+ecmascript@0.16.13                    # Enable ECMAScript2015+ syntax in app code
+shell-server@0.6.2                  # Server-side component of the `meteor shell` command
+hot-module-replacement@0.5.4        # Update client in development without reloading the page
+react-meteor-data
 
-insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
-static-html@1.3.2             # Define static page content in .html files
-react-meteor-data@2.4.0       # React higher-order component for reactively tracking Meteor data
 ostrio:files
-underscore@1.0.10
 less
-typescript
-jcbernack:reactive-aggregate
+typescript@5.6.6
+static-html
