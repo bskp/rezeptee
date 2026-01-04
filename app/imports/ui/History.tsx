@@ -51,7 +51,8 @@ export const History = () => {
           {lineage.map(version => (
             <li key={version._id}
                 className={version._id === peeking?._id ? 'peeking' : undefined}
-                onMouseEnter={(e) => {
+                onClick={(() => setPeeking(version))}
+                onMouseEnter={() => {
                   setPeeking(version);
                 }}
             >
