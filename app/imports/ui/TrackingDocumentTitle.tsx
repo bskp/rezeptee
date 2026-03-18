@@ -1,7 +1,7 @@
 import * as React from 'react';
-import DocumentTitle from 'react-document-title';
 import { useMatomo } from '@datapunt/matomo-tracker-react'
 import { useLocation } from 'react-router-dom';
+import {useEffect} from "react";
 
 interface TrackingDocumentTitleProps {
     title: string,
@@ -11,8 +11,13 @@ interface TrackingDocumentTitleProps {
 function TrackingDocumentTitle( {title, track_as} : TrackingDocumentTitleProps ) {
     let location = track_as || useLocation().pathname;
     const { trackPageView } = useMatomo();
-    React.useEffect(() => trackPageView({}), [location]);
-    return <DocumentTitle title={title} />
+
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+
+    useEffect(() => trackPageView({}), [location]);
+    return null;
 }
 
 export default TrackingDocumentTitle;
