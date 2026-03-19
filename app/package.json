@@ -46,7 +46,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/slug": "^5.0.9",
-    "chai": "^5.3.3",
+    "chai": "^6.2.2",
     "chai-as-promised": "^7.1.1",
     "esm": "^3.2.25",
     "js-yaml": "^4.1.0",
