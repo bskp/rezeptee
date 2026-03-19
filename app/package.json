@@ -23,7 +23,7 @@
     "react-router-dom": "^6.30.2",
     "react-textarea-autosize": "^8.5.3",
     "remark-parse": "^10.0.1",
-    "slug": "^5.1.0",
+    "slug": "^11.0.1",
     "spawn-sync": "^2.0.0",
     "tslib": "^2.3.1",
     "unified": "^10.1.1",
