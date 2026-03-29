@@ -7,11 +7,14 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "¾"
+        "value": {
+          "value": "¾",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",
-        "value": "dl "
+        "value": "dl"
       },
       {
         "type": "ingredient",
@@ -25,11 +28,14 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "¾"
+        "value": {
+          "value": "¾",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",
-        "value": "dl "
+        "value": "dl"
       },
       {
         "type": "ingredient",
@@ -43,11 +49,14 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "1,4"
+        "value": {
+          "value": "1,4",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",
-        "value": "dl "
+        "value": "dl"
       },
       {
         "type": "ingredient",
@@ -61,11 +70,14 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "1.3"
+        "value": {
+          "value": "1.3",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",
-        "value": "dl "
+        "value": "dl"
       },
       {
         "type": "ingredient",
@@ -79,7 +91,10 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "1½"
+        "value": {
+          "value": "1½",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",
@@ -107,7 +122,10 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "1"
+        "value": {
+          "value": "1",
+          "dimension": 1
+        }
       },
       {
         "type": "ingredient",
@@ -121,7 +139,10 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "1"
+        "value": {
+          "value": "1",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",
@@ -139,11 +160,10 @@ describe('Ingredient Node parsing', () => {
     assert.deepEqual(mdast, [
       {
         "type": "quantity",
-        "value": "8"
-      },
-      {
-        "type": "unit",
-        "value": ""
+        "value": {
+          "value": "8",
+          "dimension": 1
+        }
       },
       {
         "type": "ingredient",
@@ -161,7 +181,10 @@ describe('Ingredient Node parsing', () => {
       },
       {
         "type": "quantity",
-        "value": "6"
+        "value": {
+          "value": "6",
+          "dimension": 1
+        }
       },
       {
         "type": "text",
@@ -169,7 +192,10 @@ describe('Ingredient Node parsing', () => {
       },
       {
         "type": "quantity",
-        "value": "10"
+        "value": {
+          "value": "10",
+          "dimension": 1
+        }
       },
       {
         "type": "unit",

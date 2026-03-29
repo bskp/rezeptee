@@ -39,6 +39,11 @@
     // to allow for iteration of HTMLCollections
     "downlevelIteration": true
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "exclude": [
     "./.meteor/**",
     "./packages/**",

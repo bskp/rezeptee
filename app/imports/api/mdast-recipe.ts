@@ -9,7 +9,7 @@ import {
 
 export function splitIngredients(row: string) {
   row = expandTypographicalFractions(row);
-  const matches = row.matchAll(/(\d+(?: \d)?(?:[\/.,]\d+)?) *(Pfund|Dose|Bund|Bd|[KTE]L|[kdcm]?[lg]? )/g);
+  const matches = row.matchAll(/(\d+(?: \d)?(?:[\/.,]\d+)?)(?: *(Pfund|Dose|Bund|Bd|[KTE]L|[kdcm]?[lg])\b)?/g);
 
   let children : Node[] = [];
   let consumed = 0;
@@ -19,7 +19,7 @@ export function splitIngredients(row: string) {
     const start = match.index || 0;
     if (start > consumed) {
       children.push(
-        text(row.substring(consumed, start).trim()) // "ca. "
+        text(row.substring(consumed, start).trim()) // "ca." or "-"
       );
     }
     children.push(

@@ -5,7 +5,7 @@ import {listItem} from "mdast-builder";
 import {splitIngredients} from "./mdast-recipe";
 import type {Plugin, Transformer} from 'unified'
 import {Code, Paragraph, PhrasingContent, Text} from 'mdast'
-import {expandTypographicalFractions} from "/imports/api/quantityHelpers";
+import {expandTypographicalFractions} from "./quantityHelpers";
 
 
 const remarkRecipe: Plugin = function () {

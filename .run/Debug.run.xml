@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Debug" type="meteor-app-runner" factoryName="Meteor" workingDirectory="$PROJECT_DIR$/app">
+    <option name="exePath" value="/usr/local/bin/meteor" />
+    <option name="startBrowserSettings">
+      <browser start="true" url="http://localhost:3000" />
+    </option>
+    <meteor-runner-state>
+      <startBrowserSettings>
+        <browser start="true" url="http://localhost:3000" />
+      </startBrowserSettings>
+    </meteor-runner-state>
+    <method v="2" />
+  </configuration>
+</component>

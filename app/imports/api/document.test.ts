@@ -2,7 +2,8 @@ import {markdownToAst} from "./document";
 import assert from "assert";
 import React from "react";
 import {removePosition} from "unist-util-remove-position";
-import {matchHeading, matchParagraph, matchType, renderMdast} from "/imports/api/render_mdast";
+import {renderMdast} from "./render_mdast/render.jsx";
+import {matchHeading, matchParagraph, matchType} from "./render_mdast/utils";
 
 const mdast = {
   'type': 'root',
@@ -92,4 +93,3 @@ Testtitel
     });
   });
 });
-
