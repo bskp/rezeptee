@@ -1,9 +1,10 @@
 import {useNavigate, useSearchParams} from "react-router-dom";
 import schema from "/imports/ui/recipe-schema";
-import React, {Dispatch, SetStateAction, TouchEventHandler, useContext} from "react";
+import React, {Dispatch, SetStateAction, TouchEventHandler, useContext, useEffect} from "react";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import {RezeptContext} from "/imports/ui/RezeptResolver";
 import {renderMdast} from "/imports/api/render_mdast/render";
+import {useWakeLock} from "/imports/ui/useWakeLock";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
@@ -13,6 +14,15 @@ export const FactorContext =
 export const Viewer = ()=> {
   let navigate = useNavigate();
   const rezept = useContext(RezeptContext);
+  const wakeLock = useWakeLock(true);
+
+  useEffect(() => {
+    console.debug("[WakeLock]", {
+      supported: wakeLock.isSupported,
+      active: wakeLock.isActive,
+      error: wakeLock.error ?? null,
+    });
+  }, [wakeLock.isSupported, wakeLock.isActive, wakeLock.error]);
 
   // Provide "factor" from URL Search Param as context variable
   let [queryParams, setQueryParams] = useSearchParams()
