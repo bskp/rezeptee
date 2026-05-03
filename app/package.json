@@ -4,7 +4,9 @@
   "scripts": {
     "start": "meteor --exclude-archs web.browser.legacy --port 0:3000",
     "visualize": "meteor --production --extra-packages bundle-visualizer",
-    "test": "mocha"
+    "test": "mocha",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@babel/register": "^7.16.7",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.5",
+    "@playwright/test": "^1.52.0",
     "@types/chai-as-promised": "^7.1.4",
     "@types/color-convert": "^3.0.1",
     "@types/core-js": "^2.5.5",
