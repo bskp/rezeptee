@@ -21,7 +21,11 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run start',
-    port: 3000,
+    // Bewusst url statt port: Meteor öffnet seinen Proxy, bevor das Bundle
+    // gebaut ist. Auf den offenen TCP-Port zu warten heisst, mitten in den
+    // Build zu navigieren -- der erste goto() stirbt dann an ERR_ABORTED.
+    // Mit url pollt Playwright per HTTP bis zu einer echten Antwort.
+    url: 'http://127.0.0.1:3000',
     timeout: 180_000,
     reuseExistingServer: !process.env.CI,
   },
