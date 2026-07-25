@@ -3,7 +3,7 @@
     /* Basic Options */
     "target": "es2018",
     "module": "esNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": ["esnext", "dom", "DOM.Iterable"],
     "allowJs": true,
     "checkJs": false,
@@ -23,22 +23,19 @@
     "noFallthroughCasesInSwitch": false,
 
     /* Module Resolution Options */
-    "baseUrl": ".",
+    /* Ohne baseUrl (in TS 7 entfernt) sind paths relativ zur tsconfig. */
     "paths": {
       /* Support absolute /imports/* with a leading '/' */
-      "/*": ["*"],
+      "/*": ["./*"],
       "meteor/*": [
-        ".meteor/local/types/packages.d.ts"
+        "./.meteor/local/types/packages.d.ts"
       ]
     },
     "resolveJsonModule": true,
     "types": ["node", "mocha"],
     "esModuleInterop": true,
     "preserveSymlinks": true,
-    "skipLibCheck": true,
-
-    // to allow for iteration of HTMLCollections
-    "downlevelIteration": true
+    "skipLibCheck": true
   },
   "exclude": [
     "./.meteor/**",
