@@ -12,7 +12,7 @@
     "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
-    "@babel/runtime": "^7.15.4",
+    "@babel/runtime": "^8.0.0",
     "@datapunt/matomo-tracker-react": "^0.5.1",
     "classnames": "^2.3.1",
     "gm": "^1.23.1",
