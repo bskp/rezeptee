@@ -11,6 +11,19 @@
 @list: 350px;
 @list_desktop: 400px;
 
+// Safe Areas
+//
+// Als Custom Properties statt env() direkt: so steht der Wert an einer
+// Stelle, und man kann ihn zum Prüfen im Devtools-Inspector überschreiben,
+// ohne ein Gerät mit Notch zur Hand zu haben.
+// Wirksam werden sie erst durch viewport-fit=cover in der main.html.
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
 // Fixes
 
 html {
@@ -75,7 +88,7 @@ aside#sidebar {
   font-family: 'Inter var', 'Inter', Helvetica, Arial, sans-serif;
 
   width: @list_desktop;
-  padding: 0;
+  padding: var(--safe-top) 0 var(--safe-bottom) var(--safe-left);
   margin: 0;
 
   li a {
@@ -209,14 +222,19 @@ aside#sidebar {
 
 #content {
   min-height: 100vh;
+  min-height: 100dvh; // dvh schliesst die ein-/ausfahrende Safari-Leiste ein
   width: 100%;
 
   transition: 0.5s;
 
   box-sizing: border-box;
 
-  padding: 1em 2em 5em;
-  padding-left: @leftCol;
+  // Longhand statt Kurzschreibweise: die Kurzform mit mehreren calc(var())
+  // fiel bei der Verarbeitung stillschweigend weg.
+  padding-top: calc(1em + var(--safe-top));
+  padding-right: calc(2em + var(--safe-right));
+  padding-bottom: calc(5em + var(--safe-bottom));
+  padding-left: calc(@leftCol + var(--safe-left));
 
   background-color: @sheet;
   box-shadow: 0 0 20px;
@@ -228,12 +246,14 @@ aside#sidebar {
   overflow-x: hidden;
 
   &:has(#editor) {
-    padding-top: 0;
-    padding-bottom: 0;
+    // Der Editor läuft randlos, aber nicht unter Notch und Home-Indicator.
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
   }
 
   #editor {
     min-height: 100vh;
+    min-height: 100dvh;
     margin: 0;
     padding: 0;
 
@@ -370,7 +390,8 @@ aside#tools {
   position: sticky;
   margin-left: calc(-1 * @leftCol + 0.7em);
   height: 100vh;
-  top: 0;
+  height: 100dvh;
+  top: var(--safe-top);
   float: left;
   display: flex;
   flex-direction: column;
@@ -685,7 +706,7 @@ a {
 // Grosse Bildschirme
 @media screen and (min-width: 1200px) {
   #content {
-    padding-left: 28vw
+    padding-left: calc(28vw + var(--safe-left));
   }
 
   ul.ingredients {
@@ -745,10 +766,10 @@ a {
 
   //  Zutaten-Spalte in Haupttextfluss aufnehmen
   #content {
-    padding-left: 50px;
+    padding-left: calc(50px + var(--safe-left));
 
     // Weissraum rechts des Texts reduzieren
-    padding-right: 1em;
+    padding-right: calc(1em + var(--safe-right));
 
     ul.ingredients {
       font-size: 1em;
@@ -815,7 +836,7 @@ a {
 
   #content {
     transform: translateX(-100%);
-    padding-left: 20px;
+    padding-left: calc(20px + var(--safe-left));
 
     .page ol, .page ul {
       padding-left: 1em;

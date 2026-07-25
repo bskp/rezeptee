@@ -4,9 +4,14 @@
     <!-- Das apple-Präfix ist deprecated, ältere iOS-Versionen brauchen es aber noch. -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Rezepte">
+    <!-- Bewusst "black" und nicht "black-translucent": das Rezeptblatt ist
+         weiss (@sheet), die Statusleiste zeichnet bei translucent aber weisse
+         Glyphen darüber. Das wäre unlesbar. -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#9ebfc7">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <!-- viewport-fit=cover schaltet env(safe-area-inset-*) überhaupt erst
+         scharf; ohne das liefern sie konstant 0. Siehe :root in rezepte.less. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <link rel="manifest" href="/manifest.json">
     <!-- Absolute Pfade: relativ würden sie auf /rezept/foo zu /rezept/buch-180.png
          auflösen, wo Meteor die SPA statt des Bildes ausliefert. -->
