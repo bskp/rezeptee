@@ -19,7 +19,7 @@ export const ImageList = (props: {
   setText: React.Dispatch<React.SetStateAction<string>>
 }) => {
   const isLoadingImages = useSubscribe('files.imgs.all');
-  let [dragInProgress, setDragInProgress] = useState("");
+  const [dragInProgress, setDragInProgress] = useState("");
 
   const imagesCursor = useTracker(() =>
       Imgs.find({'meta.namespace': props.namespace}).fetch().reverse(),
@@ -77,15 +77,15 @@ function Uploader(props: {
   namespace: string,
   confirmImageDeletion: (id: string) => boolean
 }) {
-  let [dragOver, setDragOver] = useState(false);
-  let [progress, setProgress] = useState(-1);
+  const [dragOver, setDragOver] = useState(false);
+  const [progress, setProgress] = useState(-1);
   const insert = (files: FileList) => {
     const progress = Array(files.length).fill(0);
     [...files].forEach((file, i) => {
       const fileProgress = (p: number) => {
         progress[i] = p;
         const sum = progress.reduceRight((acc, cur) => acc + cur, 0);
-        let ratio = sum / files.length;
+        const ratio = sum / files.length;
         setProgress(ratio < 1 ? ratio : -1);
       }
       Imgs.insert({
@@ -125,7 +125,7 @@ function Uploader(props: {
       setDragOver(false);
       insert(event.dataTransfer.files);
     }
-    let img_id = event.dataTransfer.getData('text/x-img-id');
+    const img_id = event.dataTransfer.getData('text/x-img-id');
     if (img_id && props.confirmImageDeletion(img_id)) {
       Imgs.remove({_id: img_id});
       setDragOver(false);

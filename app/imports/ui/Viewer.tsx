@@ -2,17 +2,17 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import schema from "/imports/ui/recipe-schema";
 import React, {Dispatch, SetStateAction, TouchEventHandler, useContext, useEffect} from "react";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
-import {RezeptContext} from "/imports/ui/RezeptResolver";
+import {RezeptContext} from "/imports/ui/RezeptContext";
 import {renderMdast} from "/imports/api/render_mdast/render";
 import {useWakeLock} from "/imports/ui/useWakeLock";
 
 const FACTOR_PARAM_NAME = 'faktor';
 
 export const FactorContext =
-  React.createContext<{factor: number, setFactor: Dispatch<SetStateAction<number>>}>({factor: 1, setFactor: factor => {} })
+  React.createContext<{factor: number, setFactor: Dispatch<SetStateAction<number>>}>({factor: 1, setFactor: () => {} })
 
 export const Viewer = ()=> {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const rezept = useContext(RezeptContext);
   const wakeLock = useWakeLock(true);
 
@@ -25,7 +25,7 @@ export const Viewer = ()=> {
   }, [wakeLock.isSupported, wakeLock.isActive, wakeLock.error]);
 
   // Provide "factor" from URL Search Param as context variable
-  let [queryParams, setQueryParams] = useSearchParams()
+  const [queryParams, setQueryParams] = useSearchParams()
   const setFactor = (factor: number) => {
     setQueryParams(currentParams => {
       currentParams.set(FACTOR_PARAM_NAME, String(factor));
@@ -58,7 +58,7 @@ export const Viewer = ()=> {
   const vdom = renderMdast(rezept.mdast, schema)
   const shareData = {title: rezept.name, url: window.location.href};
 
-  let share = navigator.canShare && navigator.canShare(shareData) ?
+  const share = navigator.canShare && navigator.canShare(shareData) ?
     <a id="share" onClick={() => navigator.share(shareData)}></a>
     : undefined
 

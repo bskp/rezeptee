@@ -35,14 +35,10 @@
     "types": ["node", "mocha"],
     "esModuleInterop": true,
     "preserveSymlinks": true,
+    "skipLibCheck": true,
 
     // to allow for iteration of HTMLCollections
     "downlevelIteration": true
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
   },
   "exclude": [
     "./.meteor/**",

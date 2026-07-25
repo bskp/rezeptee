@@ -4,7 +4,7 @@ import {createFractionalNumber, parseFractionalNumber} from "/imports/api/quanti
 
 type QuantityProps = {
   value: {value: string, dimension: number},
-  setEditing: Function
+  setEditing: (editing: boolean) => void
 }
 
 const QuantityViewer = (props: QuantityProps) => {
@@ -41,7 +41,7 @@ const QuantityEditor = (props: QuantityProps) => {
       setFactor(1)
     }
     const val = Number.parseFloat(event.target.value);
-    let f = val / baseQuantity;
+    const f = val / baseQuantity;
     if (Number.isNaN(f)) {
       setValid(false)
     } else {

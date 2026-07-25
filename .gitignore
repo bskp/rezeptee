@@ -5,3 +5,4 @@
 .DS_Store
 /app/test-results/
 /app/playwright-report/
+/app/tsconfig.tsbuildinfo

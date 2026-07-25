@@ -2,8 +2,9 @@
 import {useFind, useSubscribe} from "meteor/react-meteor-data";
 import React, {TouchEventHandler, useEffect, useRef, useState} from "react";
 import {Sidebar} from "/imports/ui/Sidebar";
-import {Outlet, useParams} from "react-router-dom";
-import {RezeptContext} from "./RezeptResolver";
+import {Link, Outlet, useLocation, useParams} from "react-router-dom";
+import {RezeptContext} from "./RezeptContext";
+import {ErrorBoundary} from "./ErrorBoundary";
 import {parse, Rezepte, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
@@ -20,18 +21,17 @@ export const getSubdomain = () => {
 export const ContentWrapper = (props: ContentWrapperProps) => {
   const rezepteLoading = useSubscribe('rezepte', getSubdomain());
   useSubscribe('spaces');
-  useSubscribe('rezepteVersions', getSubdomain());
 
   const ref = useRef<HTMLDivElement>(null)
-  let [sidebarCollapse, setSidebarCollapse] = useState(true);
+  const [sidebarCollapse, setSidebarCollapse] = useState(true);
 
-  let handleSidebarToggle = () => {
+  const handleSidebarToggle = () => {
     setSidebarCollapse(current => !current);
   }
 
-  let [start, setStart] = useState({x: 0, y: 0});
-  let [swipe, setSwipe] = useState({x: 0, y: 0});
-  let [offsetTransform, setOffsetTransform] = useState("");
+  const [start, setStart] = useState({x: 0, y: 0});
+  const [swipe, setSwipe] = useState({x: 0, y: 0});
+  const [offsetTransform, setOffsetTransform] = useState("");
 
   const touchStartHandler: TouchEventHandler = event => {
     if (!props.allowSwipe) return;
@@ -45,7 +45,7 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
   const touchMoveHandler: TouchEventHandler = event => {
     if (!props.allowSwipe) return;
     let dX = event.touches[0].pageX - start.x
-    let dY = event.touches[0].pageY - start.y
+    const dY = event.touches[0].pageY - start.y
 
     // Check swipe angle (<45°) and dead zone
     const deadZone = 10;
@@ -95,6 +95,7 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
   };
 
   const params = useParams();
+  const location = useLocation();
   const slug = params.slug ?? 'rezeptee';
   const rezeptStored = useFind(() => Rezepte.find({slug: slug, active: true}), [slug])[0];
 
@@ -118,7 +119,18 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
          onTouchEnd={touchEndHandler}>
 
       <section id="content" ref={ref} style={{transform: baseTransform}}>
-        <Outlet/>
+        <ErrorBoundary key={location.pathname} fallback={error => <div className="page">
+          <h1>Da ging etwas schief.</h1>
+          <p>
+            Dieses Rezept konnte nicht dargestellt werden — vermutlich stolpert
+            der Renderer über eine Stelle im Markdown.
+            Du kannst es <Link to={`/${slug}/edit`}>im Editor öffnen</Link> und
+            die Änderung zurücknehmen.
+          </p>
+          <pre>{error.message}</pre>
+        </div>}>
+          <Outlet/>
+        </ErrorBoundary>
       </section>
       <Sidebar toggler={() => setSidebarCollapse(true)}/>
       <div onClick={handleSidebarToggle} id="mode_flip"></div>

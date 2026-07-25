@@ -4,16 +4,16 @@ import {Meteor} from "meteor/meteor";
 import {ImageList} from "/imports/ui/Images";
 import TextareaAutosize from "react-textarea-autosize";
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
-import {RezeptContext, RezeptResolver} from "/imports/ui/RezeptResolver";
+import {RezeptContext} from "/imports/ui/RezeptContext";
 import {parse, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 import {getSubdomain} from "/imports/ui/ContentWrapper";
 
 export const Editor = () => {
   const rezept = useContext(RezeptContext) ?? getTemplateRecipe();
 
-  let [text, setText] = useState(rezept.markdown);
-  let [dirty, setDirty] = useState(false)
-  let navigate = useNavigate();
+  const [text, setText] = useState(rezept.markdown);
+  const [dirty, setDirty] = useState(false)
+  const navigate = useNavigate();
 
   const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     let text = event.currentTarget.value
@@ -42,7 +42,7 @@ export const Editor = () => {
     }
     if (event.key == 'Enter') {
       const autocomplete = (given: RegExp, completeWith) => {
-        let match = row.match(given)
+        const match = row.match(given)
         if (match == null) return false
         if (match[2] == '') {
           // Nothing was added after the autocompletion.
@@ -50,14 +50,14 @@ export const Editor = () => {
           t.setRangeText("", t.selectionStart - row.length, t.selectionEnd, "end")
           return true
         }
-        let replacement = "\n" + match[0].replace(given, completeWith)
+        const replacement = "\n" + match[0].replace(given, completeWith)
         t.setRangeText(replacement, t.selectionStart, t.selectionEnd, "end")
         event.preventDefault()
         return true
       }
       if (
         autocomplete(/^((?: {4})+) *(\S*)/, "$1") ||
-        autocomplete(/^( *[\-+*]) *(\S*)/, "$1 ") ||
+        autocomplete(/^( *[-+*]) *(\S*)/, "$1 ") ||
         autocomplete(/^ *(\d+)\. *(\S*)/, (all, d) => (Number.parseInt(d, 10) + 1) + ". ")
       ) return
     }

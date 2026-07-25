@@ -36,7 +36,7 @@ export const conversionLookup = {};
 
 for (const match of conversions.matchAll(/(\w+) = (\d*) ?(\w+)?\n/g)) {
   let [ , coarseUnit, factorString=1, fineUnit=""] = match;
-  let factor = Number(factorString);
+  const factor = Number(factorString);
   coarseUnit = coarseUnit.toLowerCase();
   fineUnit = fineUnit.toLowerCase();
   const ensure = unit => {
@@ -65,11 +65,11 @@ export function createFractionalNumber(number : number) : string {
   for (let denominator = 2; denominator <= 4; denominator++) {
     const error = (number*denominator)%1.0;
     if (error < 0.001) {
-      let wholes = Math.floor(number)
+      const wholes = Math.floor(number)
       if (wholes > 10) continue
-      let nominator = Math.round(number*denominator) - wholes*denominator
-      let wholesText = wholes == 0 ? '' : wholes.toString()
-      let text = `${wholesText} ${nominator}/${denominator}`
+      const nominator = Math.round(number*denominator) - wholes*denominator
+      const wholesText = wholes == 0 ? '' : wholes.toString()
+      const text = `${wholesText} ${nominator}/${denominator}`
       return insertTypographicalFractions(text)
     }
   }

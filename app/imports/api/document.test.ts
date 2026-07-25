@@ -64,7 +64,7 @@ const mdast_result = {
 describe('Markdown to react parsing', () => {
   it('Markdown to mdast', () => {
 
-    let md = "A h1 title\n=======\n";
+    const md = "A h1 title\n=======\n";
 
     let actual = markdownToAst(md);
     actual = removePosition(actual, true);
@@ -80,7 +80,7 @@ describe('Markdown to react parsing', () => {
 
   it('Test ingredientProcessor', () => {
     assert.doesNotThrow( () => {
-      let md = `
+      const md = `
 Testtitel
 =========
 
@@ -88,7 +88,7 @@ Testtitel
     100g Teigis
 
 `;
-      let tree = markdownToAst(md);
+      const tree = markdownToAst(md);
       console.dir(tree);
     });
   });

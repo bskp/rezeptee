@@ -2,7 +2,8 @@ declare module "meteor/ostrio:files" {
   import { Meteor } from 'meteor/meteor';
   import { Mongo } from 'meteor/mongo';
   import { ReactiveVar } from 'meteor/reactive-var';
-  import { SimpleSchemaDefinition } from 'simpl-schema';
+  // simpl-schema ist nicht installiert; die App nutzt das schema-Feld nicht.
+  type SimpleSchemaDefinition = unknown;
   import * as http from 'http';
   import { IncomingMessage } from 'connect';
 
