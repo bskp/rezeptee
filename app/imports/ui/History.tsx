@@ -1,8 +1,8 @@
 import TrackingDocumentTitle from "/imports/ui/TrackingDocumentTitle";
 import React, {useContext, useState} from "react";
 import {Rezepte, RezeptStored} from "/imports/api/models/rezept";
-import {useFind} from "meteor/react-meteor-data";
-import {RezeptContext} from "/imports/ui/RezeptResolver";
+import {useFind, useSubscribe} from "meteor/react-meteor-data";
+import {RezeptContext} from "/imports/ui/RezeptContext";
 import {useNavigate} from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 
@@ -24,8 +24,11 @@ function followPreviousVersionReferences(versions: RezeptStored[], currentId: st
 export const History = () => {
   const rezept = useContext(RezeptContext);
   const navigate = useNavigate();
-  const [peeking, setPeeking] = useState<RezeptWithAge>(rezept as RezeptWithAge);
+  // Kein useState(rezept): beim ersten Render ist das Abo noch nicht bereit,
+  // der Startwert wäre dauerhaft undefined. Deshalb erst beim Lesen auflösen.
+  const [peeking, setPeeking] = useState<RezeptWithAge | undefined>(undefined);
 
+  useSubscribe('rezeptVersions', rezept?._lineage);
   const versions = useFind(
     () => Rezepte.find({_lineage: rezept?._lineage}, {sort: {createdAt: -1}}),
     [rezept]
@@ -36,6 +39,7 @@ export const History = () => {
   }
 
   const lineage = followPreviousVersionReferences(versions, rezept._id);
+  const shown = peeking ?? (rezept as RezeptWithAge);
 
   const getLabel = (version: RezeptWithAge) => {
     if (version.age == 0) return 'Aktuell';
@@ -50,7 +54,7 @@ export const History = () => {
         <ol id="history">
           {lineage.map(version => (
             <li key={version._id}
-                className={version._id === peeking?._id ? 'peeking' : undefined}
+                className={version._id === shown._id ? 'peeking' : undefined}
                 onClick={(() => setPeeking(version))}
                 onMouseEnter={() => {
                   setPeeking(version);
@@ -65,7 +69,7 @@ export const History = () => {
       </aside>
       <TextareaAutosize id="editor"
                         readOnly={true}
-                        value={peeking.markdown}
+                        value={shown.markdown}
                         minRows={30}/>
     </div>
   </>;

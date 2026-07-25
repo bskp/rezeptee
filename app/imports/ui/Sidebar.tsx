@@ -2,12 +2,12 @@ import React, {useContext, useRef, useState} from "react";
 import {NavLink} from "react-router-dom";
 import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
-import {RezeptContext} from "/imports/ui/RezeptResolver";
+import {RezeptContext} from "/imports/ui/RezeptContext";
 import {useFind} from "meteor/react-meteor-data";
 import {Rezepte, RezeptStored} from "/imports/api/models/rezept";
 
 interface SidebarProps {
-  toggler: Function,
+  toggler: () => void,
 }
 
 export const Sidebar = (props: SidebarProps) => {
@@ -52,7 +52,7 @@ export const Sidebar = (props: SidebarProps) => {
     filtered = filtered.filter(rez => {
       if (rez.name.toLowerCase().includes(term)) return true;
       if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true;
-      for (let ingr of rez.ingredientNames) {
+      for (const ingr of rez.ingredientNames) {
         if (ingr.includes(term)) return true;
       }
       if (rez.markdown.includes(term)) return true
@@ -60,7 +60,7 @@ export const Sidebar = (props: SidebarProps) => {
     })
   }
 
-  const handleBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     trackSiteSearch({
       keyword: filter,
       category: '',
@@ -68,7 +68,7 @@ export const Sidebar = (props: SidebarProps) => {
     })
   };
 
-  let input = useRef<HTMLInputElement>(null)
+  const input = useRef<HTMLInputElement>(null)
   const introCreateNew = <>
     <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>
     <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Übersicht</NavLink></li>

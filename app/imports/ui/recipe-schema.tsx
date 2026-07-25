@@ -9,7 +9,13 @@ const List = ({children, data, attributes = {}}) => data.ordered
   : <ul>{children}</ul>
 
 const isExternalURL = (url) => {
-  return new URL(url, location.origin).origin !== location.origin;
+  try {
+    return new URL(url, location.origin).origin !== location.origin;
+  } catch {
+    // Unparsbare URL (z.B. "http://"). Als externen Link ausgeben — ein
+    // inertes <a> ist harmlos, der Router würde daran ersticken.
+    return true;
+  }
 };
 
 const paragraphRule = {
@@ -56,7 +62,7 @@ const paragraphRule = {
         isExternal: isExternalURL(node.url)
       }),
       component: ({url, isExternal, children}) =>
-        isExternal ? <a href={url} target='_blank'>{children}</a> : <Link to={url}>{children}</Link>
+        isExternal ? <a href={url} target='_blank' rel="noreferrer">{children}</a> : <Link to={url}>{children}</Link>
     },
     {
       matchMdast: matchType('inlineCode'),

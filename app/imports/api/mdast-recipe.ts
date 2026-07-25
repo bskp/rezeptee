@@ -9,13 +9,13 @@ import {
 
 export function splitIngredients(row: string) {
   row = expandTypographicalFractions(row);
-  const matches = row.matchAll(/(\d+(?: \d)?(?:[\/.,]\d+)?)(?: *(Pfund|Dose|Bund|Bd|[KTE]L|[kdcm]?[lg])\b)?/g);
+  const matches = row.matchAll(/(\d+(?: \d)?(?:[/.,]\d+)?)(?: *(Pfund|Dose|Bund|Bd|[KTE]L|[kdcm]?[lg])\b)?/g);
 
-  let children : Node[] = [];
+  const children : Node[] = [];
   let consumed = 0;
 
   for (const match of matches) {
-    let [all, quantity, unit] = match;
+    const [all, quantity, unit] = match;
     const start = match.index || 0;
     if (start > consumed) {
       children.push(

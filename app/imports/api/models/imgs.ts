@@ -71,8 +71,8 @@ export const Imgs = new FilesCollection({
             'versions.original.meta.height': features.height
           }
         });
-        createSizeVersion(file, 'thumbnail', i => i.quality(90).resize('300>').gravity('Center'));
-        createSizeVersion(file, 'full', i => i.quality(60).resize('1600>'));
+        createSizeVersion(file, 'thumbnail', i => i.quality(90).resize(300, undefined, '>').gravity('Center'));
+        createSizeVersion(file, 'full', i => i.quality(60).resize(1600, undefined, '>'));
       })
     }); // size + bound
   }

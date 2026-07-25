@@ -19,26 +19,19 @@ Meteor.publish('rezepte', (collectionName: string | null) =>
     })
 );
 
-Meteor.publish('rezepteVersions', (collectionName: string | null) =>
-  (collectionName !== null && collectionName !== undefined) ?
-    Rezepte.find({
-      collections: collectionName
-    })
-    :
-    Rezepte.find({
-      $or: [
-        {collections: {$exists: false}},
-        {collections: {$size: 0}},
-        {collections: 'global'}
-      ]
-    })
-);
+// Versionsverlauf eines einzelnen Rezepts. Bewusst eng geschnitten: früher
+// wurden alle Versionen aller Rezepte an jeden Client geschickt.
+Meteor.publish('rezeptVersions', function (lineage: string) {
+  if (typeof lineage !== 'string' || lineage === '') {
+    this.ready();
+    return;
+  }
+  return Rezepte.find({_lineage: lineage});
+});
 
 Meteor.publish('files.imgs.all', () => Imgs.find().cursor);
 
-Meteor.publish('spaces', function () {
-  const self = this;
-
+Meteor.publish('spaces', async function () {
   const counts: {[key: string]: Set<string>} = {};
 
   const add = (id: string, collections?: string[]) => {
@@ -46,12 +39,12 @@ Meteor.publish('spaces', function () {
       collections = ['root'];
     }
     collections?.forEach(collection => {
-      if (!counts.hasOwnProperty(collection)) {
+      if (!Object.prototype.hasOwnProperty.call(counts, collection)) {
         counts[collection] = new Set();
-        self.added('spaces', collection, {count: 0});
+        this.added('spaces', collection, {count: 0});
       }
       counts[collection].add(id)
-      self.changed('spaces', collection, {count: counts[collection].size});
+      this.changed('spaces', collection, {count: counts[collection].size});
     });
   };
 
@@ -61,16 +54,18 @@ Meteor.publish('spaces', function () {
       if (!idWasInCollection) {
         continue;
       }
-      self.changed('spaces', collection, {count: counts[collection].size});
+      this.changed('spaces', collection, {count: counts[collection].size});
 
       if (counts[collection].size == 0) {
         delete counts[collection];
-        self.removed('spaces', collection);
+        this.removed('spaces', collection);
       }
     }
   };
 
-  const handle = Rezepte.find({active: true}, {fields: {collections: 1}}).observeChanges({
+  // observeChanges liefert unter Meteor 3 ein Promise — ohne await war
+  // handle.stop() undefined und der Observer überlebte jedes Unsubscribe.
+  const handle = await Rezepte.find({active: true}, {fields: {collections: 1}}).observeChanges({
     added(id, fields) {
       add(id, fields.collections);
     },
@@ -84,18 +79,18 @@ Meteor.publish('spaces', function () {
     }
   });
 
-  self.ready();
-  self.onStop(() => handle.stop());
+  this.onStop(() => handle.stop());
+  this.ready();
 });
 
 Meteor.methods({
 
   async saveRezept(remoteObject: RezeptParsed) {
-    const {mdast, ...rezept} = parse(remoteObject);
+    const {mdast: _mdast, ...rezept} = parse(remoteObject);
 
     // Compare with stored Rezept versions
     // TODO: respect creation date
-    let stored = await Rezepte.findOneAsync({_lineage: rezept._lineage, active: true});
+    const stored = await Rezepte.findOneAsync({_lineage: rezept._lineage, active: true});
 
     // Archive previous version
     if (stored !== undefined) {
@@ -121,7 +116,7 @@ Meteor.methods({
 
 Meteor.startup(async function () {
   Rezepte.find({_parser_version: {$ne: CURRENT_PARSER_VERSION}, active: true}).forEach(async (r) => {
-    const {mdast, ...rezept} = parse(r);
+    const {mdast: _mdast, ...rezept} = parse(r);
     await Rezepte.updateAsync(rezept._id, rezept);
     console.log(`Re-parsed ${rezept.slug}`);
   });

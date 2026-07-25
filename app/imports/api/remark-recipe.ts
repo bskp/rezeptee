@@ -24,7 +24,7 @@ const remarkRecipe: Plugin = function () {
         )
       } else if (is(node, "paragraph")) {
         const par = node as Paragraph
-        let children = par.children.flatMap(child => {
+        const children = par.children.flatMap(child => {
           if (!is(child, 'text')) return child
           const text = child as Text
 
@@ -36,7 +36,7 @@ const remarkRecipe: Plugin = function () {
             // Collection assignment
             return [[...text.value.matchAll(/@(\S+)/g)].map(match => collectionNode(match[1]) as PhrasingContent)]
           }
-          const regex = /([^$]+)(?:(\${1,3})(\d+(?: \d)?(?:[\/.,]\d+)?))?/g;
+          const regex = /([^$]+)(?:(\${1,3})(\d+(?: \d)?(?:[/.,]\d+)?))?/g;
           return [...text.value.matchAll(regex)].map(([match, plaintext, dimension, number]) => {
             const contents = [textNode(plaintext) as PhrasingContent]
             if (number !== undefined) {
@@ -66,7 +66,7 @@ const remarkRecipe: Plugin = function () {
 
 function expandNestedArrays<Type>(nested: (Type | Type[])[]): Type[] {
   let out: Type[] = []
-  for (let slot of nested) {
+  for (const slot of nested) {
     if (Array.isArray(slot)) {
       out = out.concat(slot)
     } else {

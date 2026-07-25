@@ -9,3 +9,9 @@ updates:
     directory: "app" # Location of package manifests
     schedule:
       interval: "daily"
+
+  # Damit Actions nicht wieder auf einer alten Major-Version festrosten.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
