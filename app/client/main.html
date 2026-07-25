@@ -1,13 +1,18 @@
 <head>
   <title>Rezept.ee</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Das apple-Präfix ist deprecated, ältere iOS-Versionen brauchen es aber noch. -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Rezepte">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#9ebfc7">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="buch-180.png">
-    <link rel="apple-touch-icon" type="image/png" sizes="512x512" href="buch-512.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <!-- Absolute Pfade: relativ würden sie auf /rezept/foo zu /rezept/buch-180.png
+         auflösen, wo Meteor die SPA statt des Bildes ausliefert. -->
+    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/buch-180.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="512x512" href="/buch-512.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
 </head>
 
 <body>
