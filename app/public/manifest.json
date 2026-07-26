@@ -3,20 +3,38 @@
   "name": "Rezept.ee",
   "short_name": "Rezept.ee",
   "description": "Rezepte-Wiki",
+  "lang": "de",
+  "dir": "ltr",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "start_url": "/",
+  "scope": "/",
+  "theme_color": "#9D643C",
+  "background_color": "#9D643C",
   "icons": [
+    {
+      "src": "/buch-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/buch-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
     {
       "src": "/buch_adaptive-192.png",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     },
     {
       "src": "/buch_adaptive-512.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
