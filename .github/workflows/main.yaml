@@ -19,7 +19,7 @@ jobs:
         working-directory: app
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -70,7 +70,7 @@ jobs:
       - name: Test ssh key to fail fast
         run: ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} -i ~/.ssh/id_rsa_github_actor -t "pwd"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Use Node.js
         uses: actions/setup-node@v4
