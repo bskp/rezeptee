@@ -36,9 +36,9 @@ body::before {
   left: 0;
   right: 0;
   height: var(--safe-top);
-  background: rgba(30, 30, 30, 0.4);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  background: rgb(30 30 30 / 0.07);
+  backdrop-filter: blur(4px) saturate(140%);
+  //-webkit-backdrop-filter: blur(14px) saturate(140%);
   z-index: 200;
   pointer-events: none;
 }
@@ -47,6 +47,20 @@ body::before {
 
 html {
   height: 100%;
+}
+
+// iOS, Standalone mit black-translucent: solange das Wurzelelement seine
+// Höhe nur relativ (100%) bezieht, hält iOS das Layout-Viewport auf
+// screenHeight - safe-area-inset-top fest. Die untersten Pixel liegen dann
+// ausserhalb des Viewports -- unerreichbar auch für den Canvas-Hintergrund,
+// weshalb dort ein Streifen in der nativen Hintergrundfarbe stehen bleibt.
+// Eine absolute Höhe durchbricht diese Rückkopplung.
+// Bewusst nur hier: im Browser wäre 100vh grösser als das sichtbare
+// Viewport und liefe unter Safaris Leisten.
+@media (display-mode: standalone) {
+  html {
+    height: 100vh;
+  }
 }
 
 input, select, textarea {
