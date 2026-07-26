@@ -1,4 +1,5 @@
 import {Meteor} from "meteor/meteor";
+import { WebApp } from 'meteor/webapp';
 import {CURRENT_PARSER_VERSION, parse, Rezepte, RezeptParsed} from "/imports/api/models/rezept";
 import {Imgs} from "/imports/api/models/imgs";
 
@@ -115,6 +116,9 @@ Meteor.methods({
 });
 
 Meteor.startup(async function () {
+  // @ts-ignore
+  WebApp.addHtmlAttributeHook(() => ({ lang: 'de-CH' }));
+
   Rezepte.find({_parser_version: {$ne: CURRENT_PARSER_VERSION}, active: true}).forEach(async (r) => {
     const {mdast: _mdast, ...rezept} = parse(r);
     await Rezepte.updateAsync(rezept._id, rezept);
