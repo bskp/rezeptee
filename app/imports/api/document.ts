@@ -16,7 +16,7 @@ export const markdownToAst = (md: string) => {
 
 export function getTitle(mdast) {
   const h1 = find(mdast, {type: "heading", depth: 1});
-  return toString(h1 ?? "(Ohne Titel)");
+  return h1 ? toString(h1) : "(Ohne Titel)";
 }
 
 export function getTags(mdast) {

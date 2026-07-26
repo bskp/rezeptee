@@ -99,7 +99,7 @@ Meteor.methods({
       await Rezepte.updateAsync(stored._id, stored);
     }
 
-    if (rezept.markdown === "") {
+    if (rezept.markdown.trim() === "") {
       // That is the convention to delete a recipe. Skip creation of new & active version
       return undefined;
     }
