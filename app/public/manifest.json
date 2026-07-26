@@ -9,8 +9,8 @@
   "display_override": ["standalone", "minimal-ui"],
   "start_url": "/",
   "scope": "/",
-  "theme_color": "#9ebfc7",
-  "background_color": "#9ebfc7",
+  "theme_color": "#9D643C",
+  "background_color": "#9D643C",
   "icons": [
     {
       "src": "/buch-192.png",
