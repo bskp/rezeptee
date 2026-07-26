@@ -1,13 +1,15 @@
 <head>
-  <title>Rezept.ee</title>
+    <title>Rezept.ee</title>
     <meta name="mobile-web-app-capable" content="yes">
     <!-- Das apple-Präfix ist deprecated, ältere iOS-Versionen brauchen es aber noch. -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Rezept.ee">
-    <!-- Bewusst "black" und nicht "black-translucent": das Rezeptblatt ist
-         weiss (@sheet), die Statusleiste zeichnet bei translucent aber weisse
-         Glyphen darüber. Das wäre unlesbar. -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- black-translucent: die Statusleiste bleibt sichtbar, aber
+         durchscheinend -- der Seiteninhalt läuft direkt darunter durch.
+         Damit die Systemglyphen (Uhr, Akku) über jedem Seiteninhalt lesbar
+         bleiben -- nicht nur über dem weissen Blatt -- sorgt body::before
+         in rezepte.less für ein eigenes, abdunkelndes Blur-Band. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#9D643C">
     <!-- viewport-fit=cover schaltet env(safe-area-inset-*) überhaupt erst
          scharf; ohne das liefern sie konstant 0. Siehe :root in rezepte.less. -->
@@ -21,5 +23,5 @@
 </head>
 
 <body>
-  <div id="react-target"></div>
+<div id="react-target"></div>
 </body>

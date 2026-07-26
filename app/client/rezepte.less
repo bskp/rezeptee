@@ -24,6 +24,25 @@
   --safe-left: env(safe-area-inset-left, 0px);
 }
 
+// Durchscheinendes Band hinter der Statusleiste (siehe
+// apple-mobile-web-app-status-bar-style=black-translucent in main.html).
+// Ohne eigenen Hintergrund liefe die Systemuhr direkt über Rezeptbild
+// oder weisses Blatt -- je nach Seite unlesbar. Läuft bewusst auf body,
+// nicht auf #content, damit es auf jeder Seite (Editor, History, …) wirkt.
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--safe-top);
+  background: rgba(30, 30, 30, 0.4);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  z-index: 200;
+  pointer-events: none;
+}
+
 // Fixes
 
 html {
