@@ -3,7 +3,7 @@
   "name": "Rezept.ee",
   "short_name": "Rezept.ee",
   "description": "Rezepte-Wiki",
-  "lang": "de",
+  "lang": "de-CH",
   "dir": "ltr",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],

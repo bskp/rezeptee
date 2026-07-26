@@ -2,7 +2,9 @@
 
 @sheet: #fff;
 @grey: #ddd;
-@chrome: #444;
+@table: #444;
+// Buchdeckel-Braun. Muss mit theme-color (meta-tag im HTML) / theme_color (manifest.json) übereinstimmen:
+@brand: #9D643C;
 
 // Dimensions
 @leftCol: 12em;
@@ -12,11 +14,7 @@
 @list_desktop: 400px;
 
 // Safe Areas
-//
-// Als Custom Properties statt env() direkt: so steht der Wert an einer
-// Stelle, und man kann ihn zum Prüfen im Devtools-Inspector überschreiben,
-// ohne ein Gerät mit Notch zur Hand zu haben.
-// Wirksam werden sie erst durch viewport-fit=cover in der main.html.
+// Via custom props for easy overrides during testing. Requires viewport-fit=cover within the header tags.
 :root {
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
@@ -24,10 +22,39 @@
   --safe-left: env(safe-area-inset-left, 0px);
 }
 
+// Header backdrop for "standalone" view, providing readability for system clock & icons
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--safe-top);
+  background: rgb(255 255 255 / 0.38);
+  backdrop-filter: blur(4px) saturate(140%);
+  //-webkit-backdrop-filter: blur(14px) saturate(140%);
+  z-index: 200;
+  pointer-events: none;
+}
+
 // Fixes
 
 html {
   height: 100%;
+}
+
+// iOS, Standalone mit black-translucent: solange das Wurzelelement seine
+// Höhe nur relativ (100%) bezieht, hält iOS das Layout-Viewport auf
+// screenHeight - safe-area-inset-top fest. Die untersten Pixel liegen dann
+// ausserhalb des Viewports -- unerreichbar auch für den Canvas-Hintergrund,
+// weshalb dort ein Streifen in der nativen Hintergrundfarbe stehen bleibt.
+// Eine absolute Höhe durchbricht diese Rückkopplung.
+// Bewusst nur hier: im Browser wäre 100vh grösser als das sichtbare
+// Viewport und liefe unter Safaris Leisten.
+@media (display-mode: standalone) {
+  html {
+    height: 100vh;
+  }
 }
 
 input, select, textarea {
@@ -65,7 +92,8 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  background-color: @chrome;
+  // Not visible in the viewport, only here for Safari 26's header coloring
+  background-color: @brand;
   display: flex;
 }
 
@@ -76,6 +104,7 @@ body {
 
 aside#sidebar {
   color: @sheet;
+  background-color: @table;
   z-index: 1;
   flex-grow: 0;
   flex-shrink: 0;
@@ -252,7 +281,6 @@ aside#sidebar {
   }
 
   #editor {
-    min-height: 100vh;
     min-height: 100dvh;
     margin: 0;
     padding: 0;
@@ -389,7 +417,6 @@ aside#tools {
 
   position: sticky;
   margin-left: calc(-1 * @leftCol + 0.7em);
-  height: 100vh;
   height: 100dvh;
   top: var(--safe-top);
   float: left;
