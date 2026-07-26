@@ -10,8 +10,7 @@ const parser = unified()
   .use(remarkRecipe);
 
 export const markdownToAst = (md: string) => {
-  const mdast = parser.runSync(parser.parse(md));
-  return mdast;
+  return parser.runSync(parser.parse(md));
 };
 
 export function getTitle(mdast) {
