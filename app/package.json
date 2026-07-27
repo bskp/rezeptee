@@ -20,7 +20,7 @@
     "mdast-builder": "^1.1.1",
     "mdast-util-to-string": "^3.1.0",
     "meteor": "^3.3.2",
-    "meteor-node-stubs": "^1.1.0",
+    "meteor-node-stubs": "^1.2.27",
     "react": "^19.2.4",
     "react-dom": "^19.2.0",
     "react-router-dom": "^6.30.2",
