@@ -1,9 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-// Seit der Umstellung auf rspack gibt es kein eager .less-Loading mehr: fällt
-// der Import in client/main.tsx weg, baut und startet die App weiterhin
-// klaglos -- nur eben ohne Stylesheet. Der Rest der Suite würde das nicht
-// bemerken, weil nichts sonst auf berechnete Styles schaut.
 test('stylesheets reach the browser', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#sidebar')).toBeVisible();

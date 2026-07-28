@@ -1,14 +1,9 @@
 import {FilesCollection} from "meteor/ostrio:files";
 import {Meteor} from "meteor/meteor";
 
-// Im Docker-Container liegen die Bilder auf einem Volume, lokal im Projekt.
+// Local/dev: images are in a folder, Dockerized: on a volume
 export const fsStorage = Meteor.isDevelopment ? `${process.env.PWD}/images` : '/images';
 
-// Bewusst frei von gm/fs: über imports/ui/Images.tsx landet diese Datei auch
-// im Client-Bundle. Der klassische Bundler stopfte Node-Builtins still per
-// meteor-node-stubs zu, rspack tut das nicht -- und der Browser braucht von
-// hier ohnehin nur die Collection. Die Bildverarbeitung nach dem Upload hängt
-// server/imgs-processing.ts ein.
 export const Imgs = new FilesCollection({
   debug: false,
   storagePath: fsStorage,

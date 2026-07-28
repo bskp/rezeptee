@@ -14,8 +14,6 @@ const createSizeVersion = (img: FileRef<any>, versionLabel: string, transform: (
   const versionPath = `${fsStorage}/${versionLabel}/${img._id}.avif`;
 
   transform(im(img.path)).write(versionPath, (writeError) => {
-    // Ohne diesen Abbruch liefe fs.stat auf eine Datei, die ImageMagick gar
-    // nicht geschrieben hat.
     if (writeError) {
       console.error(`${versionLabel} version not written`, writeError);
       return;
@@ -42,9 +40,9 @@ const createSizeVersion = (img: FileRef<any>, versionLabel: string, transform: (
   });
 }
 
-// Nachträglich statt via Konstruktor-Config: ostrio:files liest den Hook bei
-// jedem Upload frisch von der Instanz (`if (this.onAfterUpload)` in
-// server.js), und so bleiben gm und fs aus dem Client-Bundle heraus.
+// Imgs is available both on server and client, but we'll only ever need the
+// resizing callback on server. By defining the callback here, we keep it out
+// of the client bundle.
 Imgs.onAfterUpload = file => {
   const image = im(file.path);
   image.size((error, features) => {

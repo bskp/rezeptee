@@ -2,7 +2,6 @@ import {Meteor} from "meteor/meteor";
 import { WebApp } from 'meteor/webapp';
 import {CURRENT_PARSER_VERSION, parse, Rezepte, RezeptParsed} from "/imports/api/models/rezept";
 import {Imgs} from "/imports/api/models/imgs";
-// Hängt den serverseitigen onAfterUpload-Hook ein (Seiteneffekt-Import).
 import "./imgs-processing";
 
 Meteor.publish('rezepte', (collectionName: string | null) =>
