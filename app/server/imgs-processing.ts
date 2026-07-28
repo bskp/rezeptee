@@ -13,10 +13,20 @@ const bound = Meteor.bindEnvironment((callback) => {
 const createSizeVersion = (img: FileRef<any>, versionLabel: string, transform: (i: gm.State) => gm.State) => {
   const versionPath = `${fsStorage}/${versionLabel}/${img._id}.avif`;
 
-  transform(im(img.path)).write(versionPath, (err) => {
-    fs.stat(versionPath, (err, stats) => {
+  transform(im(img.path)).write(versionPath, (writeError) => {
+    // Ohne diesen Abbruch liefe fs.stat auf eine Datei, die ImageMagick gar
+    // nicht geschrieben hat.
+    if (writeError) {
+      console.error(`${versionLabel} version not written`, writeError);
+      return;
+    }
+
+    fs.stat(versionPath, (statError, stats) => {
       bound(() => {
-        if (err) console.log(err)
+        if (statError) {
+          console.error(`${versionLabel} version not readable`, statError);
+          return;
+        }
         return Imgs.update(img._id, {
           $set: {
             [`versions.${versionLabel}`]: {
