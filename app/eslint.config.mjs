@@ -13,6 +13,11 @@ export default tseslint.config(
       'test-results/**',
       'playwright-report/**',
       '*.tsbuildinfo',
+      // Generierte rspack-Ausgabe.
+      '_build/**',
+      'build-chunks/**',
+      'build-assets/**',
+      '.rsdoctor/**',
     ],
   },
 
@@ -57,5 +62,12 @@ export default tseslint.config(
     // Handgepflegte Typ-Stubs für ostrio:files — bewusst nah am Original.
     files: ['meteor-files.d.ts'],
     rules: {'@typescript-eslint/no-empty-object-type': 'off'},
+  },
+
+  {
+    // rspack lädt seine Konfiguration als CommonJS.
+    files: ['rspack.config.js'],
+    languageOptions: {sourceType: 'commonjs', globals: {...globals.node}},
+    rules: {'@typescript-eslint/no-require-imports': 'off'},
   },
 );
