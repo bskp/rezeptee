@@ -1,41 +1,14 @@
-import {FileRef, FilesCollection} from "meteor/ostrio:files";
+import {FilesCollection} from "meteor/ostrio:files";
 import {Meteor} from "meteor/meteor";
-import fs from "fs";
-import gm from "gm";
 
-const im = gm.subClass({ imageMagick: true });
+// Im Docker-Container liegen die Bilder auf einem Volume, lokal im Projekt.
+export const fsStorage = Meteor.isDevelopment ? `${process.env.PWD}/images` : '/images';
 
-let fsStorage = '/images';  // within docker container
-if (Meteor.isDevelopment) {
-  fsStorage = `${process.env.PWD}/images`;
-}
-
-const bound = Meteor.bindEnvironment((callback) => {
-  return callback();
-});
-
-const createSizeVersion = (img: FileRef<any>, versionLabel: string, transform: (i: gm.State) => gm.State) => {
-  const versionPath = `${fsStorage}/${versionLabel}/${img._id}.avif`;
-
-  transform(im(img.path)).write(versionPath, (err) => {
-    fs.stat(versionPath, (err, stats) => {
-      bound(() => {
-        if (err) console.log(err)
-        return Imgs.update(img._id, {
-          $set: {
-            [`versions.${versionLabel}`]: {
-              path: versionPath,
-              size: stats.size,
-              type: 'image/avif',
-              name: img.name,
-            }
-          }
-        });
-      });
-    });
-  });
-}
-
+// Bewusst frei von gm/fs: über imports/ui/Images.tsx landet diese Datei auch
+// im Client-Bundle. Der klassische Bundler stopfte Node-Builtins still per
+// meteor-node-stubs zu, rspack tut das nicht -- und der Browser braucht von
+// hier ohnehin nur die Collection. Die Bildverarbeitung nach dem Upload hängt
+// server/imgs-processing.ts ein.
 export const Imgs = new FilesCollection({
   debug: false,
   storagePath: fsStorage,
@@ -52,28 +25,4 @@ export const Imgs = new FilesCollection({
     }
     return true;
   },
-
-  onAfterUpload: file => {
-    const image = im(file.path);
-    image.size((error, features) => {
-      bound(() => {
-        if (error) {
-          console.error('size not readable', error);
-          return;
-        }
-
-        // Update meta data if original image
-        Imgs.collection.update(file._id, {
-          $set: {
-            'meta.width': features.width,
-            'meta.height': features.height,
-            'versions.original.meta.width': features.width,
-            'versions.original.meta.height': features.height
-          }
-        });
-        createSizeVersion(file, 'thumbnail', i => i.quality(90).resize(300, undefined, '>').gravity('Center'));
-        createSizeVersion(file, 'full', i => i.quality(60).resize(1600, undefined, '>'));
-      })
-    }); // size + bound
-  }
 });

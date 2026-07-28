@@ -193,6 +193,13 @@ declare module "meteor/ostrio:files" {
     collection: Mongo.Collection<FileObj<MetadataType>>;
     schema: SimpleSchemaDefinition;
 
+    /**
+     * Serverseitiger Upload-Hook. Wird bei jedem Upload frisch von der Instanz
+     * gelesen und darf daher auch nach der Konstruktion gesetzt werden -- so
+     * bleibt der Bildverarbeitungs-Code aus dem Client-Bundle.
+     */
+    onAfterUpload: FilesCollectionConfig<MetadataType>['onAfterUpload'] | false;
+
     constructor(config: FilesCollectionConfig<MetadataType>)
 
     /**

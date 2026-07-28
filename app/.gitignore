@@ -1,0 +1,11 @@
+
+# Meteor Modern-Tools build context directories
+_build
+*/build-assets
+*/build-chunks
+.rsdoctor
+
+# Die vom rspack-Package erzeugten Muster oben greifen nur eine Ebene tief;
+# gebaut wird aber auch direkt hier.
+/build-assets
+/build-chunks

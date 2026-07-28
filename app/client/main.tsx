@@ -1,5 +1,12 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
+
+// Mit dem entfernten less-Package lädt Meteor .less nicht mehr eager, rspack
+// kennt kein Gegenstück dazu -- ohne diesen Import fehlt das halbe Stylesheet
+// kommentarlos. fonts.css bleibt bewusst draussen: reine .css-Dateien unter
+// client/ zieht Meteor weiterhin selbst ein, ein Import hier lüde sie doppelt.
+import './rezepte.less';
+
 import {createInstance, MatomoProvider} from "@datapunt/matomo-tracker-react";
 import {createRoot} from "react-dom/client";
 import {App} from "/imports/ui/App";

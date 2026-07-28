@@ -1,5 +1,32 @@
 import { expect, test } from '@playwright/test';
 
+// Seit der Umstellung auf rspack gibt es kein eager .less-Loading mehr: fällt
+// der Import in client/main.tsx weg, baut und startet die App weiterhin
+// klaglos -- nur eben ohne Stylesheet. Der Rest der Suite würde das nicht
+// bemerken, weil nichts sonst auf berechnete Styles schaut.
+test('stylesheets reach the browser', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#sidebar')).toBeVisible();
+
+  const theme = await page.evaluate(() => ({
+    background: getComputedStyle(document.body).backgroundColor,
+    fontFamily: getComputedStyle(document.body).fontFamily,
+    fontFaces: [...document.styleSheets].reduce((n, sheet) => {
+      try {
+        return n + [...sheet.cssRules].filter(r => r instanceof CSSFontFaceRule).length;
+      } catch {
+        return n; // cross-origin Stylesheet, hier nicht zu erwarten
+      }
+    }, 0),
+  }));
+
+  // Aus rezepte.less: @brand (#9D643C), via explizitem Import gebündelt.
+  expect(theme.background).toBe('rgb(157, 100, 60)');
+  expect(theme.fontFamily).toContain('double_pica');
+  // Aus fonts.css, das Meteor weiterhin selbst einzieht.
+  expect(theme.fontFaces).toBeGreaterThan(0);
+});
+
 test('meteor boots and core navigation works', async ({ page }) => {
   const marker = Date.now();
   const lineage = `e2e-test-${marker}`;
