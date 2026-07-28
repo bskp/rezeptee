@@ -11,7 +11,6 @@ reactive-var@1.0.13                  # Reactive variable for tracker
 ecmascript@0.18.1                    # Enable ECMAScript2015+ syntax in app code
 typescript@5.10.1
 shell-server@0.7.0                  # Server-side component of the `meteor shell` command
-hot-module-replacement@0.6.0        # Update client in development without reloading the page
 
 static-html@1.5.0
 react-meteor-data
