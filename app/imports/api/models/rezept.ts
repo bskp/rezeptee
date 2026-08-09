@@ -15,6 +15,10 @@ export const START_TAG = 'start';
 // selbst. Sie bleiben aus der Liste draussen, bis man nach ihnen sucht.
 export const META_TAG = 'meta';
 
+// Diese Tags steuern das Kochbuch, statt ein Rezept zu beschreiben — in der
+// Tagwolke hätten sie nichts zu suchen.
+export const HIDDEN_TAGS = [META_TAG, START_TAG];
+
 export type RezeptDraft = {
   markdown: string;
   _lineage: string;
