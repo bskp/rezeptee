@@ -4,7 +4,7 @@ import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptContext";
 import {useFind} from "meteor/react-meteor-data";
-import {Rezepte, RezeptStored} from "/imports/api/models/rezept";
+import {META_TAG, Rezepte, RezeptStored} from "/imports/api/models/rezept";
 
 interface SidebarProps {
   toggler: () => void,
@@ -45,10 +45,13 @@ export const Sidebar = (props: SidebarProps) => {
     setFilter(event.currentTarget.value);
   }
 
-  let filtered = rezepte.filter(rez => !rez.tagNames.includes('meta'))
+  const terms = filter.toLowerCase().split(" ").filter(term => term !== '');
 
-  for (let term of filter.split(" ")) {
-    term = term.toLowerCase()
+  // Meta-Seiten sind ausgeblendet — ausser man sucht ausdrücklich nach ihnen.
+  const showMeta = terms.includes('#' + META_TAG);
+  let filtered = showMeta ? rezepte : rezepte.filter(rez => !rez.tagNames.includes(META_TAG))
+
+  for (const term of terms) {
     filtered = filtered.filter(rez => {
       if (rez.name.toLowerCase().includes(term)) return true;
       if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true;
@@ -61,6 +64,9 @@ export const Sidebar = (props: SidebarProps) => {
   }
 
   const handleBlur = () => {
+    if (!filter) {
+      return;
+    }
     trackSiteSearch({
       keyword: filter,
       category: '',

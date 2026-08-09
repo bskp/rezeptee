@@ -5,7 +5,7 @@ import {Sidebar} from "/imports/ui/Sidebar";
 import {Link, Outlet, useLocation, useParams} from "react-router-dom";
 import {RezeptContext} from "./RezeptContext";
 import {ErrorBoundary} from "./ErrorBoundary";
-import {parse, Rezepte, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
+import {parse, Rezepte, RezeptParsed, RezeptStored, START_TAG} from "/imports/api/models/rezept";
 
 type ContentWrapperProps = {
   allowSwipe: boolean;
@@ -96,12 +96,21 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
 
   const params = useParams();
   const location = useLocation();
-  const slug = params.slug ?? 'rezeptee';
-  const rezeptStored = useFind(() => Rezepte.find({slug: slug, active: true}), [slug])[0];
+  const slug = params.slug;
+
+  // Ohne Slug sind wir auf der Startseite: dort zählt nicht ein bestimmter
+  // Name, sondern das mit START_TAG markierte Rezept der Sammlung.
+  const rezeptStored = useFind(() => Rezepte.find(
+    slug === undefined
+      ? {active: true, tagNames: START_TAG}
+      : {active: true, slug: slug},
+    {limit: 1}
+  ), [slug])[0];
 
   useEffect(() => {
     if (rezepteLoading()) {
-      setRezept(parse({markdown: `${params.slug ?? 'rezept.ee'}\n======\n\n`} as RezeptStored));
+      const placeholder = slug ?? getSubdomain() ?? 'rezept.ee';
+      setRezept(parse({markdown: `${placeholder}\n======\n\n`} as RezeptStored));
       return;
     }
     if (rezeptStored === undefined) {
@@ -111,6 +120,9 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
     const rezept = parse(rezeptStored)
     setRezeptWithEffect(rezept);
   }, [rezeptStored, rezepteLoading()]);
+
+  // Auf der Startseite steht kein Slug in der URL, wohl aber im Rezept.
+  const editSlug = slug ?? rezept?.slug;
 
   return <RezeptContext.Provider value={rezept}>
     <div className={'contentwrapper ' + (sidebarCollapse ? '' : 'offset')}
@@ -124,8 +136,10 @@ export const ContentWrapper = (props: ContentWrapperProps) => {
           <p>
             Dieses Rezept konnte nicht dargestellt werden — vermutlich stolpert
             der Renderer über eine Stelle im Markdown.
-            Du kannst es <Link to={`/${slug}/edit`}>im Editor öffnen</Link> und
-            die Änderung zurücknehmen.
+            {editSlug !== undefined && <>
+              {' '}Du kannst es <Link to={`/${editSlug}/edit`}>im Editor öffnen</Link> und
+              die Änderung zurücknehmen.
+            </>}
           </p>
           <pre>{error.message}</pre>
         </div>}>
