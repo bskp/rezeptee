@@ -69,10 +69,8 @@ export const Sidebar = (props: SidebarProps) => {
   };
 
   const input = useRef<HTMLInputElement>(null)
-  const hasStartPage = rezepte.some(rez => rez.tagNames.includes(START_TAG));
   const introCreateNew = <>
-    {hasStartPage &&
-      <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>}
+    <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>
     <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Übersicht</NavLink></li>
     <li key="create"><NavLink to="/create" onClick={sideBarToggle}>Neues Rezept…</NavLink></li>
   </>

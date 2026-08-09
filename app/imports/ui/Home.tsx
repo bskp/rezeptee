@@ -17,10 +17,11 @@ export const Home = () => {
 
   const space = getSubdomain();
 
+  let title = space ? `${space}.rezept.ee` : 'rezept.ee';
   return <>
-    <TrackingDocumentTitle title={space ? `${space}.rezept.ee` : 'rezept.ee'}/>
+    <TrackingDocumentTitle title={title}/>
     <div className="page">
-      <h1>{space ?? 'rezept.ee'}</h1>
+      <h1>{title}</h1>
       <p>
         Diese Sammlung hat noch keine Startseite. Wenn du eines
         ihrer <Link to="/create">Rezepte</Link> mit <code>#start</code> markierst,
