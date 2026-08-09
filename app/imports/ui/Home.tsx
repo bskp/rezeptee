@@ -17,7 +17,7 @@ export const Home = () => {
 
   const space = getSubdomain();
 
-  let title = space ? `${space}.rezept.ee` : 'rezept.ee';
+  const title = space ? `${space}.rezept.ee` : 'rezept.ee';
   return <>
     <TrackingDocumentTitle title={title}/>
     <div className="page">
