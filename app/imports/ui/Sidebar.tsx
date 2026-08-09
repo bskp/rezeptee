@@ -64,6 +64,9 @@ export const Sidebar = (props: SidebarProps) => {
   }
 
   const handleBlur = () => {
+    if (!filter) {
+      return;
+    }
     trackSiteSearch({
       keyword: filter,
       category: '',
