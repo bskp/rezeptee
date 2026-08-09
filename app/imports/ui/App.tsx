@@ -3,6 +3,7 @@ import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} fr
 import {ContentWrapper} from "/imports/ui/ContentWrapper";
 import {Editor} from "/imports/ui/Editor";
 import {Viewer} from "/imports/ui/Viewer";
+import {Home} from "/imports/ui/Home";
 import {attachTouchHandlers} from "/imports/ui/preventBodyBounce";
 import {Changes} from "/imports/ui/Changes";
 import {History} from "/imports/ui/History";
@@ -15,7 +16,7 @@ export const App = () => {
   const router = createBrowserRouter(createRoutesFromElements(
     <>
       <Route element={<ContentWrapper allowSwipe={true}/>}>
-        <Route path='/' element={<Viewer/>}/>
+        <Route path='/' element={<Home/>}/>
         <Route path=':slug' element={<Viewer/>}/>
         <Route path='changes' element={<Changes/>}/>
       </Route>

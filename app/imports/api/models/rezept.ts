@@ -6,6 +6,11 @@ import {Mongo} from "meteor/mongo";
 
 export const CURRENT_PARSER_VERSION = 1;
 
+// Ein Rezept mit diesem Tag ist die Startseite seiner Sammlung. Weil die
+// Subscription bereits nach Sammlung filtert, findet dieselbe Query in jedem
+// Space die passende Begrüssung.
+export const START_TAG = 'start';
+
 export type RezeptDraft = {
   markdown: string;
   _lineage: string;

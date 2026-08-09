@@ -4,7 +4,7 @@ import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptContext";
 import {useFind} from "meteor/react-meteor-data";
-import {Rezepte, RezeptStored} from "/imports/api/models/rezept";
+import {Rezepte, RezeptStored, START_TAG} from "/imports/api/models/rezept";
 
 interface SidebarProps {
   toggler: () => void,
@@ -69,8 +69,10 @@ export const Sidebar = (props: SidebarProps) => {
   };
 
   const input = useRef<HTMLInputElement>(null)
+  const hasStartPage = rezepte.some(rez => rez.tagNames.includes(START_TAG));
   const introCreateNew = <>
-    <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>
+    {hasStartPage &&
+      <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>}
     <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Übersicht</NavLink></li>
     <li key="create"><NavLink to="/create" onClick={sideBarToggle}>Neues Rezept…</NavLink></li>
   </>
