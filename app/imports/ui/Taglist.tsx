@@ -1,7 +1,7 @@
 import React from "react";
 import {visit} from "unist-util-visit";
 import {toString} from "mdast-util-to-string";
-import {parse, Rezepte} from "/imports/api/models/rezept";
+import {META_TAG, parse, Rezepte} from "/imports/api/models/rezept";
 import {useFind} from "meteor/react-meteor-data";
 
 interface TaglistProps {
@@ -12,7 +12,7 @@ interface TaglistProps {
 export const Taglist = (props: TaglistProps) => {
   const tags = useFind(() => Rezepte.find({active: true}, {fields: {tagNames: 1}}))
     .flatMap(r => r.tagNames)
-    .filter(tag => tag !== 'meta')
+    .filter(tag => tag !== META_TAG)
     .filter((tag, i, self) => i === self.indexOf(tag))
     .sort((a, b) => a.localeCompare(b));
 

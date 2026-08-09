@@ -11,6 +11,10 @@ export const CURRENT_PARSER_VERSION = 1;
 // Space die passende Begrüssung.
 export const START_TAG = 'start';
 
+// Rezepte mit diesem Tag sind keine Rezepte, sondern Seiten übers Kochbuch
+// selbst. Sie bleiben aus der Liste draussen, bis man nach ihnen sucht.
+export const META_TAG = 'meta';
+
 export type RezeptDraft = {
   markdown: string;
   _lineage: string;
