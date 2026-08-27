@@ -8,7 +8,7 @@ export function Image({id, alt}) {
   // @ts-ignore
   const src = `${Imgs.downloadRoute}/imgs/${id}/full/${id}`;
   return <figure className="img">
-    <img src={src} alt={alt}/>
+    <img key={id} src={src} alt={alt}/>
     <figcaption>{alt}</figcaption>
   </figure>
 }
