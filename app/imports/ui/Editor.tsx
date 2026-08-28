@@ -8,8 +8,14 @@ import {RezeptContext} from "/imports/ui/RezeptContext";
 import {parse, RezeptParsed, RezeptStored} from "/imports/api/models/rezept";
 import {getSubdomain} from "/imports/ui/ContentWrapper";
 
-export const Editor = () => {
-  const rezept = useContext(RezeptContext) ?? getTemplateRecipe();
+export const Editor = ({create = false}: { create?: boolean }) => {
+  // Auf /create hat ContentWrapper keinen Slug und liefert deshalb das
+  // #start-Rezept der Sammlung im Context. Würde der Editor das übernehmen,
+  // speicherte "Neues Rezept…" auf der Lineage der Startseite und verdrängte
+  // sie. Beim Erstellen zählt darum nur das frische Template.
+  const contextRezept = useContext(RezeptContext);
+  const [template] = useState(getTemplateRecipe);
+  const rezept = create ? template : (contextRezept ?? template);
 
   const [text, setText] = useState(rezept.markdown);
   const [dirty, setDirty] = useState(false)
@@ -75,8 +81,7 @@ export const Editor = () => {
   }
 
   const save = () => {
-    rezept.markdown = text;
-    Meteor.call('saveRezept', rezept, (error, newSlug) => {
+    Meteor.call('saveRezept', {...rezept, markdown: text}, (error, newSlug) => {
       if (error !== undefined) {
         console.log(error);
       }
