@@ -21,7 +21,7 @@ export const App = () => {
         <Route path='changes' element={<Changes/>}/>
       </Route>
       <Route element={<ContentWrapper allowSwipe={false}/>}>
-        <Route path='create' element={<Editor/>}/>
+        <Route path='create' element={<Editor create={true}/>}/>
         <Route path=':slug/edit' element={<Editor/>}/>
         <Route path=':slug/history' element={<History/>}/>
       </Route>
