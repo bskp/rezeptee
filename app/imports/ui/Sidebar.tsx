@@ -1,5 +1,5 @@
-import React, {useContext, useRef, useState} from "react";
-import {NavLink} from "react-router-dom";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {NavLink, useNavigate} from "react-router-dom";
 import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptContext";
@@ -15,7 +15,11 @@ export const Sidebar = (props: SidebarProps) => {
 
   const [filter, setFilter] = useState('');
   const {trackSiteSearch} = useMatomo();
-  const activeTags = useContext(RezeptContext)?.tagNames ?? [];
+  const rezeptContext = useContext(RezeptContext);
+  const activeTags = rezeptContext?.tagNames ?? [];
+  const currentSlug = rezeptContext?.slug;
+  const navigate = useNavigate();
+  const input = useRef<HTMLInputElement>(null)
   const sideBarToggle = () => props.toggler();
 
   function getFilterTogglingCallback(term: string) {
@@ -63,6 +67,46 @@ export const Sidebar = (props: SidebarProps) => {
     })
   }
 
+  // Pfeil hoch/runter blättert durch die aktuell gefilterte Liste. Der Listener
+  // wird nur einmal registriert; den jeweils aktuellen Stand liest er aus einem
+  // Ref, damit er nicht bei jedem Tastendruck neu aufgehängt werden muss.
+  const navState = useRef({slugs: [] as string[], currentSlug, navigate, sideBarToggle});
+  useEffect(() => {
+    navState.current = {slugs: filtered.map(rez => rez.slug), currentSlug, navigate, sideBarToggle};
+  });
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+
+      // In Textfeldern (Editor, andere Inputs) haben die Pfeiltasten Vorrang —
+      // ausser im Suchfeld der Sidebar, von wo aus das Blättern praktisch ist.
+      const target = event.target as HTMLElement | null;
+      if (target && target !== input.current &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' || target.isContentEditable)) return;
+
+      const {slugs, currentSlug} = navState.current;
+      if (slugs.length === 0) return;
+
+      const currentIndex = currentSlug ? slugs.indexOf(currentSlug) : -1;
+      let nextIndex: number;
+      if (currentIndex === -1) {
+        nextIndex = event.key === 'ArrowDown' ? 0 : slugs.length - 1;
+      } else {
+        nextIndex = currentIndex + (event.key === 'ArrowDown' ? 1 : -1);
+        if (nextIndex < 0 || nextIndex >= slugs.length) return;
+      }
+
+      event.preventDefault();
+      navState.current.navigate('/' + slugs[nextIndex]);
+      navState.current.sideBarToggle();
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   const handleBlur = () => {
     if (!filter) {
       return;
@@ -74,7 +118,6 @@ export const Sidebar = (props: SidebarProps) => {
     })
   };
 
-  const input = useRef<HTMLInputElement>(null)
   const introCreateNew = <>
     <li key="intro"><NavLink to="/" onClick={sideBarToggle}>Einführung</NavLink></li>
     <li key="changes"><NavLink to="/changes" onClick={sideBarToggle}>Übersicht</NavLink></li>
