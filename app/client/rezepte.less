@@ -26,6 +26,21 @@ html {
   height: 100%;
 }
 
+// iOS, Standalone (Inhalt läuft unter der Statusleiste durch, auch ohne
+// apple-mobile-web-app-status-bar-style): solange das Wurzelelement seine
+// Höhe nur relativ (100%) bezieht, hält iOS das Layout-Viewport auf
+// screenHeight - safe-area-inset-top fest. Die untersten Pixel liegen dann
+// ausserhalb des Viewports -- unerreichbar auch für den Canvas-Hintergrund,
+// weshalb dort ein Streifen in der nativen Hintergrundfarbe stehen bleibt.
+// Eine absolute Höhe durchbricht diese Rückkopplung.
+// Bewusst nur hier: im Browser wäre 100vh grösser als das sichtbare
+// Viewport und liefe unter Safaris Leisten.
+@media (display-mode: standalone) {
+  html {
+    height: 100vh;
+  }
+}
+
 input, select, textarea {
   font: inherit;
   border-style: none;
