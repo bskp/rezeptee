@@ -22,40 +22,8 @@
   --safe-left: env(safe-area-inset-left, 0px);
 }
 
-// Header backdrop for "standalone" view, providing readability for system clock & icons
-// TEMP: kein background-Tint -- pure blur() zum Abgrenzen von iOS' eigenem
-// Scroll-Edge-Effect (der reicht über --safe-top hinaus und tönt eigenständig).
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--safe-top);
-  backdrop-filter: blur(4px) saturate(140%);
-  //-webkit-backdrop-filter: blur(14px) saturate(140%);
-  z-index: 200;
-  pointer-events: none;
-}
-
-// Fixes
-
 html {
   height: 100%;
-}
-
-// iOS, Standalone mit black-translucent: solange das Wurzelelement seine
-// Höhe nur relativ (100%) bezieht, hält iOS das Layout-Viewport auf
-// screenHeight - safe-area-inset-top fest. Die untersten Pixel liegen dann
-// ausserhalb des Viewports -- unerreichbar auch für den Canvas-Hintergrund,
-// weshalb dort ein Streifen in der nativen Hintergrundfarbe stehen bleibt.
-// Eine absolute Höhe durchbricht diese Rückkopplung.
-// Bewusst nur hier: im Browser wäre 100vh grösser als das sichtbare
-// Viewport und liefe unter Safaris Leisten.
-@media (display-mode: standalone) {
-  html {
-    height: 100vh;
-  }
 }
 
 input, select, textarea {
@@ -96,6 +64,13 @@ body {
   // Not visible in the viewport, only here for Safari 26's header coloring
   background-color: @brand;
   display: flex;
+}
+
+// iOS 27 tönt den Scroll-Edge-Effect unter der Statusleiste mit der body-Farbe.
+@media (display-mode: standalone) {
+  body {
+    background-color: @sheet;
+  }
 }
 
 #react-target {
@@ -246,7 +221,6 @@ aside#sidebar {
 // aside
 
 #content {
-  min-height: 100vh;
   min-height: 100dvh; // dvh schliesst die ein-/ausfahrende Safari-Leiste ein
   width: 100%;
 
