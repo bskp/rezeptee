@@ -19,9 +19,7 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  --statusbar: var(--safe-top); // Oberer Rand des Layouts, siehe #statusbar
-}
+  --safe-left: env(safe-area-inset-left, 0px);}
 
 html {
   height: 100%;
@@ -92,32 +90,35 @@ body {
 // iOS 27 legt in der PWA einen eigenen Blur unter die Statusleiste, per CSS
 // nicht abschaltbar. Findet WebKit am oberen Rand aber ein fixed-Element mit
 // eigener background-color, übernimmt es dessen Farbe für eine opake
-// Statusleiste und lässt den Blur weg.
+// Statusleiste und lässt den Blur weg. Das klappt nur zusammen mit
+// apple-mobile-web-app-status-bar-style: default (siehe main.html).
 // Ein echtes Element statt ::before, weil unklar ist, ob WebKit Pseudo-
 // Elemente dabei berücksichtigt.
-// Höhe: In der über https installierten PWA liegt die Seite unter der
-// Statusleiste, der Balken muss also --safe-top hoch sein. Ist --safe-top 0
-// (lokal über http installiert, Querformat), genügen 5px.
-// Nur iOS statt (display-mode: standalone): Die Media Query griff in der
-// lokal (über http) installierten PWA nicht.
+// Höhe: 11px, weil WebKit die Farbe laut Berichten erst über 10px aus dem Style
+// liest. Dank background-clip wird nichts gemalt, die 11px kommen also nicht
+// als Band zur Statusleiste dazu; die Farbe bestimmt nur die der Statusleiste.
+// Nur in der iOS-PWA: Im Safari-Tab und in Firefox-Lesezeichen gibt es den Blur
+// nicht, dort bliebe der Balken als Linie sichtbar.
+// Testen nur mit einer in Safari angelegten PWA: Lesezeichen aus Firefox
+// verhalten sich anders (kein Blur, kein Icon).
 #statusbar {
   display: none;
 }
 
 @supports (-webkit-touch-callout: none) {
-  :root {
-    --statusbar: max(var(--safe-top), 5px);
-  }
-
-  #statusbar {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--statusbar);
-    background-color: @sheet;
-    z-index: 200; // über #content und #mode_flip
+  @media (display-mode: standalone) {
+    #statusbar {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 11px;
+      background-color: black;
+      -webkit-background-clip: text;
+      background-clip: text;
+      z-index: 200; // über #content und #mode_flip
+    }
   }
 }
 
@@ -142,8 +143,6 @@ aside#sidebar {
 
   width: @list_desktop;
   padding: var(--safe-top) 0 var(--safe-bottom) var(--safe-left);
-  // Platz für #statusbar, damit es den Rand über dem Suchfeld nicht verdeckt.
-  padding-top: var(--statusbar);
   margin: 0;
 
   li a {

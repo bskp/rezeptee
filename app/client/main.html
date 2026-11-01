@@ -4,10 +4,10 @@
     <!-- Das apple-Präfix ist deprecated, ältere iOS-Versionen brauchen es aber noch. -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Rezept.ee">
-    <!-- Deprecated, und ob iOS 27 ihn noch auswertet, ist unklar. Die opake
-         Statusleiste (#statusbar in rezepte.less) ist aber mit diesem Tag
-         getestet -- nicht ungetestet entfernen. -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Nicht black-translucent: Damit blendet WebKit den iOS-27-Blur trotz
+         #statusbar (rezepte.less) nicht aus. iOS liest den Tag vermutlich nur
+         beim Hinzufügen zum Home-Bildschirm, also mit neuer PWA testen. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#9D643C">
     <!-- viewport-fit=cover schaltet env(safe-area-inset-*) überhaupt erst
          scharf; ohne das liefern sie konstant 0. Siehe :root in rezepte.less. -->
