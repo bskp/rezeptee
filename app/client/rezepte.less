@@ -20,6 +20,7 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
+  --statusbar: 0px; // Höhe von #statusbar, auf iOS gesetzt
 }
 
 html {
@@ -88,6 +89,35 @@ body {
   }
 }
 
+// iOS 27 legt in der PWA einen eigenen Blur unter die Statusleiste, per CSS
+// nicht abschaltbar. Findet WebKit am oberen Rand aber ein fixed-Element mit
+// eigener background-color, übernimmt es dessen Farbe für eine opake
+// Statusleiste und lässt den Blur weg. Auf dem iPhone getestet: 5px weiss.
+// Ein echtes Element statt ::before, weil unklar ist, ob WebKit Pseudo-
+// Elemente dabei berücksichtigt.
+// Nur iOS statt (display-mode: standalone): Die Media Query griff in der
+// lokal (über http) installierten PWA nicht.
+#statusbar {
+  display: none;
+}
+
+@supports (-webkit-touch-callout: none) {
+  :root {
+    --statusbar: 5px;
+  }
+
+  #statusbar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--statusbar);
+    background-color: @sheet;
+    z-index: 200; // über #content und #mode_flip
+  }
+}
+
 #react-target {
   min-height: 100%;
   display: contents;
@@ -109,6 +139,8 @@ aside#sidebar {
 
   width: @list_desktop;
   padding: var(--safe-top) 0 var(--safe-bottom) var(--safe-left);
+  // Platz für #statusbar, damit es den Rand über dem Suchfeld nicht verdeckt.
+  padding-top: calc(var(--safe-top) + var(--statusbar));
   margin: 0;
 
   li a {
