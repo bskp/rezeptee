@@ -1,27 +1,19 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {NavLink, useNavigate} from "react-router-dom";
 import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptContext";
 import {useFind} from "meteor/react-meteor-data";
-import {META_TAG, Rezepte, RezeptStored} from "/imports/api/models/rezept";
-
-// Gross-/Kleinschreibung und Akzente spielen beim Suchen keine Rolle:
-// «creme» findet «Crème», «strasse» findet «Straße».
-export function normalizeForSearch(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .replaceAll('ß', 'ss');
-}
+import {META_TAG, Rezepte, RezeptLoaded} from "/imports/api/models/rezept";
+import {matchesSearchTerm} from "/imports/api/search";
 
 interface SidebarProps {
   toggler: () => void,
 }
 
 export const Sidebar = (props: SidebarProps) => {
-  const rezepte: RezeptStored[] = useFind(() => Rezepte.find({active: true}, {sort: {name: 1}}));
+  // useFind wendet den Transform der Collection an, seine Typen kennen ihn nur nicht.
+  const rezepte = useFind(() => Rezepte.find({active: true}, {sort: {name: 1}})) as RezeptLoaded[];
 
   const [filter, setFilter] = useState('');
   const {trackSiteSearch} = useMatomo();
@@ -59,27 +51,15 @@ export const Sidebar = (props: SidebarProps) => {
     setFilter(event.currentTarget.value);
   }
 
-  // Der ganze Rezepttext wird einmal pro Datenstand normalisiert, nicht bei
-  // jedem Tastendruck. Titel und Zutaten stecken im Markdown mit drin.
-  const searchTexts = useMemo(
-    () => new Map(rezepte.map(rez => [rez._id, normalizeForSearch(rez.markdown)])),
-    [rezepte]
-  );
-
   const terms = filter.toLowerCase().split(" ").filter(term => term !== '');
 
   // Meta-Seiten sind ausgeblendet — ausser man sucht ausdrücklich nach ihnen.
   const showMeta = terms.includes('#' + META_TAG);
   let filtered = showMeta ? rezepte : rezepte.filter(rez => !rez.tagNames.includes(META_TAG))
 
-  // Jeder Begriff muss irgendwo im Rezept vorkommen. Tags stehen als «#tag» im
-  // Text, «#veg» findet darum schon beim Tippen «#vegetarisch».
+  // Jeder Begriff muss irgendwo im Rezept vorkommen.
   for (const term of terms) {
-    const needle = normalizeForSearch(term);
-    filtered = filtered.filter(rez =>
-      (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) ||
-      searchTexts.get(rez._id)?.includes(needle)
-    );
+    filtered = filtered.filter(rez => matchesSearchTerm(rez, term));
   }
 
   // Pfeil hoch/runter blättert durch die aktuell gefilterte Liste. Der Listener
