@@ -4,14 +4,16 @@ import {Taglist} from "/imports/ui/Taglist";
 import {useMatomo} from "@datapunt/matomo-tracker-react";
 import {RezeptContext} from "/imports/ui/RezeptContext";
 import {useFind} from "meteor/react-meteor-data";
-import {META_TAG, Rezepte, RezeptStored} from "/imports/api/models/rezept";
+import {META_TAG, Rezepte, RezeptLoaded} from "/imports/api/models/rezept";
+import {matchesSearchTerm} from "/imports/api/search";
 
 interface SidebarProps {
   toggler: () => void,
 }
 
 export const Sidebar = (props: SidebarProps) => {
-  const rezepte: RezeptStored[] = useFind(() => Rezepte.find({active: true}, {sort: {name: 1}}));
+  // useFind wendet den Transform der Collection an, seine Typen kennen ihn nur nicht.
+  const rezepte = useFind(() => Rezepte.find({active: true}, {sort: {name: 1}})) as RezeptLoaded[];
 
   const [filter, setFilter] = useState('');
   const {trackSiteSearch} = useMatomo();
@@ -55,16 +57,9 @@ export const Sidebar = (props: SidebarProps) => {
   const showMeta = terms.includes('#' + META_TAG);
   let filtered = showMeta ? rezepte : rezepte.filter(rez => !rez.tagNames.includes(META_TAG))
 
+  // Jeder Begriff muss irgendwo im Rezept vorkommen.
   for (const term of terms) {
-    filtered = filtered.filter(rez => {
-      if (rez.name.toLowerCase().includes(term)) return true;
-      if (term.startsWith("#") && rez.tagNames.includes(term.substring(1))) return true;
-      for (const ingr of rez.ingredientNames) {
-        if (ingr.includes(term)) return true;
-      }
-      if (rez.markdown.includes(term)) return true
-      return false
-    })
+    filtered = filtered.filter(rez => matchesSearchTerm(rez, term));
   }
 
   // Pfeil hoch/runter blättert durch die aktuell gefilterte Liste. Der Listener
