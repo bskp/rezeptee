@@ -3,6 +3,7 @@ import {Node} from "unist";
 import {getCollections, getIngredients, getTags, getTitle, markdownToAst} from "/imports/api/document";
 import slug from 'slug';
 import {Mongo} from "meteor/mongo";
+import {normalizeForSearch, Searchable} from "/imports/api/search";
 
 export const CURRENT_PARSER_VERSION = 1;
 
@@ -60,5 +61,11 @@ export const parse = (rezept: RezeptStored): RezeptParsed => {
   });
 };
 
-export const Rezepte = new Mongo.Collection<RezeptStored>("rezepte");
+export type RezeptLoaded = RezeptStored & Searchable;
+
+// Der Suchtext wird beim Laden dazugerechnet statt gespeichert: Er würde jedes
+// Rezept in der DB und auf der Leitung ungefähr verdoppeln.
+export const Rezepte = new Mongo.Collection<RezeptStored, RezeptLoaded>("rezepte", {
+  transform: rezept => ({...rezept, searchText: normalizeForSearch(rezept.markdown)})
+});
 export const Spaces = new Mongo.Collection<{ _id: string, count: number }>("spaces");

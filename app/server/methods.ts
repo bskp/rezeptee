@@ -94,11 +94,11 @@ Meteor.methods({
     // TODO: respect creation date
     const stored = await Rezepte.findOneAsync({_lineage: rezept._lineage, active: true});
 
-    // Archive previous version
+    // Archive previous version. Nur das Flag setzen: «stored» ist durch den
+    // Transform der Collection ergänzt und gehört so nicht zurück in die DB.
     if (stored !== undefined) {
-      stored.active = false;
       rezept.previous_version_id = stored._id;
-      await Rezepte.updateAsync(stored._id, stored);
+      await Rezepte.updateAsync(stored._id, {$set: {active: false}});
     }
 
     if (rezept.markdown.trim() === "") {
