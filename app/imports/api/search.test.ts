@@ -1,4 +1,4 @@
-import {matchesSearchTerm, normalizeForSearch} from "./search";
+import {matchesSearchTerm, normalizeForSearch, withSearchText} from "./search";
 import assert from "assert";
 
 const rezept = (markdown: string, tagNames: string[] = []) =>
@@ -46,6 +46,19 @@ describe('Suche', () => {
 
   it('findet Tags auch ohne Treffer im Text', () => {
     assert.ok(matchesSearchTerm(rezept('Rösti', ['meta']), '#meta'));
+  });
+
+  it('Transform verträgt projizierte Dokumente ohne Markdown', () => {
+    // So kommt es bei Rezepte.find(…, {fields: {tagNames: 1}}) an.
+    const projiziert = withSearchText<{ _id: string, tagNames: string[], markdown?: string }>(
+      {_id: 'x', tagNames: ['vegi']}
+    );
+    assert.equal(projiziert.searchText, '');
+    assert.deepEqual(projiziert.tagNames, ['vegi']);
+  });
+
+  it('Transform ergänzt den Suchtext', () => {
+    assert.equal(withSearchText({markdown: 'Crème Brûlée'}).searchText, 'creme brulee');
   });
 
   it('findet nichts, was nicht vorkommt', () => {
